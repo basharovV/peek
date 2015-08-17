@@ -1,0 +1,66 @@
+<!-- activity_screen_slide.xml -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:animateLayoutChanges="true">
+
+    <android.support.v4.view.ViewPager
+
+        android:id="@+id/pager"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|bottom"
+    />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:id="@+id/peek_toolbar_group">
+
+        <android.support.v7.widget.Toolbar
+            android:layout_height="50dp"
+            android:layout_width="match_parent"
+
+            style="@style/AppTheme.Toolbar"
+            android:id="@+id/peek_toolbar"
+            android:layout_gravity="top">
+            <!--
+            <ImageButton
+                android:src="@drawable/settings"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:scaleType="fitXY"
+                android:background="@null"
+                />
+                -->
+            <ImageView
+                android:layout_width="90dp"
+                android:layout_height="50dp"
+                android:src="@drawable/peek_toolbar_logo_small"
+                android:layout_gravity="center"
+                android:id="@+id/toolbar_logo"
+                android:cropToPadding="false"
+                android:adjustViewBounds="false"
+                android:baselineAlignBottom="false" />
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/ic_overflow"
+                android:scaleType="fitXY"
+                android:background="@null"
+                android:layout_gravity="end"
+                android:layout_margin="8dp"
+                android:id="@+id/overflowButton"/>
+
+        </android.support.v7.widget.Toolbar>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@drawable/toolbar_shadow" />
+
+   </LinearLayout>
+</FrameLayout>

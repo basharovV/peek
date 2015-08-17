@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@color/colorSecondary">
+
+    <LinearLayout
+        android:orientation="vertical" android:layout_width="250dp"
+        android:layout_height="80dp"
+        android:id="@+id/main_info_layout"
+        android:padding="10dp">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:id="@+id/info_layout"
+            android:layout_gravity="top"
+            android:orientation="vertical"
+            android:baselineAligned="false">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:layout_weight="1"
+            android:id="@+id/map_info_name"
+            style="@style/PlaceTitle"
+            android:text="Place name"
+            android:textSize="16sp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingRight="5dp"
+                android:paddingLeft="5dp"
+                android:layout_weight="1"
+                android:id="@+id/map_info_type"
+                android:background="@drawable/dark_rounded_rect"
+                android:text="Type"
+                android:textColor="@color/background_floating_material_light"
+                android:textSize="14sp"
+                android:layout_gravity="bottom|right"
+                android:gravity="center"
+
+                />
+
+        </LinearLayout>
+    </LinearLayout>
+    </RelativeLayout>

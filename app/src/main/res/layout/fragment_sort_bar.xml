@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:orientation="horizontal"
+    android:id="@+id/optionsBar"
+    android:background="#CC000000">
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginRight="30dp"
+            android:layout_marginLeft="30dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal"
+            >
+            <com.peekapp.example.peek.views.SortButtonView
+                android:layout_width="60dp"
+                android:layout_height="40dp"
+                android:id="@+id/trendingSortButton"
+                android:src="@drawable/ic_trending_icon"
+                android:scaleType="centerInside"
+                style="@style/SortingIcons"
+            />
+
+            <com.peekapp.example.peek.views.SortButtonView
+                android:layout_width="60dp"
+                android:layout_height="40dp"
+                android:id="@+id/clockSortButton"
+                android:src="@drawable/ic_clock_icon"
+                style="@style/SortingIcons"/>
+
+            <com.peekapp.example.peek.views.SortButtonView
+                android:layout_width="60dp"
+                android:layout_height="40dp"
+                android:id="@+id/locationSortButton"
+                android:src="@drawable/ic_pin_icon"
+                android:scaleType="centerInside"
+                style="@style/SortingIcons"/>
+
+        </LinearLayout>
+            <ImageView
+                android:layout_width="10dp"
+                android:layout_height="25dp"
+                android:src="@drawable/search_handle"
+                android:background="@android:color/transparent"
+                android:alpha="0.5"
+                android:scaleType="fitXY"
+                android:layout_gravity="right|center_vertical"/>
+
+    </FrameLayout>
+</LinearLayout>

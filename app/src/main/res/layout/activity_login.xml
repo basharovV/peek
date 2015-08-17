@@ -1,0 +1,47 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:gravity="center_horizontal"
+    android:orientation="vertical" android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.peekapp.example.peek.activities.LoginActivity"
+    android:background="@color/peek_orange">
+
+    <!-- Login progress -->
+
+    <ImageView
+        android:src="@drawable/peek_toolbar_logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/loginLogo"
+        android:layout_gravity="center_horizontal"
+        android:cropToPadding="false"
+        android:adjustViewBounds="true"
+        android:layout_marginTop="10dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/white"
+        android:text="Your world. \nDifferent eyes."
+        android:textSize="40dp"
+        android:gravity="center_horizontal"
+        android:fontFamily="sans-serif-light"/>
+
+    <ProgressBar android:id="@+id/login_progress" style="?android:attr/progressBarStyleLarge"
+        android:layout_marginTop="30dp"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        />
+            <ImageButton
+                android:layout_width="360dp"
+                android:layout_height="70dp"
+                android:id="@+id/fbLoginButton"
+                android:src="@drawable/fb_login"
+                android:adjustViewBounds="false"
+                android:layout_gravity="center_horizontal"
+                android:background="@null"
+                android:layout_marginTop="30dp" />
+
+</LinearLayout>
+

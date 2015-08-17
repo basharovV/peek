@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="mdtp_accent_color">@color/colorPrimary</color>
+    <color name="mdtp_accent_color_dark">#ae4e00</color>
+    <!-- old orange#ff7200-->
+    <color name="pale_white">#FAFAFA</color>
+    <color name="peek_orange">#CC4910</color>
+    <color name="peek_orangeOLD">#D64E13</color>
+
+    <color name="colorPrimary">#CC4910</color>
+    <color name="colorPrimaryDark">#B5410E</color>
+    <color name="colorPrimaryLight">#FF8F7D</color>
+
+    <color name="colorSecondary">#325059</color>
+    <color name="colorSecondaryLight">#1E6E84</color>
+
+    <color name="colorTertiaryLight">#D3DCC6</color>
+
+
+    <color name="bright_lime">#F2FF00</color>
+    <color name="dark_aqua">#006478</color>
+    <color name="darker_aqua">#013149</color>
+    <color name="blue_purple">#443BF5</color>
+    <color name="gray">#C6C6C6</color>
+    <color name="placeRatingForeground">#ffd800</color>
+    <color name="placeRatingBackground">#fff9db</color>
+</resources>

@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">Peek</string>
+
+    <!-- Wait dialog -->
+    <string name="load_dialog_title">One moment</string>
+    <string name="load_dialog_content">Fetching location data...</string>
+    <string name="load_dialog_done">Done!</string>
+    <string name="load_dialog_done_content">Wow!</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_splash">SplashActivity</string>
+
+    <string name="feed_text">Live feed of media\n\n\n\nLive feed of media</string>
+
+    <!-- Create event -->
+
+    <string name="create_event">Create an event</string>
+    <string name="event_name">Event name:</string>
+    <string name="event_location">Event location:</string>
+
+    <!--Bottom sheet items -->
+    <string name="profile_item">My profile</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_create_event">CreateEventActivity</string>
+
+
+</resources>

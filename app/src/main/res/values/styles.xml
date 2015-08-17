@@ -1,0 +1,100 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Base.AppTheme">
+        <!-- Toolbar + Overflow menu text color -->
+        <item name="android:textColorPrimary">#FFFFFF</item>
+        <!-- Overflow menu button color -->
+        <item name="android:textColorSecondary">#FFFFFF</item>
+        <item name="android:dropDownListViewStyle">@style/DropDownListViewStyle</item>
+
+    </style>
+    
+    <style name="Base.AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Used for Toolbar background color -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorPrimary</item>
+    </style>
+
+    <style name="DropDownListViewStyle" parent="@style/Widget.AppCompat.ListView.DropDown">
+        <item name="android:divider">@android:color/transparent</item>
+        <item name="android:dividerHeight">0dp</item>
+    </style>
+
+    <style name="AppTheme.Toolbar" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="android:iconifiedByDefault">true</item>
+        <item name="android:background">@color/colorPrimary</item>
+        <item name="android:minHeight">50dp</item>
+        <item name="android:maxHeight">50dp</item>
+        <item name="android:height">50dp</item>
+        <item name="popupTheme">@style/Theme.AppCompat.Light</item>
+    </style>
+
+    <!-- Overflow drop down style -->
+    <style name="AppTheme.ActionBar.Popup" parent="Widget.AppCompat.Light.PopupMenu.Overflow">
+        <item name="android:background">@color/peek_orange</item>
+    </style>
+
+    <!-- Create event activity style -->
+    <style name="EventCreateText">
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="EventHeading">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:gravity">center_horizontal</item>
+    </style>
+
+    <!-- Event feed style -->
+    <style name="PlaceTitle">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:shadowColor">#696969</item>
+    </style>
+
+    <style name="PlaceType">
+        <item name="android:textColor">@color/colorSecondaryLight</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:shadowColor">#696969</item>
+    </style>
+    <style name="PlaceVicinity">
+        <item name="android:textColor">@color/gray</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:shadowColor">#696969</item>
+    </style>
+    
+    <!-- Place profile style -->
+    <style name="RatingStyle" parent="Widget.AppCompat.RatingBar">
+        <item name="android:stepSize">0.5</item>
+        <item name="android:numStars">5</item>
+        <item name="android:minHeight">30dp</item>
+        <item name="android:maxHeight">30dp</item>
+        <item name="android:progressDrawable">@drawable/ic_ratingdrawable</item>
+    </style>
+
+    <style name="SortingIcons">
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:scaleType">fitXY</item>
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:paddingRight">10dp</item>
+        <item name="android:layout_marginRight">20dp</item>
+        <item name="android:layout_marginLeft">20dp</item>
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
+    <style name="RatingNumber">
+        <item name="android:textSize">30sp</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:shadowRadius">1</item>
+        <item name="android:shadowColor">#000000</item>
+        <item name="android:shadowDx">1</item>
+    </style>
+
+
+
+
+
+</resources>

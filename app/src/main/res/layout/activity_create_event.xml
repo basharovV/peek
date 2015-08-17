@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorSecondary">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/peek_toolbar"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        style="@style/AppTheme.Toolbar">
+        <ImageButton
+            android:src="@drawable/back_button"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:background="@null"
+            android:id="@+id/backButton" />
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:layout_gravity="center_horizontal">
+            <ImageView
+                android:layout_width="80dp"
+                android:layout_height="40dp"
+                android:src="@drawable/peek_toolbar_logo"
+                android:id="@+id/toolbar_logo"
+                android:layout_gravity="center_horizontal"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/EventCreateText"
+                android:text="@string/create_event"
+                android:clickable="false"
+                android:layout_below="@+id/toolbar_logo"
+                 />
+        </RelativeLayout>
+
+    </android.support.v7.widget.Toolbar>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="15dp"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="30dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:id="@+id/today_date"
+                android:text="Today is "
+                android:textColor="@color/peek_orange"
+                android:textAlignment="center"
+                android:background="#70677a74" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="#50677a74"
+            android:padding="10dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            style="@style/EventHeading"
+            android:layout_marginTop="15dp"
+            android:text="@string/event_name"
+            android:layout_marginLeft="10dp"
+            />
+
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="37dp"
+            android:id="@+id/eventName"
+            android:layout_margin="5dp"
+            android:elegantTextHeight="false"
+            android:editable="true"
+            android:autoText="false"
+            android:singleLine="true"
+            android:layout_weight="0.00"
+            android:inputType="textAutoComplete" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            style="@style/EventHeading"
+            android:layout_marginTop="15dp"
+            android:text="@string/event_location"
+            android:layout_marginLeft="10dp"
+            />
+
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="37dp"
+            android:id="@+id/eventLocation"
+            android:layout_margin="5dp"
+            android:elegantTextHeight="false"
+            android:editable="true"
+            android:autoText="false"
+            android:layout_weight="0.00"
+            android:singleLine="true"/>
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Use current location"
+            android:textColor="@android:color/white"
+            android:layout_marginTop="15dp"
+            android:id="@+id/checkBox"
+            android:checked="false" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="50dp"
+            android:background="@color/colorSecondaryLight">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                style="@style/EventHeading"
+                android:layout_weight="1"
+                android:paddingLeft="5dp"
+                android:paddingRight="10dp"
+                android:background="@color/mdtp_dark_gray"
+                android:gravity="center"
+                android:textSize="25sp"
+                android:text="Time:"
+                android:textColor="@color/mdtp_done_text_color_disabled"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="12:00"
+                android:layout_weight="1"
+                style="@style/EventHeading"
+                android:id="@+id/timeTextView"
+                android:textAlignment="center"
+                android:textSize="35sp"
+                android:clickable="true" />
+
+            </LinearLayout>
+    </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="bottom"
+            android:layout_marginTop="10dp">
+            <ImageButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@drawable/invite_fb_button"
+                android:background="#50677a74"
+                android:scaleType="fitCenter"/>
+        </LinearLayout>
+    </LinearLayout>
+
+
+</LinearLayout>

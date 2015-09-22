@@ -16,7 +16,7 @@
             android:layout_gravity="center"
             android:orientation="horizontal"
             >
-            <com.peekapp.example.peek.views.SortButtonView
+            <com.peekapps.peek.views.SortButtonView
                 android:layout_width="60dp"
                 android:layout_height="40dp"
                 android:id="@+id/trendingSortButton"
@@ -25,14 +25,14 @@
                 style="@style/SortingIcons"
             />
 
-            <com.peekapp.example.peek.views.SortButtonView
+            <com.peekapps.peek.views.SortButtonView
                 android:layout_width="60dp"
                 android:layout_height="40dp"
                 android:id="@+id/clockSortButton"
                 android:src="@drawable/ic_clock_icon"
                 style="@style/SortingIcons"/>
 
-            <com.peekapp.example.peek.views.SortButtonView
+            <com.peekapps.peek.views.SortButtonView
                 android:layout_width="60dp"
                 android:layout_height="40dp"
                 android:id="@+id/locationSortButton"

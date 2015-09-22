@@ -8,14 +8,24 @@
     <color name="peek_orangeOLD">#D64E13</color>
 
     <color name="colorPrimary">#CC4910</color>
+    <color name="colorPrimaryDarkest">#8F350D</color>
     <color name="colorPrimaryDark">#B5410E</color>
     <color name="colorPrimaryLight">#FF8F7D</color>
 
     <color name="colorSecondary">#325059</color>
-    <color name="colorSecondaryLight">#1E6E84</color>
+    <color name="colorSecondaryDark">#092E39</color>
+    <color name="colorSecondaryDarkTrans">#CC092E39</color>
+    <color name="colorSecondaryMedium">#0C4454</color>
+    <color name="colorSecondaryMediumTrans">#CC0C4454</color>
+    <color name="colorSecondaryLight">#317B90</color>
+    <color name="colorSecondaryLightTrans">#CC317B90</color>
 
+    <color name="colorLight">#F4F4F4</color>
     <color name="colorTertiaryLight">#D3DCC6</color>
-
+    <color name="colorTertiary">#D84315</color>
+    <!--options:
+    Teal green: #26A69A
+    -->
 
     <color name="bright_lime">#F2FF00</color>
     <color name="dark_aqua">#006478</color>

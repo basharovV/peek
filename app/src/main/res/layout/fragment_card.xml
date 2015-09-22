@@ -1,105 +1,132 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="160dp"
-    android:layout_margin="5dp"
-    android:orientation="vertical"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="4dp"
     app:cardBackgroundColor="@android:color/transparent"
-    android:background="@android:color/transparent"
+    android:orientation="vertical">
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/gray"
+        />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:orientation="horizontal"
+        android:background="@android:color/white"
+        >
+        <TextView
+            android:id="@+id/card_title"
+            android:layout_width="0dp"
+            android:layout_weight="0.7"
+
+            android:layout_height="wrap_content"
+            android:maxWidth="260dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:text="Place name"
+            android:singleLine="true"
+            android:requiresFadingEdge="horizontal"
+            android:fadingEdge="horizontal"
+            android:fadingEdgeLength="10dp"
+            style="@style/PlaceTitle"/>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="0.3"
+            android:layout_height="match_parent"
+            android:layout_margin="10dp"
+            android:id="@+id/card_type"
+            android:layout_gravity="center_vertical"
+            style="@style/PlaceCardTopInfo"
+            android:textColor="@color/colorPrimary"
+            android:gravity="right"
+            android:text="Type"
+            />
+
+            -->
+
+    </LinearLayout>
+<FrameLayout
+    android:layout_width="match_parent"
+    android:layout_height="130dp"
     >
 
     <ImageView
         android:id="@+id/placePhoto"
+        android:src="@drawable/no_img_bg"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/ocean"
         android:scaleType="centerCrop"
         />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:weightSum="1">
+        android:orientation="vertical">
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:orientation="vertical"
-            android:background="#50000000"
-            android:layout_weight="0.5">
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="right">
+        <LinearLayout
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginRight="25dp"
+            android:background="@drawable/card_info_bg"
+            android:layout_gravity="right|center_vertical">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/card_distance"
+            android:layout_margin="10dp"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
+            android:text="5.2 km"
+            style="@style/PlaceCardTopInfo"
+            />
 
-            <FrameLayout
-                android:layout_width="65dp"
-                android:layout_height="65dp"
-                android:background="@android:color/transparent"
-                android:layout_gravity="center">
-                <ImageView
-                    android:layout_width="65dp"
-                    android:layout_height="65dp"
-                    android:src="@drawable/rating_circle_bg"
-                    android:id="@+id/placeMeter" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/placeSortAttribute"
-                    android:layout_gravity="center"
-                    style="@style/RatingNumber"
-                    android:text="1"/>
-            </FrameLayout>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/card_time"
+            android:layout_margin="10dp"
+            style="@style/PlaceCardTopInfo"
+            android:gravity="end"
+            android:text="3 min"
+            />
+        </LinearLayout>
+            <View
+                android:layout_width="50dp"
+                android:layout_height="30dp"
+                android:layout_gravity="right"
+                />
+        </LinearLayout>
         </LinearLayout>
 
                 <LinearLayout
-                    android:layout_width="fill_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="0.5"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal|bottom"
-                    android:background="@color/mdtp_white"
                     android:orientation="horizontal">
                     <LinearLayout
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_weight="0.8"
                         android:orientation="vertical">
 
-                    <TextView
-                        android:layout_width="260dp"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/card_type"
-                        android:layout_marginTop="25dp"
-                        android:layout_marginLeft="20dp"
-                        android:layout_gravity="center_vertical"
-                        style="@style/PlaceType"
-                        android:text="Type"
-                        />
-                    <TextView
-                        android:layout_width="260dp"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/card_location"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginLeft="20dp"
-                        android:layout_gravity="center_vertical"
-                        android:singleLine="true"
-                        android:maxLength="40"
-                        style="@style/PlaceVicinity"
-                        android:text="Vicinity"
-                        />
                     </LinearLayout>
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="0.2">
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:id="@+id/startMediaButton"
-                            android:background="@color/colorSecondaryLight"/>
 
                     </LinearLayout>
             <!-- icon -->
-
-            </LinearLayout>
-
     </LinearLayout>
 
 
@@ -118,24 +145,36 @@
             android:layout_alignLeft="@id/card_title"
             android:layout_alignRight="@id/card_title"/>
             -->
-        <TextView
-            android:id="@+id/card_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:maxWidth="260dp"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:layout_marginTop="10dp"
-            android:text="Place name"
-            android:singleLine="true"
-            android:requiresFadingEdge="horizontal"
-            android:fadingEdge="horizontal"
-            android:fadingEdgeLength="10dp"
-            android:textColor="@android:color/white"
-            android:background="@color/colorSecondary"
-            style="@style/PlaceTitle"/>
+
     </RelativeLayout>
 
+    <FrameLayout
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_margin="5dp"
+        android:id="@+id/startMediaButton"
+        android:background="@android:color/transparent"
+        android:layout_gravity="right|center_vertical">
+
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/rating_circle_bg"
+            android:id="@+id/placeMeter" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/placeSortAttribute"
+            android:layout_gravity="center"
+            style="@style/RatingNumber"
+            android:text="1"/>
+
+    </FrameLayout>
+
+
 </FrameLayout>
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:src="@drawable/toolbar_shadow"/>
+</LinearLayout>

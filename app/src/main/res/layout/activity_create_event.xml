@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorSecondary">
+    android:background="@color/material_blue_grey_900">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/peek_toolbar"
@@ -42,7 +42,8 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.75"
         android:padding="15dp"
         android:orientation="vertical">
 
@@ -56,16 +57,15 @@
                 android:gravity="center"
                 android:id="@+id/today_date"
                 android:text="Today is "
-                android:textColor="@color/peek_orange"
-                android:textAlignment="center"
-                android:background="#70677a74" />
+                android:textColor="@color/colorSecondaryLight"
+                android:textAlignment="center" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="#50677a74"
+            android:background="@android:color/transparent"
             android:padding="10dp">
         <TextView
             android:layout_width="wrap_content"
@@ -74,20 +74,17 @@
             style="@style/EventHeading"
             android:layout_marginTop="15dp"
             android:text="@string/event_name"
-            android:layout_marginLeft="10dp"
             />
 
 
         <EditText
             android:layout_width="match_parent"
-            android:layout_height="37dp"
+            android:layout_height="wrap_content"
             android:id="@+id/eventName"
-            android:layout_margin="5dp"
-            android:elegantTextHeight="false"
-            android:editable="true"
-            android:autoText="false"
+            android:layout_marginTop="5dp"
+            style="@style/CreateEventEditText"
+            android:hint="Enter the name of the event"
             android:singleLine="true"
-            android:layout_weight="0.00"
             android:inputType="textAutoComplete" />
 
         <TextView
@@ -97,18 +94,16 @@
             style="@style/EventHeading"
             android:layout_marginTop="15dp"
             android:text="@string/event_location"
-            android:layout_marginLeft="10dp"
             />
 
 
         <EditText
             android:layout_width="match_parent"
-            android:layout_height="37dp"
+            android:layout_height="wrap_content"
             android:id="@+id/eventLocation"
-            android:layout_margin="5dp"
-            android:elegantTextHeight="false"
-            android:editable="true"
-            android:autoText="false"
+            style="@style/CreateEventEditText"
+            android:layout_marginTop="5dp"
+            android:hint="Enter your event's location"
             android:layout_weight="0.00"
             android:singleLine="true"/>
 
@@ -116,7 +111,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Use current location"
-            android:textColor="@android:color/white"
+            android:textAllCaps="true"
+            android:textStyle="bold"
+            android:textColor="@color/colorPrimary"
             android:layout_marginTop="15dp"
             android:id="@+id/checkBox"
             android:checked="false" />
@@ -125,18 +122,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="50dp"
-            android:background="@color/colorSecondaryLight">
+            android:layout_marginTop="15dp"
+            android:background="@color/colorSecondaryDark">
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                style="@style/EventHeading"
+                style="@style/EventTimeHeading"
                 android:layout_weight="1"
                 android:paddingLeft="5dp"
                 android:paddingRight="10dp"
-                android:background="@color/mdtp_dark_gray"
+                android:background="@color/colorSecondary"
                 android:gravity="center"
-                android:textSize="25sp"
+                android:textSize="20sp"
                 android:text="Time:"
                 android:textColor="@color/mdtp_done_text_color_disabled"/>
             <TextView
@@ -144,7 +141,7 @@
                 android:layout_height="wrap_content"
                 android:text="12:00"
                 android:layout_weight="1"
-                style="@style/EventHeading"
+                style="@style/EventTime"
                 android:id="@+id/timeTextView"
                 android:textAlignment="center"
                 android:textSize="35sp"
@@ -152,20 +149,23 @@
 
             </LinearLayout>
     </LinearLayout>
-        <LinearLayout
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="bottom"
+        android:background="#3B5998">
+        <ImageButton
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_gravity="bottom"
-            android:layout_marginTop="10dp">
-            <ImageButton
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:src="@drawable/invite_fb_button"
-                android:background="#50677a74"
-                android:scaleType="fitCenter"/>
-        </LinearLayout>
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_gravity="center"
+            android:src="@drawable/invite_fb_button"
+            android:background="@android:color/transparent"
+            android:scaleType="fitCenter"/>
     </LinearLayout>
 
 

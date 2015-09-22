@@ -1,47 +1,83 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:gravity="center_horizontal"
-    android:orientation="vertical" android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.peekapp.example.peek.activities.LoginActivity"
-    android:background="@color/peek_orange">
+    android:layout_height="match_parent"
+    tools:context="com.peekapps.peek.activities.LoginActivity"
+    android:background="@color/colorTertiary">
 
-    <!-- Login progress -->
 
-    <ImageView
-        android:src="@drawable/peek_toolbar_logo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/loginLogo"
-        android:layout_gravity="center_horizontal"
-        android:cropToPadding="false"
-        android:adjustViewBounds="true"
-        android:layout_marginTop="10dp" />
-
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@android:color/white"
-        android:text="Your world. \nDifferent eyes."
-        android:textSize="40dp"
-        android:gravity="center_horizontal"
-        android:fontFamily="sans-serif-light"/>
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <!-- Login progress -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.4">
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/loginHeaderLogo"
+                    android:orientation="horizontal"
+                    android:layout_centerInParent="true">
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="150dp"
+                            android:id="@+id/loginLogo"
+                            android:src="@drawable/p_logo"
+                            android:layout_gravity="center_vertical"
+                            android:cropToPadding="false"
+                            android:adjustViewBounds="true"
+                            android:visibility="invisible"/>
+                        <ImageView
+                            android:layout_width="200dp"
+                            android:layout_height="match_parent"
+                            android:id="@+id/loginTextLogo"
+                            android:src="@drawable/peek_toolbar_logo"
+                            android:visibility="invisible"/>
+                </LinearLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/loginSlogan"
+                    android:layout_below="@+id/loginHeaderLogo"
+                    android:textColor="#FFB74D"
+                    android:text="Your world. Different eyes."
+                    android:textSize="20sp"
+                    android:visibility="invisible"
+                    android:layout_centerHorizontal="true"
+                    android:fontFamily="sans-serif-light"/>
+        </RelativeLayout>
 
-    <ProgressBar android:id="@+id/login_progress" style="?android:attr/progressBarStyleLarge"
-        android:layout_marginTop="30dp"
-        android:layout_width="wrap_content" android:layout_height="wrap_content"
-        />
-            <ImageButton
-                android:layout_width="360dp"
-                android:layout_height="70dp"
-                android:id="@+id/fbLoginButton"
-                android:src="@drawable/fb_login"
-                android:adjustViewBounds="false"
-                android:layout_gravity="center_horizontal"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.4"
+            >
+        <cn.trinea.android.view.autoscrollviewpager.AutoScrollViewPager
+            android:id="@+id/loginInfoPager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.2"
+            android:orientation="horizontal"
+            android:background="#BF360C">
+
+
+            <com.facebook.login.widget.LoginButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/fb_login_button"
+                android:layout_gravity="center"
                 android:background="@null"
-                android:layout_marginTop="30dp" />
-
-</LinearLayout>
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"/>
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>
 

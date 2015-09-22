@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Peek</string>
-
+    <string name="facebook_app_id">1403100456683343</string>
     <!-- Wait dialog -->
     <string name="load_dialog_title">One moment</string>
     <string name="load_dialog_content">Fetching location data...</string>
@@ -25,5 +25,12 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_create_event">CreateEventActivity</string>
 
+    <string-array name="settings_list">
+        <item>General</item>
+        <item>Location</item>
+        <item>Sharing</item>
+        <item>Feedback</item>
+        <item>About Peek</item>
+    </string-array>
 
 </resources>

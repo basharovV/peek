@@ -3,7 +3,7 @@
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     android:id="@+id/feedFragment"
-    android:background="@color/colorSecondaryDark"
+    android:background="@color/materialWhite200"
     android:paddingTop="50dp">
 
     <FrameLayout
@@ -15,15 +15,13 @@
         <android.support.v4.widget.SwipeRefreshLayout
             android:id="@+id/swipeRefreshLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/background_floating_material_light">
+            android:layout_height="match_parent">
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recycler_view"
                 android:scrollbars="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@android:color/white"
                 />
 
         </android.support.v4.widget.SwipeRefreshLayout>
@@ -39,7 +37,7 @@
                 android:id="@+id/scrollOptionsBar"/>
             <View
                 android:layout_width="match_parent"
-                android:layout_height="2dp"
+                android:layout_height="1dp"
                 android:background="@drawable/toolbar_shadow" />
         </LinearLayout>
 </FrameLayout>

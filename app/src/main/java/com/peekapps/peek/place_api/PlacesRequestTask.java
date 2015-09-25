@@ -54,6 +54,7 @@ public class PlacesRequestTask {
         }
         catch (JSONException e) {
             Log.e(TAG, "JSON Exception, error fetching data");
+            e.printStackTrace();
         }
         return placesList;
     }

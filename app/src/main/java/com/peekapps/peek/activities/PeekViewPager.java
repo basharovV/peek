@@ -14,9 +14,12 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -25,6 +28,7 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.cocosw.bottomsheet.BottomSheet;
+import com.facebook.appevents.AppEventsLogger;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.peekapps.peek.DisplayMarkersTask;
@@ -234,7 +238,7 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
      *  Otherwise, animate toolbar 'out'
      * The animation consists of a fade and 'slide in' effect.
      */
-    public class ScrollListener implements ViewPager.OnPageChangeListener {
+    public class ScrollListener implements OnPageChangeListener {
         //Hold the height to change the y-offset on user scroll
         private int toolbarHeight;
         private int viewPagerHeight;
@@ -243,7 +247,9 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
          * Scroll direction:
          * 0 - left | 1 - stationary |2 - right
          */
-        private int scrollDir;
+        private float previousOffset = 2;
+        private int scrollDir = 0;
+        private int currentPage = 0;
 
         public ScrollListener() {
             super();
@@ -252,38 +258,70 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
             viewPagerHeight = viewPager.getHeight();
         }
 
+
+        @Override
         public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
-            //Set scrolling/swiping direction
-            if (positionOffset < 0.5) {
-                scrollDir = 0; //Left
+            switch (currentPage) {
+                case 0:
+                    toolbarGroup.setY(-toolbarHeight * (positionOffset));
+                    toolbarGroup.setAlpha(1 - positionOffset);
+                    break;
+                case 1:
+                    //If not been initialised
+                    if (previousOffset == 2) {
+                        previousOffset = positionOffset;
+                    }
+                    //...moving to the LEFT
+                    if (previousOffset > positionOffset) {
+                        //towards MAP
+                        if (position == 0) {
+                            toolbarGroup.setAlpha(1 - positionOffset);
+                            toolbarGroup.setTranslationY(-toolbarHeight * (positionOffset));
+                        }
+                        //towards CAMERA
+                        else {
+                            toolbarGroup.setAlpha(positionOffset);
+                            toolbarGroup.setTranslationY(-toolbarHeight * (1.0f - positionOffset));
+                        }
+                    }
+                    //...moving to the RIGHT
+                    else if (previousOffset < positionOffset) {
+                        //towards FEED
+                        if (position == 1) {
+                            toolbarGroup.setAlpha(positionOffset);
+                            toolbarGroup.setTranslationY(-toolbarHeight * (1.0f - positionOffset));
+                        }
+                        //towards CAMERA
+                        else {
+                            toolbarGroup.setAlpha(1.0f - positionOffset);
+                            toolbarGroup.setTranslationY(-toolbarHeight * positionOffset);
+                        }
+                    } else {
+                        if (position % 2 == 0) toolbarGroup.setAlpha(1);
+                        else toolbarGroup.setAlpha(0);
+                    }
+                    previousOffset = positionOffset;
+                    break;
+                case 2:
+                    if (positionOffset == 0) toolbarGroup.setAlpha(1.0f);
+                    else {
+                        toolbarGroup.setAlpha(positionOffset);
+                        toolbarGroup.setTranslationY(-toolbarHeight * (1 - positionOffset));
+                    }
+                    break;
             }
-            else if (positionOffset == 0.5) {
-                scrollDir = 1; //Stationary
-            }
-            else {
-                scrollDir = 2; //Right
-            }
+//            Log.d("ViewPager", "Alpha = " + toolbarGroup.getAlpha()
+//                    + " | Offset =" + positionOffset + " | Position = " + position
+//                    + " | Current page = " + currentPage);
 
-            if (position == 1) {
-                //Decrease transparency
-                toolbarGroup.setTranslationY(toolbar.getTranslationY() * positionOffset);
-                toolbarGroup.setAlpha(positionOffset);
-                //Move toolbar down
-            }
-            else {
-                //Increase transparency
-                toolbarGroup.setTranslationY(-toolbarHeight * positionOffset);
-                toolbarGroup.setAlpha(1 - positionOffset);
-                //Move toolbar up
-            }
         }
 
         public void onPageSelected(int position) {
+            currentPage = position;
             switch (position) {
                 case 0:
-                    toolbarGroup.setAlpha(1);
-                    toolbarGroup.setTranslationY(0);
+                    toolbarGroup.setAlpha(0x1);
                     if (fragments[1] != null) {
                         ((CameraFragment) fragments[1]).stop();
                     }
@@ -292,22 +330,35 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
                     if (fragments[1] != null) {
                         ((CameraFragment) fragments[1]).start();
                     }
-                    toolbarGroup.setAlpha(0);
-                    toolbarGroup.setTranslationY(-toolbarHeight);
+                    toolbarGroup.setAlpha(0x0);
                     break;
                 case 2:
                     if (fragments[1] != null) {
                         ((CameraFragment) fragments[1]).stop();
                     }
-                    toolbarGroup.setAlpha(1);
-                    toolbarGroup.setTranslationY(0);
+                    toolbarGroup.setAlpha(0x1);
                     break;
-                }
+            }
         }
 
 
         public void onPageScrollStateChanged(int state) {
-
+            if (state == ViewPager.SCROLL_STATE_DRAGGING) {
+                currentPage = viewPager.getCurrentItem();
+            }
+            if (state == ViewPager.SCROLL_STATE_IDLE) {
+                switch (currentPage) {
+                    case 0:
+                        toolbarGroup.setAlpha(0x1);
+                        break;
+                    case 1:
+                        toolbarGroup.setAlpha(0x0);
+                        break;
+                    case 2:
+                        toolbarGroup.setAlpha(0x1);
+                        break;
+                }
+            }
         }
     }
 
@@ -362,6 +413,18 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
     private void launchProfile() {
         Intent createEventIntent = new Intent(PeekViewPager.this, ProfileActivity.class);
         startActivity(createEventIntent);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        AppEventsLogger.activateApp(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        AppEventsLogger.deactivateApp(this);
     }
 }
 

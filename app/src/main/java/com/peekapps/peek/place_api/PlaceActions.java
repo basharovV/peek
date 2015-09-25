@@ -83,7 +83,18 @@ public class PlaceActions {
         currentLocation = mockLocation;
     }
 
-
+    public String distanceToPlace(Context context, Place pl) {
+        Location myLocation = PlaceActions.getInstance().getLocation(context);
+        Location placeLocation = new Location("place");
+        placeLocation.setLatitude(pl.getLatitude());
+        placeLocation.setLongitude(pl.getLongitude());
+        float dist = myLocation.distanceTo(placeLocation);
+        if (dist > 1000) {
+            dist = dist / 1000;
+            return String.format("%.2f", dist) + " km";
+        }
+        return (String.format("%.2f", dist)) + " m";
+    }
     public Location getCurrentLocation(Context context) {
         return currentLocation;
     }
@@ -92,8 +103,10 @@ public class PlaceActions {
         PlacesRequestTask reqTask = new PlacesRequestTask();
         String url = generateUrl(placeID);
         Place pl = reqTask.fetchSinglePlace(url);
-        if (pl.hasPhoto()) {
-            downloadPhoto(pl, context);
+        if (pl != null) {
+            if (pl.hasPhoto()) {
+                downloadPhoto(pl, context);
+            }
         }
         return pl;
     }
@@ -118,17 +131,20 @@ public class PlaceActions {
         PlacesRequestTask reqTask = new PlacesRequestTask();
         String url = generateUrl(null);
         List<Place> placesList = reqTask.fetchNearbyPlaces(url);
-        //Fpr Demo video purposes
-        placesList.add(getPlace("ChIJmQJIxlVYwokRLgeuocVOGVU", context));
-        placesList.add(getPlace("ChIJPTacEpBQwokRKwIlDXelxkA", context));
-        placesList.add(getPlace("ChIJR_bK295bwokR8gM6QgEdmkY", context));
-
-        updateDatabase(placesList, context);
+        if (placesList == null) {
+            return null;
+        }
         for (Place pl : placesList) {
             if (pl.hasPhoto()) {
                 downloadPhoto(pl, context);
             }
         }
+        //Fpr Demo video purposes
+        placesList.add(getPlace("ChIJmQJIxlVYwokRLgeuocVOGVU", context));
+        placesList.add(getPlace("ChIJPTacEpBQwokRKwIlDXelxkA", context));
+        placesList.add(getPlace("ChIJR_bK295bwokR8gM6QgEdmkY", context));
+        updateDatabase(placesList, context);
+
         return placesList;
         }
 

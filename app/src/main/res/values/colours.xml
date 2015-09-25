@@ -7,7 +7,8 @@
     <color name="peek_orange">#CC4910</color>
     <color name="peek_orangeOLD">#D64E13</color>
 
-    <color name="colorPrimary">#CC4910</color>
+    <!--<color name="colorPrimary">#CC4910</color>-->
+    <color name="colorPrimary">#D84315</color>
     <color name="colorPrimaryDarkest">#8F350D</color>
     <color name="colorPrimaryDark">#B5410E</color>
     <color name="colorPrimaryLight">#FF8F7D</color>
@@ -23,6 +24,9 @@
     <color name="colorLight">#F4F4F4</color>
     <color name="colorTertiaryLight">#D3DCC6</color>
     <color name="colorTertiary">#D84315</color>
+
+    <color name="materialWhite200">#EEEEEE</color>
+    <color name="colorMaterialLightGrey">#EEEEEE</color>
     <!--options:
     Teal green: #26A69A
     -->

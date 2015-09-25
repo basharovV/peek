@@ -69,8 +69,8 @@
 
     <!-- Event feed style -->
     <style name="PlaceTitle">
-        <item name="android:textColor">@color/colorSecondaryLight</item>
-        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">15sp</item>
     </style>
 
     <style name="PlaceType">
@@ -85,8 +85,12 @@
     </style>
 
     <style name="PlaceCardTopInfo">
+        <item name="android:textColor">@color/mdtp_light_gray</item>
+        <item name="android:textSize">11sp</item>
+    </style>
+    <style name="PlaceCardType">
         <item name="android:textColor">@color/gray</item>
-        <item name="android:textSize">14sp</item>
+        <item name="android:textSize">12sp</item>
     </style>
 
     <style name="AutoCompleteText">

@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created by Slav on 26/05/2015.
@@ -97,24 +98,20 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                             }
                         }
                     });
-            Location myLocation = PlaceActions.getInstance().getLocation(context);
-            Location placeLocation = new Location("place");
-            Place pl = placeList.get(position);
-            placeLocation.setLatitude(pl.getLatitude());
-            placeLocation.setLongitude(pl.getLongitude());
-            float dist = myLocation.distanceTo(placeLocation);
-            if (dist > 1000) {
-                dist = dist / 1000;
-                ((ViewHolder) holder).distance.setText((String.format("%.2f", dist)) + " km");
-            }
-            else {
-                ((ViewHolder) holder).distance.setText((String.format("%.2f", dist)) + " m");
-            }
+            //Set the formatted distance to the place in the list
+            String distanceToPlace = PlaceActions.getInstance().
+                    distanceToPlace(context, placeList.get(position));
+                    ((ViewHolder) holder).distance.setText(distanceToPlace);
+            //Set and format the type of place
             String type = placeList.get(position).getType();
-            String capitalised = type.substring(0, 1).toUpperCase() + type.substring(1);
-            ((ViewHolder) holder).type.setText(capitalised);
+            String formattedType = type.replaceAll("_", " ")
+                    .substring(0, 1).toUpperCase() + type.substring(1);;
+            ((ViewHolder) holder).type.setText(formattedType);
 
-
+            //Set and format the time of upload
+            Random random = new Random();
+            int randomTime = random.nextInt(11);
+                    ((ViewHolder) holder).time.setText(randomTime + "min");
             //Load place photo from cache
             String path = context.getExternalCacheDir() + "/" + placeList.get(position).getID() + "photo.jpg";
             File photo = new File(path);
@@ -156,6 +153,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         public TextView title;
         public TextView location;
         public TextView distance;
+        public TextView time;
         public TextView type;
         public ImageView meter;
         public ImageView image;
@@ -171,7 +169,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             meter = (ImageView) cardLayoutView.findViewById(R.id.placeMeter);
             distance = (TextView) cardLayoutView.findViewById(R.id.card_distance);
             image = (ImageView) cardLayoutView.findViewById(R.id.placePhoto);
-//            location = (TextView) cardLayoutView.findViewById(R.id.card_location);
+            time = (TextView) cardLayoutView.findViewById(R.id.card_time);
             type = (TextView) cardLayoutView.findViewById(R.id.card_type);
             startMediaButton = cardLayoutView.findViewById(R.id.startMediaButton);
             sortAttribute = (TextView) cardLayoutView.findViewById(R.id.placeSortAttribute);

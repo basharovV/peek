@@ -137,7 +137,9 @@ public class LoginActivity extends FragmentActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
         scrollInfoPager.setAdapter(new InfoImageAdapter(fragmentManager));
         scrollInfoPager.setInterval(4000);
+        scrollInfoPager.setScrollDurationFactor(3);
         scrollInfoPager.startAutoScroll();
+        scrollInfoPager.setOffscreenPageLimit(5);
 
         /**
          * Facebook login button SDK setup

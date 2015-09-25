@@ -56,7 +56,6 @@ import java.util.concurrent.TimeUnit;
 
 public class Camera2Fragment extends Fragment implements View.OnClickListener {
 
-
     private static SparseIntArray ORIENTATIONS = new SparseIntArray();
     private static final String TAG = "Camera2BasicFragment";
     /**
@@ -126,8 +125,6 @@ public class Camera2Fragment extends Fragment implements View.OnClickListener {
         super.onActivityCreated(savedInstanceState);
         file = new File(getActivity().getExternalFilesDir(null), "pic.jpg");
     }
-
-
 
     @Override
     public void onResume() {

@@ -40,7 +40,9 @@ public class InfoImageFragment extends Fragment {
 //        String uri = "drawable/login_info_img_" + pos;
 //        int resource = getResources().getIdentifier(uri, null, context.getPackageName());
 //        Drawable imageDrawable = getResources().getDrawable(resource);
-        Picasso.with(getActivity()).load(imagesArray[pos]).fit().centerInside().into(image);
+        Picasso.with(getActivity()).
+                load(imagesArray[pos])
+                .into(image);
 
         return rootView;
     }

@@ -28,7 +28,7 @@
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
             android:id="@+id/map_info_name"
-            style="@style/PlaceTitle"
+            style="@style/MapInfoTitle"
             android:text="Place name"
             android:textSize="16sp"
             android:layout_gravity="center"

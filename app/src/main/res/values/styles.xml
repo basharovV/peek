@@ -67,9 +67,15 @@
         <item name="android:gravity">center_horizontal</item>
     </style>
 
+    <!-- Map style -->
+    <!-- Event feed style -->
+    <style name="MapInfoTitle">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">15sp</item>
+    </style>
     <!-- Event feed style -->
     <style name="PlaceTitle">
-        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textColor">@color/mdtp_dark_gray</item>
         <item name="android:textSize">15sp</item>
     </style>
 
@@ -85,7 +91,7 @@
     </style>
 
     <style name="PlaceCardTopInfo">
-        <item name="android:textColor">@color/mdtp_light_gray</item>
+        <item name="android:textColor">@android:color/white</item>
         <item name="android:textSize">11sp</item>
     </style>
     <style name="PlaceCardType">
@@ -118,7 +124,7 @@
 
     <style name="RatingNumber">
         <item name="android:textSize">20sp</item>
-        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textColor">@color/colorPrimary</item>
         <item name="android:shadowRadius">1</item>
         <item name="android:shadowColor">#000000</item>
         <item name="android:shadowDx">1</item>

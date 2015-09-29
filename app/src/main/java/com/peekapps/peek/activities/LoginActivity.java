@@ -2,6 +2,7 @@ package com.peekapps.peek.activities;
 
 import android.animation.ObjectAnimator;
 import android.app.Activity;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.content.Intent;
@@ -30,6 +31,7 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.facebook.shimmer.ShimmerFrameLayout;
@@ -42,13 +44,14 @@ import com.peekapps.peek.fragments.InfoImageFragment;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 
 import cn.trinea.android.view.autoscrollviewpager.AutoScrollViewPager;
 
 
 public class LoginActivity extends FragmentActivity {
 
-    LoginButton fbButton;
+    FloatingActionButton fbButton;
     CallbackManager callbackManager;
 
 
@@ -144,9 +147,14 @@ public class LoginActivity extends FragmentActivity {
         /**
          * Facebook login button SDK setup
          */
-        fbButton = (LoginButton) findViewById(R.id.fb_login_button);
-        fbButton.setReadPermissions("user_friends");
-        fbButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+        fbButton = (FloatingActionButton) findViewById(R.id.fb_login_button);
+        fbButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LoginManager.getInstance().logInWithReadPermissions(LoginActivity.this, Arrays.asList("public_profile", "user_friends"));
+            }
+        });
+        LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 Intent pagerIntent = new Intent(LoginActivity.this, PeekViewPager.class);
@@ -189,7 +197,7 @@ public class LoginActivity extends FragmentActivity {
 
         @Override
         public int getCount() {
-            return 5;
+            return 4;
         }
     }
 

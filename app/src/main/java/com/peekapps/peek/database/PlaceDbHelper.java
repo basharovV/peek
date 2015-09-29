@@ -31,7 +31,8 @@ public class PlaceDbHelper extends SQLiteOpenHelper {
     public static final String COLUMN_NAME_LATITUDE = "latitude";
     public static final String COLUMN_NAME_LONGITUDE = "longitude";
     public static final String COLUMN_NAME_TYPE = "type";
-    public static final String COLUMN_NAME_TIME = "time_upload";
+    public static final String COLUMN_NAME_TIME_UPDATED = "time_updated";
+    public static final String COLUMN_NAME_DISTANCE = "distance";
 
 
 
@@ -47,7 +48,9 @@ public class PlaceDbHelper extends SQLiteOpenHelper {
                 + COLUMN_NAME_VICINITY + " TEXT" + COMMA_SEP
                 + COLUMN_NAME_LATITUDE + " REAL" + COMMA_SEP
                 + COLUMN_NAME_LONGITUDE + " REAL" + COMMA_SEP
-                + COLUMN_NAME_TYPE + " TEXT" + ")";
+                + COLUMN_NAME_TYPE + " TEXT" + COMMA_SEP
+                + COLUMN_NAME_TIME_UPDATED + " INTEGER" + COMMA_SEP
+                + COLUMN_NAME_DISTANCE + " INTEGER" + ")";
         db.execSQL(SQL_CREATE_TABLE);
     }
 
@@ -73,6 +76,8 @@ public class PlaceDbHelper extends SQLiteOpenHelper {
         values.put(COLUMN_NAME_LATITUDE, pl.getLatitude());
         values.put(COLUMN_NAME_LONGITUDE, pl.getLongitude());
         values.put(COLUMN_NAME_TYPE, pl.getType());
+        values.put(COLUMN_NAME_TIME_UPDATED, pl.getTimeUpdated());
+        values.put(COLUMN_NAME_DISTANCE, pl.getDistance());
         db.insertWithOnConflict(TABLE_NAME, "null", values, SQLiteDatabase.CONFLICT_IGNORE);
         db.close();
     }
@@ -85,12 +90,14 @@ public class PlaceDbHelper extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 Place pl = new Place();
-                pl.setID(cursor.getString(cursor.getColumnIndex("place_id")));
-                pl.setName(cursor.getString(cursor.getColumnIndex("place_name")));
-                pl.setVicinity(cursor.getString(cursor.getColumnIndex("vicinity")));
-                pl.setLatitude(Double.parseDouble(cursor.getString((cursor.getColumnIndex("latitude")))));
-                pl.setLongitude(Double.parseDouble(cursor.getString(cursor.getColumnIndex("longitude"))));
-                pl.setType(cursor.getString(cursor.getColumnIndex("type")));
+                pl.setID(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_PLACE_ID)));
+                pl.setName(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_PLACE)));
+                pl.setVicinity(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_VICINITY)));
+                pl.setLatitude(Double.parseDouble(cursor.getString((cursor.getColumnIndex(COLUMN_NAME_LATITUDE)))));
+                pl.setLongitude(Double.parseDouble(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_LONGITUDE))));
+                pl.setType(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_TYPE)));
+                pl.setTimeUpdated(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_TIME_UPDATED))));
+                pl.setDistance(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_DISTANCE))));
                 placesList.add(pl);
             }
             while (cursor.moveToNext());

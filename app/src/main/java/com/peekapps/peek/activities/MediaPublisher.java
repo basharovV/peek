@@ -467,28 +467,28 @@ public class MediaPublisher extends Activity{
                     selectedPlace.getId() +
                     "/");
 //            //new - upload to Google Cloud Storage
-//            Object toPass[] = new Object[3];
-//            toPass[0] = photoFile;
-//            toPass[1] = selectedPlace;
-//            toPass[2] = this;
-//            UploadTask uploadTask = new UploadTask();
-//            uploadTask.execute(toPass);
+            Object toPass[] = new Object[3];
+            toPass[0] = photoFile;
+            toPass[1] = selectedPlace;
+            toPass[2] = this;
+            UploadTask uploadTask = new UploadTask();
+            uploadTask.execute(toPass);
 
             /**
              * Old publisher - save to device
              */
-            if (!publishDirectory.exists()) {
-                publishDirectory.mkdirs();
-            }
-            String filename = incrementPhotoCounter(publishDirectory) + ".jpg";
-            File publishFile = new File(publishDirectory.getAbsolutePath() + File.separator + filename);
-            copy(photoFile, publishFile);
+//            if (!publishDirectory.exists()) {
+//                publishDirectory.mkdirs();
+//            }
+//            String filename = incrementPhotoCounter(publishDirectory) + ".jpg";
+//            File publishFile = new File(publishDirectory.getAbsolutePath() + File.separator + filename);
+//            copy(photoFile, publishFile);
         } catch (NullPointerException e) {
             Log.e(TAG, "NPE");
         }
-        catch (IOException e) {
-            Log.e(TAG, "IOException");
-        }
+//        catch (IOException e) {
+//            Log.e(TAG, "IOException");
+//        }
 
     }
 

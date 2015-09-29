@@ -13,6 +13,8 @@ public class Place implements Serializable {
     private String imageURL;
     private double latitude;
     private double longitude;
+    private int timeUpdated;
+    private int distance;
     private PlacePhoto placePhoto;
 
     public Place() {}
@@ -80,6 +82,22 @@ public class Place implements Serializable {
         this.longitude = longitude;
     }
 
+    public int getTimeUpdated() {
+        return timeUpdated;
+    }
+
+    public void setTimeUpdated(int timeUpdated) {
+        this.timeUpdated = timeUpdated;
+    }
+
+    public int getDistance() {
+        return distance;
+    }
+
+    public void setDistance(int distance) {
+        this.distance = distance;
+    }
+
     public PlacePhoto getPhoto() { return placePhoto; }
     public void setPhoto(PlacePhoto placePhoto) {
         this.placePhoto = placePhoto;
@@ -87,6 +105,5 @@ public class Place implements Serializable {
     public boolean hasPhoto() {
         return placePhoto != null;
     }
-
 }
 

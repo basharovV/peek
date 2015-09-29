@@ -24,6 +24,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created by Slav on 25/07/2015.
@@ -83,18 +84,34 @@ public class PlaceActions {
         currentLocation = mockLocation;
     }
 
-    public String distanceToPlace(Context context, Place pl) {
+    /**
+     * Get the distance from the user's location to a particular place
+     * @param context
+     * @param pl The place to calculate the distance to
+     * @return The distance calculated in meters
+     */
+    public int distanceToPlace(Context context, Place pl) {
         Location myLocation = PlaceActions.getInstance().getLocation(context);
         Location placeLocation = new Location("place");
         placeLocation.setLatitude(pl.getLatitude());
         placeLocation.setLongitude(pl.getLongitude());
         float dist = myLocation.distanceTo(placeLocation);
+        return Math.round(dist);
+    }
+
+    /**
+     * Format the distance to be displayed in a TextField
+     * @param dist The distance to the place in meters
+     * @return A formatted String for the distance in meters or kilometers (miles)
+     */
+    public String formatDistance(int dist) {
         if (dist > 1000) {
             dist = dist / 1000;
-            return String.format("%.2f", dist) + " km";
+            return dist + " km";
         }
-        return (String.format("%.2f", dist)) + " m";
+        return dist + " m";
     }
+
     public Location getCurrentLocation(Context context) {
         return currentLocation;
     }
@@ -134,16 +151,27 @@ public class PlaceActions {
         if (placesList == null) {
             return null;
         }
-        for (Place pl : placesList) {
-            if (pl.hasPhoto()) {
-                downloadPhoto(pl, context);
-            }
-        }
         //Fpr Demo video purposes
         placesList.add(getPlace("ChIJmQJIxlVYwokRLgeuocVOGVU", context));
         placesList.add(getPlace("ChIJPTacEpBQwokRKwIlDXelxkA", context));
         placesList.add(getPlace("ChIJR_bK295bwokR8gM6QgEdmkY", context));
         updateDatabase(placesList, context);
+
+        for (Place pl : placesList) {
+            if (pl.hasPhoto()) {
+                //Create a Photo Request for the place, store in cache
+                downloadPhoto(pl, context);
+                /* Retrieve the 'last updated' time attribute (eg. 9 min ago)
+                 * Set and format the time of upload -RANDOMISED FOR TEST VERSION
+                 */
+                Random random = new Random();
+                int randomTime = random.nextInt(31);
+                pl.setTimeUpdated(randomTime);
+                //Calculate and set the distance to the place
+                int distance = distanceToPlace(context, pl);
+                pl.setDistance(distance);
+            }
+        }
 
         return placesList;
         }

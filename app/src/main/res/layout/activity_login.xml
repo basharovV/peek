@@ -1,6 +1,8 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.peekapps.peek.activities.LoginActivity"
     android:background="@color/colorTertiary">
 
@@ -66,11 +68,11 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="0.15"
+            android:layout_weight="0.20"
             android:padding="15dp"
             android:layout_alignParentBottom="true"
-            android:orientation="horizontal"
-            android:background="#BF360C">
+            android:orientation="vertical">
+            <!--
             <com.facebook.login.widget.LoginButton
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -79,6 +81,19 @@
                 android:background="@null"
                 android:layout_marginLeft="30dp"
                 android:layout_marginRight="30dp"/>
+                -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+            <android.support.design.widget.FloatingActionButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/fb_login_button"
+                android:layout_centerInParent="true"
+                android:src="@drawable/fb_logo"
+                app:backgroundTint="@android:color/white"
+                />
+            </RelativeLayout>
         </LinearLayout>
     </LinearLayout>
 </FrameLayout>

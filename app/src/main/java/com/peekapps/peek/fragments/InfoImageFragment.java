@@ -23,11 +23,10 @@ public class InfoImageFragment extends Fragment {
 
     public InfoImageFragment() {
         imagesArray = new int[] {
-                R.drawable.login_info_img_4,
-                R.drawable.login_info_img_3,
-                R.drawable.login_info_img_2,
+                R.drawable.login_info_img_0,
                 R.drawable.login_info_img_1,
-                R.drawable.login_info_img_0};
+                R.drawable.login_info_img_2,
+                R.drawable.login_info_img_3};
     }
 
     @Nullable

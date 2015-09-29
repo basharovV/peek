@@ -26,6 +26,7 @@
     <color name="colorTertiary">#D84315</color>
 
     <color name="materialWhite200">#EEEEEE</color>
+    <color name="materialBlueGrey800">#37474F</color>
     <color name="colorMaterialLightGrey">#EEEEEE</color>
     <!--options:
     Teal green: #26A69A

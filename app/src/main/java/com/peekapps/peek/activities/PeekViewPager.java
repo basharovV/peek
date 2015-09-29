@@ -297,9 +297,6 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
                             toolbarGroup.setAlpha(1.0f - positionOffset);
                             toolbarGroup.setTranslationY(-toolbarHeight * positionOffset);
                         }
-                    } else {
-                        if (position % 2 == 0) toolbarGroup.setAlpha(1);
-                        else toolbarGroup.setAlpha(0);
                     }
                     previousOffset = positionOffset;
                     break;

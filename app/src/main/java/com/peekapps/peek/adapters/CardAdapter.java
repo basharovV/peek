@@ -9,9 +9,11 @@ import android.location.LocationManager;
 import android.support.annotation.UiThread;
 import android.support.v7.widget.*;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.peekapps.peek.R;
@@ -44,6 +46,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         placeList.add(new Place("LOADING...", "...", "...", "...", null));
         mDialog = dialog;
     }
+
     public CardAdapter(ArrayList<Place> venueList) {
         this.placeList = venueList;
     }
@@ -77,8 +80,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public int getItemViewType(int position) {
         if (position == 0) {
             return 0;
-        }
-        else return 1;
+        } else return 1;
     }
 
     @Override
@@ -88,7 +90,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             ((ViewHolder) holder).title.setText(placeList.get(position).getName());
 //            ((ViewHolder) holder).location.setText(placeList.get(position).getVicinity());
             ((ViewHolder) holder).sortAttribute.setText(String.valueOf(position));
-            ((ViewHolder) holder).startMediaButton.setOnClickListener(
+            ((ViewHolder) holder).image.setOnClickListener(
                     new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -98,20 +100,25 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                             }
                         }
                     });
-            //Set the formatted distance to the place in the list
-            String distanceToPlace = PlaceActions.getInstance().
-                    distanceToPlace(context, placeList.get(position));
-                    ((ViewHolder) holder).distance.setText(distanceToPlace);
+            ((ViewHolder) holder).headerOnTouchListener.setCurrentPosition(position);
+
+            //Set the formatted 'distance to the place'
+            String formattedDistance = PlaceActions.getInstance().
+                    formatDistance(placeList.get(position).getDistance());
+            ((ViewHolder) holder).distance.
+            setText(formattedDistance);
+
             //Set and format the type of place
             String type = placeList.get(position).getType();
             String formattedType = type.replaceAll("_", " ")
-                    .substring(0, 1).toUpperCase() + type.substring(1);;
+                    .substring(0, 1).toUpperCase() + type.substring(1);
             ((ViewHolder) holder).type.setText(formattedType);
 
-            //Set and format the time of upload
-            Random random = new Random();
-            int randomTime = random.nextInt(11);
-                    ((ViewHolder) holder).time.setText(randomTime + "min");
+            //Set the 'last updated' time attribute text
+            int time = placeList.get(position).getTimeUpdated();
+            ((ViewHolder) holder).time
+                    .setText(Integer.toString(placeList.get(position).getTimeUpdated()) + " m");
+
             //Load place photo from cache
             String path = context.getExternalCacheDir() + "/" + placeList.get(position).getID() + "photo.jpg";
             File photo = new File(path);
@@ -148,14 +155,15 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class ViewHolder extends RecyclerView.ViewHolder{
 
+        public LinearLayout header;
+        public HeaderOnTouchListener headerOnTouchListener;
         public TextView title;
         public TextView location;
         public TextView distance;
         public TextView time;
         public TextView type;
-        public ImageView meter;
         public ImageView image;
         public TextView sortAttribute;
         public View startMediaButton;
@@ -165,34 +173,53 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         public ViewHolder(final View cardLayoutView, final Context context) {
             super(cardLayoutView);
             this.context = context;
+            header = (LinearLayout) cardLayoutView.findViewById(R.id.card_header_layout);
             title = (TextView) cardLayoutView.findViewById(R.id.card_title);
-            meter = (ImageView) cardLayoutView.findViewById(R.id.placeMeter);
             distance = (TextView) cardLayoutView.findViewById(R.id.card_distance);
             image = (ImageView) cardLayoutView.findViewById(R.id.placePhoto);
             time = (TextView) cardLayoutView.findViewById(R.id.card_time);
             type = (TextView) cardLayoutView.findViewById(R.id.card_type);
-            startMediaButton = cardLayoutView.findViewById(R.id.startMediaButton);
             sortAttribute = (TextView) cardLayoutView.findViewById(R.id.placeSortAttribute);
-            cardLayoutView.setOnClickListener(this);
-        }
 
-        @Override
-        public void onClick(View v) {
-            Intent plProfileIntent = new Intent(context, PlaceProfile.class).
-                    setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            plProfileIntent.putExtra("place_object", getPlace(getPosition()));
-            context.startActivity(plProfileIntent);
+            //Handle header clicks - leads to profile
+            headerOnTouchListener = new HeaderOnTouchListener();
+            header.setOnTouchListener(headerOnTouchListener);
+            header.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent plProfileIntent = new Intent(context, PlaceProfile.class).
+                            setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    plProfileIntent.putExtra("place_object", getPlace(getAdapterPosition()));
+                    context.startActivity(plProfileIntent);
+                }
+            });
         }
-
     }
 
     public Place getPlace(int position) {
         return placeList.get(position);
     }
+
     @Override
     public int getItemCount() {
         return placeList.size();
     }
 
+    public class HeaderOnTouchListener implements View.OnTouchListener {
+        int currentPosition = 0;
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    v.setBackgroundColor(context.getResources().getColor(R.color.colorMaterialLightGrey));
+                    break;
+                case MotionEvent.ACTION_CANCEL:
+                    v.setBackgroundResource(R.drawable.card_header_gradient);            }
+            return false;
+        }
 
+        public void setCurrentPosition(int position) {
+            currentPosition = position;
+        }
+    }
 }

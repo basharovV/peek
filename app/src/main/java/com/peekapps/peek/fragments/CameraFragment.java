@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.hardware.Camera;
 import android.hardware.SensorManager;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -39,17 +40,24 @@ import java.util.List;
  */
 public class CameraFragment extends Fragment {
 
+    //CAMERA OBJECT PROPERTIES
     private Camera camera;
     private CameraPreview preview;
+    private float ratio;
+    //Default camera ID is rear-facing camera
+    private int cameraID = Camera.CameraInfo.CAMERA_FACING_BACK;
 
+    //BUTTONS
     private ImageButton captureButton;
-
     private ImageButton flashButton;
+    private ImageButton switchCamButton;
+
+    //FLASH MODE
     private static final String FLASH_ON = "FLASH_MODE_ON";
     private static final String FLASH_OFF = "FLASH_MODE_OFF";
     private static final String FLASH_AUTO = "FLASH_MODE_AUTO";
     private boolean flashOn = false;
-    private String[] flashModes;
+    private String[] flashModes = new String[] {FLASH_ON, FLASH_OFF, FLASH_AUTO};
 
     private SurfaceHolder surfaceHolder;
     private CameraOrientationListener orientationListener;
@@ -61,6 +69,7 @@ public class CameraFragment extends Fragment {
 
     private static final int MEDIA_TYPE_IMAGE = 1;
     private static final int MEDIA_TYPE_VIDEO = 2;
+
     private Camera.PictureCallback pictureCallback = new Camera.PictureCallback() {
 
         @Override
@@ -93,17 +102,44 @@ public class CameraFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_camera, container, false);
-
-        camera = getCameraInstance();
-        camera.setDisplayOrientation(0);
         orientationListener = new CameraOrientationListener(getActivity());
-
-        preview = new CameraPreview(this.getActivity(), camera);
         activeFragment = true;
 
+        switchCamButton = (ImageButton) rootView.findViewById(R.id.cameraSwitchButton);
+        flashButton = (ImageButton) rootView.findViewById(R.id.cameraFlashButton);
+        captureButton = (ImageButton) rootView.findViewById(R.id.pictureButton);
+        setUpButtons();
+
+
+        return rootView;
+    }
+
+    /**
+     * Set up OnClickListeners for buttons in the camera fragment (swtich camera, flash, capture)
+     */
+    private void setUpButtons() {
+        //Set up switchcam button
+        switchCamButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (preview.isEnabled()) {
+                    stop();
+                    camera.release();
+
+                    if (cameraID == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+                        cameraID = Camera.CameraInfo.CAMERA_FACING_BACK;
+                    }
+                    else {
+                        cameraID = Camera.CameraInfo.CAMERA_FACING_FRONT;
+                    }
+                    camera = Camera.open(cameraID);
+                    setCameraDisplayOrientation(cameraID, camera);
+                    start();
+                }
+            }
+        });
+
         //Set up flash button
-        flashButton = (ImageButton) rootView.findViewById(R.id.flash_button);
-        flashModes = new String[] {FLASH_ON, FLASH_OFF, FLASH_AUTO};
         flashButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -121,15 +157,8 @@ public class CameraFragment extends Fragment {
                 start();
             }
         });
-        //Set up capture button
-        captureButton = (ImageButton) rootView.findViewById(R.id.pictureButton);
-        try {
-            FrameLayout previewLayout = (FrameLayout) rootView.findViewById(R.id.camera_preview);
-            previewLayout.addView(preview);
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        }
 
+        //Set up capture button
         captureButton.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -139,7 +168,6 @@ public class CameraFragment extends Fragment {
                     }
                 }
         );
-        return rootView;
     }
 
     private class CameraOrientationListener extends OrientationEventListener {
@@ -186,12 +214,15 @@ public class CameraFragment extends Fragment {
         }
     }
 
+    /**
+     * Handle camera and preview instantiation
+     */
     @Override
     public void onResume() {
         super.onResume();
-        if (camera == null && activeFragment) {
+        if (camera == null) {
             camera = getCameraInstance();
-            camera.setDisplayOrientation(0);
+            camera.setDisplayOrientation(90);
             preview = new CameraPreview(this.getActivity(), camera);
             try {
                 FrameLayout previewLayout = (FrameLayout) getView().findViewById(R.id.camera_preview);
@@ -201,6 +232,9 @@ public class CameraFragment extends Fragment {
                 Log.d("onResume", "NPE in finding view");
                 e.printStackTrace();
             }
+        }
+        else {
+            start();
         }
     }
 
@@ -260,10 +294,10 @@ public class CameraFragment extends Fragment {
     /**
      * A safe way to get an instance of the Camera object.
      */
-    public static Camera getCameraInstance() {
+    private Camera getCameraInstance() {
         Camera c = null;
         try {
-            c = Camera.open(); // attempt to get a Camera instance
+            c = Camera.open(cameraID); // attempt to get a Camera instance
         } catch (Exception e) {
             // Camera is not available (in use or does not exist)
         }
@@ -281,10 +315,12 @@ public class CameraFragment extends Fragment {
         public CameraPreview(Context context, Camera camera) {
             super(context);
             this.camera = camera;
+
             // supported preview sizes
             supportedPreviewSizes = camera.getParameters().getSupportedPreviewSizes();
             for(Camera.Size str: supportedPreviewSizes)
                 Log.e(TAG, str.width + "/" + str.height);
+
             // Install a SurfaceHolder.Callback so we get notified when the
             // underlying surface is created and destroyed.
             surfaceHolder = getHolder();
@@ -296,6 +332,7 @@ public class CameraFragment extends Fragment {
         public void surfaceCreated(SurfaceHolder holder) {
             // The Surface has been created, now tell the camera where to draw the preview.
             try {
+                camera.setDisplayOrientation(90);
                 camera.setPreviewDisplay(holder);
                 camera.startPreview();
             } catch (IOException e) {
@@ -326,9 +363,12 @@ public class CameraFragment extends Fragment {
             try {
                 Camera.Parameters parameters = camera.getParameters();
                 parameters.setPreviewSize(previewSize.width, previewSize.height);
-                camera.setParameters(parameters);
 
-                setCameraDisplayOrientation(0, camera);
+                //Set the picture size
+                Camera.Size pictureSize = getOptimalPictureSize();
+                parameters.setPictureSize(pictureSize.width, pictureSize.height);
+                //Set overall parameters
+                camera.setParameters(parameters);
 
                 camera.setPreviewDisplay(holder);
                 camera.startPreview();
@@ -336,6 +376,29 @@ public class CameraFragment extends Fragment {
             } catch (Exception e){
                 Log.d(TAG, "Error starting camera preview: " + e.getMessage());
             }
+        }
+
+        /**
+         * Sets the picture resolution
+         * Choose a size from the supported list to match the camera preview aspect ratio
+         */
+
+        private Camera.Size getOptimalPictureSize() {
+            Camera.Parameters params = camera.getParameters();
+            Camera.Size maxSize = null;
+            for (Camera.Size size : params.getSupportedPictureSizes()) {
+                float sizeRatio;
+                if (size.width > size.height) {
+                    sizeRatio = size.width / size.height;
+                }
+                else {
+                    sizeRatio = size.height / size.width;
+                }
+                if (sizeRatio == ratio) {
+                    maxSize = size;
+                }
+            }
+            return maxSize;
         }
 
         @Override
@@ -347,7 +410,6 @@ public class CameraFragment extends Fragment {
                 previewSize = getOptimalPreviewSize(supportedPreviewSizes, width, height);
             }
 
-            float ratio;
             if(previewSize.height >= previewSize.width)
                 ratio = (float) previewSize.height / (float) previewSize.width;
             else

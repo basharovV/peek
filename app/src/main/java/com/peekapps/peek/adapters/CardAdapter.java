@@ -105,8 +105,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             //Set the formatted 'distance to the place'
             String formattedDistance = PlaceActions.getInstance().
                     formatDistance(placeList.get(position).getDistance());
-            ((ViewHolder) holder).distance.
-            setText(formattedDistance);
+            ((ViewHolder) holder).distance.setText(formattedDistance);
 
             //Set and format the type of place
             String type = placeList.get(position).getType();
@@ -117,7 +116,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             //Set the 'last updated' time attribute text
             int time = placeList.get(position).getTimeUpdated();
             ((ViewHolder) holder).time
-                    .setText(Integer.toString(placeList.get(position).getTimeUpdated()) + " m");
+                    .setText(String.format("%d m", placeList.get(position).getTimeUpdated()));
 
             //Load place photo from cache
             String path = context.getExternalCacheDir() + "/" + placeList.get(position).getID() + "photo.jpg";

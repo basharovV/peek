@@ -96,7 +96,11 @@ public class CameraFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+        // Create an instance of Camera
+
+
     }
 
     @Override
@@ -108,12 +112,75 @@ public class CameraFragment extends Fragment {
         switchCamButton = (ImageButton) rootView.findViewById(R.id.cameraSwitchButton);
         flashButton = (ImageButton) rootView.findViewById(R.id.cameraFlashButton);
         captureButton = (ImageButton) rootView.findViewById(R.id.pictureButton);
-        setUpButtons();
 
+        //Setup the camera
+        camera = getCameraInstance();
+        preview = new CameraPreview(this.getActivity(), camera);
+        //Setup the preview view and start it
+        try {
+            FrameLayout previewLayout = (FrameLayout) rootView.findViewById(R.id.camera_preview);
+            previewLayout.addView(preview);
+        } catch (NullPointerException e) {
+            Log.d("onResume", "NPE in finding view");
+            e.printStackTrace();
+        }
+        start();
+
+        //Initialise and setup all camera buttons/UI
+        setUpButtons();
 
         return rootView;
     }
 
+    /**
+     * Handle camera and preview instantiation
+     */
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (camera == null) {
+            camera = getCameraInstance();
+            start();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+//        releaseMediaRecorder();       // if you are using MediaRecorder, release it first
+        releaseCamera();// release the camera immediately on pause event
+    }
+
+    private void releaseCamera() {
+        if (camera != null) {
+            preview.getHolder().removeCallback(preview);
+            camera.release();        // release the camera for other applications
+            camera = null;
+        }
+    }
+
+    public void stop() {
+        activeFragment = false;
+        if (camera != null) {
+            camera.stopPreview();
+        }
+    }
+
+    public void start() {
+        try {
+            activeFragment = true;
+            if (camera != null) {
+                camera.setPreviewDisplay(surfaceHolder);
+                camera.startPreview();
+                isPreviewRunning = true;
+            }
+        }
+        catch(Exception e)
+        {
+            Log.d(TAG, "Cannot start preview", e);
+        }
+    }
+    
     /**
      * Set up OnClickListeners for buttons in the camera fragment (swtich camera, flash, capture)
      */
@@ -214,66 +281,6 @@ public class CameraFragment extends Fragment {
         }
     }
 
-    /**
-     * Handle camera and preview instantiation
-     */
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (camera == null) {
-            camera = getCameraInstance();
-            camera.setDisplayOrientation(90);
-            preview = new CameraPreview(this.getActivity(), camera);
-            try {
-                FrameLayout previewLayout = (FrameLayout) getView().findViewById(R.id.camera_preview);
-                previewLayout.addView(preview);
-                camera.startPreview();
-            } catch (NullPointerException e) {
-                Log.d("onResume", "NPE in finding view");
-                e.printStackTrace();
-            }
-        }
-        else {
-            start();
-        }
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-//        releaseMediaRecorder();       // if you are using MediaRecorder, release it first
-        releaseCamera();// release the camera immediately on pause event
-    }
-
-    private void releaseCamera() {
-        if (camera != null) {
-            preview.getHolder().removeCallback(preview);
-            camera.release();        // release the camera for other applications
-            camera = null;
-        }
-    }
-
-    public void stop() {
-        activeFragment = false;
-        if (camera != null) {
-            camera.stopPreview();
-        }
-    }
-
-    public void start() {
-        try {
-            activeFragment = true;
-            if (camera != null) {
-                camera.setPreviewDisplay(surfaceHolder);
-                camera.startPreview();
-                isPreviewRunning = true;
-            }
-        }
-        catch(Exception e)
-        {
-            Log.d(TAG, "Cannot start preview", e);
-        }
-    }
 
 //    @Override
 //    public void setUserVisibleHint(boolean isVisibleToUser) {
@@ -297,7 +304,8 @@ public class CameraFragment extends Fragment {
     private Camera getCameraInstance() {
         Camera c = null;
         try {
-            c = Camera.open(cameraID); // attempt to get a Camera instance
+            c = Camera.open(cameraID);
+             // attempt to get a Camera instance
         } catch (Exception e) {
             // Camera is not available (in use or does not exist)
         }
@@ -388,9 +396,11 @@ public class CameraFragment extends Fragment {
             Camera.Size maxSize = null;
             for (Camera.Size size : params.getSupportedPictureSizes()) {
                 float sizeRatio;
+                //Horizontal orientation
                 if (size.width > size.height) {
                     sizeRatio = size.width / size.height;
                 }
+                //Vertical orientation
                 else {
                     sizeRatio = size.height / size.width;
                 }
@@ -406,29 +416,59 @@ public class CameraFragment extends Fragment {
             final int width = resolveSize(getSuggestedMinimumWidth(), widthMeasureSpec);
             final int height = resolveSize(getSuggestedMinimumHeight(), heightMeasureSpec);
 
+            setMeasuredDimension(width, height);
+
             if (supportedPreviewSizes != null) {
                 previewSize = getOptimalPreviewSize(supportedPreviewSizes, width, height);
             }
 
-            if(previewSize.height >= previewSize.width)
-                ratio = (float) previewSize.height / (float) previewSize.width;
-            else
-                ratio = (float) previewSize.width / (float) previewSize.height;
+//            if(previewSize.height >= previewSize.width)
+//                ratio = (float) previewSize.height / (float) previewSize.width;
+//            else
+//                ratio = (float) previewSize.width / (float) previewSize.height;
+//
+//            float camHeight = (int) (width * ratio);
+//            float newCamHeight;
+//            float newHeightRatio;
+//
+//            if (camHeight < height) {
+//                newHeightRatio = (float) height / (float) previewSize.height;
+//                newCamHeight = (newHeightRatio * camHeight);
+//                Log.e(TAG, camHeight + " " + height + " " + previewSize.height + " " + newHeightRatio + " " + newCamHeight);
+//                setMeasuredDimension((int) (width * newHeightRatio), (int) newCamHeight);
+//                Log.e(TAG, previewSize.width + " | " + previewSize.height + " | ratio - " + ratio + " | H_ratio - " + newHeightRatio + " | A_width - " + (width * newHeightRatio) + " | A_height - " + newCamHeight);
+//            } else {
+//                newCamHeight = camHeight;
+//                setMeasuredDimension(width, (int) newCamHeight);
+//                Log.e(TAG, previewSize.width + " | " + previewSize.height + " | ratio - " + ratio + " | A_width - " + (width) + " | A_height - " + newCamHeight);
+//            }
+        }
 
-            float camHeight = (int) (width * ratio);
-            float newCamHeight;
-            float newHeightRatio;
+        @Override
+        protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+            if (changed) {
+                final View rootView = getRootView();
 
-            if (camHeight < height) {
-                newHeightRatio = (float) height / (float) previewSize.height;
-                newCamHeight = (newHeightRatio * camHeight);
-                Log.e(TAG, camHeight + " " + height + " " + previewSize.height + " " + newHeightRatio + " " + newCamHeight);
-                setMeasuredDimension((int) (width * newHeightRatio), (int) newCamHeight);
-                Log.e(TAG, previewSize.width + " | " + previewSize.height + " | ratio - " + ratio + " | H_ratio - " + newHeightRatio + " | A_width - " + (width * newHeightRatio) + " | A_height - " + newCamHeight);
-            } else {
-                newCamHeight = camHeight;
-                setMeasuredDimension(width, (int) newCamHeight);
-                Log.e(TAG, previewSize.width + " | " + previewSize.height + " | ratio - " + ratio + " | A_width - " + (width) + " | A_height - " + newCamHeight);
+                final int width = right - left;
+                final int height = bottom - top;
+
+                int previewWidth = width;
+                int previewHeight = height;
+                if (previewSize != null) {
+                    previewWidth = previewSize.width;
+                    previewHeight = previewSize.height;
+                }
+
+                // Center the child SurfaceView within the parent.
+                if (width * previewHeight > height * previewWidth) {
+                    final int scaledChildWidth = previewWidth * height / previewHeight;
+                    rootView.layout((width - scaledChildWidth) / 2, 0,
+                            (width + scaledChildWidth) / 2, height);
+                } else {
+                    final int scaledChildHeight = previewHeight * width / previewWidth;
+                    rootView.layout(0, (height - scaledChildHeight) / 2,
+                            width, (height + scaledChildHeight) / 2);
+                }
             }
         }
     }

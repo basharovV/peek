@@ -2,13 +2,13 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Base.AppTheme">
+        <item name="android:windowTranslucentStatus">true</item>
         <!-- Toolbar + Overflow menu text color -->
         <item name="android:textColorPrimary">#FFFFFF</item>
         <!-- Overflow menu button color -->
         <item name="android:textColorSecondary">#FFFFFF</item>
         <item name="android:dropDownListViewStyle">@style/DropDownListViewStyle</item>
         <item name="android:autoCompleteTextViewStyle">@style/AutoCompleteText</item>
-
     </style>
     
     <style name="Base.AppTheme" parent="Theme.AppCompat.Light.NoActionBar">

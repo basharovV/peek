@@ -47,6 +47,7 @@ import java.util.List;
 /**
  * Created by Slav on 25/05/2015.
  */
+
 public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallback, PlacesListener, LocationListener{
 
     private ViewPager viewPager;

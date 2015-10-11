@@ -212,7 +212,7 @@ public class CameraFragment extends Fragment {
 
         //Set up caption
         captionView = (EditText) rootView.findViewById(R.id.captionView);
-        
+
         //Initialise and setup the interface elements for both modes
         setUpCameraUI();
         setUpPublishUI();
@@ -1071,7 +1071,7 @@ public class CameraFragment extends Fragment {
         }
     }
 
-    
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == PLACE_PICKER_REQUEST) {

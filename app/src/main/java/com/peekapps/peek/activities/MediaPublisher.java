@@ -107,10 +107,10 @@ public class MediaPublisher extends Activity{
         locationProgress = (ProgressBar) findViewById(R.id.publishLocationProgress);
         //Set up popup
         popup.setAlpha(0);
-        setUpUI();
+        setUpPublishUI();
     }
 
-    private void setUpUI() {
+    private void setUpPublishUI() {
         //Set up image
         photoFile = new File(getExternalCacheDir() + "/temp_photo.jpg");
         Picasso.with(getApplicationContext()).load(photoFile)
@@ -238,7 +238,7 @@ public class MediaPublisher extends Activity{
         }
     }
 
-    private class OnConfirmPublishListener implements View.OnClickListener {
+    public class OnConfirmPublishListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
             publish();
@@ -246,7 +246,7 @@ public class MediaPublisher extends Activity{
                     "Photo uploaded successfully",
                     Toast.LENGTH_LONG).
                     show();
-            onBackPressed();
+
         }
     }
     private static class MyDragShadowBuilder extends View.DragShadowBuilder {
@@ -383,10 +383,6 @@ public class MediaPublisher extends Activity{
 //        canvas.drawText(text, x, y, paint);
 //        return bmp;
 //    }
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -444,6 +440,7 @@ public class MediaPublisher extends Activity{
         placeName.setText(name);
         placeName.setVisibility(View.VISIBLE);
     }
+
     private void copy(File src, File dst) throws IOException {
         InputStream in = new FileInputStream(src);
         OutputStream out = new FileOutputStream(dst);

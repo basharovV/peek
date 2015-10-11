@@ -82,7 +82,6 @@ public class MapFragment extends Fragment{
 
     public List<HashMap<String, String>> getPlacesList() {
         return placesList;
-
     }
 
     public void updateLocation(Location location) {
@@ -91,7 +90,6 @@ public class MapFragment extends Fragment{
                 (new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()))
                 .zoom(10).build();
         googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(camPosition));
-
     }
 }
 

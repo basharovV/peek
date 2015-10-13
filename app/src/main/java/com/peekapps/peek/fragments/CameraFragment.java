@@ -201,7 +201,10 @@ public class CameraFragment extends Fragment {
 
         //Set up UI
         publisherFrame = (FrameLayout) rootView.findViewById(R.id.publisherFrame);
-        photoView = (ImageView) rootView.findViewById(R.id.publisherPhoto);
+
+        //NOT USED
+        //photoView = (ImageView) rootView.findViewById(R.id.publisherPhoto);
+
         publishButton = (ImageButton) rootView.findViewById(R.id.publishButton);
         confirmButton = (TextView) rootView.findViewById(R.id.publisherConfirmButton);
         closeButton = (ImageButton) rootView.findViewById(R.id.close_publisher);
@@ -224,9 +227,11 @@ public class CameraFragment extends Fragment {
      */
     private void setUpCameraUI() {
         //Set up switchcam button
+        switchCamButton.setAlpha(0.5f);
         switchCamButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                v.setAlpha(v.getAlpha() == 0.5f ? 1 : 0.5f);
                 if (preview.isEnabled()) {
                     stop();
                     camera.release();
@@ -245,9 +250,12 @@ public class CameraFragment extends Fragment {
         });
 
         //Set up flash button
+        flashButton.setAlpha(0.5f);
         flashButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View v) {
+                v.setAlpha(v.getAlpha() == 0.5f ? 1 : 0.5f);
+
                 Camera.Parameters params = camera.getParameters();
                 stop();
                 if (!flashOn) {
@@ -262,6 +270,7 @@ public class CameraFragment extends Fragment {
                 start();
             }
         });
+
 
         //Set up capture button
         captureButton.setOnClickListener(
@@ -288,13 +297,13 @@ public class CameraFragment extends Fragment {
         apiClient.connect();
 
         //Set up image
-        photoFile = new File(getActivity().getExternalCacheDir() + "/temp_photo.jpg");
-        Picasso.with(getActivity()).load(photoFile)
-                .fit()
-                .centerInside()
-                .into(photoView);
-
-        Picasso.with(getActivity()).invalidate(photoFile);
+//        photoFile = new File(getActivity().getExternalCacheDir() + "/temp_photo.jpg");
+//        Picasso.with(getActivity()).load(photoFile)
+//                .fit()
+//                .centerInside()
+//                .into(photoView);
+//
+//        Picasso.with(getActivity()).invalidate(photoFile);
 
         captionView.setFocusable(true);
         captionView.setClickable(true);
@@ -465,7 +474,7 @@ public class CameraFragment extends Fragment {
         Camera c = null;
         try {
             c = Camera.open(cameraID);
-             // attempt to get a Camera instance
+            // attempt to get a Camera instance
         } catch (Exception e) {
             // Camera is not available (in use or does not exist)
         }
@@ -829,22 +838,22 @@ public class CameraFragment extends Fragment {
     private void switchUI(int mode) {
         switch (mode) {
             case CAPTURE_MODE:
-                cameraUI.setAlpha(0);
+//                cameraUI.setAlpha(0);
                 cameraUI.setVisibility(View.VISIBLE);
                 Animations.getInstance().fade(publishUI, Animations.ANIMATION_FADE_OUT);
                 publishUI.setVisibility(View.GONE);
                 Animations.getInstance().fade(cameraUI, Animations.ANIMATION_FADE_IN);
+                start();
                 break;
             case PUBLISH_MODE:
-                publishUI.setAlpha(0);
+//                publishUI.setAlpha(0);
                 publishUI.setVisibility(View.VISIBLE);
                 Animations.getInstance().fade(cameraUI, Animations.ANIMATION_FADE_OUT);
                 cameraUI.setVisibility(View.GONE);
                 Animations.getInstance().fade(publishUI, Animations.ANIMATION_FADE_IN);
+                stop();
                 break;
         }
-        Intent photoIntent = new Intent(getActivity(), MediaPublisher.class);
-        getActivity().startActivity(photoIntent);
     }
 
     private class OnPublishListener implements View.OnClickListener {
@@ -1119,7 +1128,7 @@ public class CameraFragment extends Fragment {
             Object toPass[] = new Object[3];
             toPass[0] = photoFile;
             toPass[1] = selectedPlace;
-            toPass[2] = this;
+            toPass[2] = getActivity();
             UploadTask uploadTask = new UploadTask();
             uploadTask.execute(toPass);
 
@@ -1132,6 +1141,8 @@ public class CameraFragment extends Fragment {
 //            String filename = incrementPhotoCounter(publishDirectory) + ".jpg";
 //            File publishFile = new File(publishDirectory.getAbsolutePath() + File.separator + filename);
 //            copy(photoFile, publishFile);
+
+            switchUI(CAPTURE_MODE);
         } catch (NullPointerException e) {
             Log.e(TAG, "NPE");
         }

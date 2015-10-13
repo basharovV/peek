@@ -5,210 +5,221 @@
     android:orientation="horizontal"
     android:background="@android:color/black">
 
-    <!-- CAMERA PREVIEW -->
     <FrameLayout
-        android:id="@+id/camera_preview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"/>
+        android:layout_height="match_parent">
+        <!-- CAMERA PREVIEW -->
+        <FrameLayout
+            android:id="@+id/camera_preview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"/>
 
-    <!--CAPTURE MODE UI-->
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/cameraUI">
+        <!--CAPTURE MODE UI-->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/cameraUI">
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                <!-- IMAGE CAPTURE BUTTON -->
+                    <ImageButton
+                        android:src="@drawable/capture_button"
+                        android:layout_width="70dp"
+                        android:layout_height="70dp"
+                        android:layout_alignParentBottom="true"
+                        android:adjustViewBounds="true"
+                        android:layout_gravity="bottom|center"
+                        android:layout_centerHorizontal="true"
+                        android:id="@+id/pictureButton"
+                        android:background="@android:color/transparent"
+                        android:scaleType="fitXY"
+                        android:onClick=""
+                        android:layout_marginBottom="6dp"
+                        android:contentDescription="captureButton" />
+
+                    <!-- FLASH BUTTON -->
+                    <ImageButton
+                        android:layout_width="25dp"
+                        android:layout_height="45dp"
+                        android:id="@+id/cameraFlashButton"
+                        android:layout_margin="10dp"
+                        android:scaleType="fitXY"
+                        android:layout_alignParentRight="true"
+                        android:src="@drawable/flash_button"
+                        android:background="@android:color/transparent"
+                        />
+
+                    <!-- SWITCH CAMERA BUTTON -->
+                    <ImageButton
+                        android:layout_width="40dp"
+                        android:layout_height="35dp"
+                        android:id="@+id/cameraSwitchButton"
+                        android:layout_margin="13dp"
+                        android:scaleType="fitXY"
+                        android:layout_alignParentLeft="true"
+                        android:src="@drawable/switch_cam"
+                        android:background="@android:color/transparent"
+                        />
+            </RelativeLayout>
+        </FrameLayout>
+
+        <!-- PUBLISH MODE UI -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/publishUI"
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:visibility="gone">
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
+                <FrameLayout
+                    android:layout_width="match_parent" android:layout_height="match_parent"
+                    android:id="@+id/publisherFrame">
 
-            <!-- IMAGE CAPTURE BUTTON -->
-                <ImageButton
-                    android:src="@drawable/capture_button"
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
-                    android:layout_alignParentBottom="true"
-                    android:adjustViewBounds="true"
-                    android:layout_gravity="bottom|center"
-                    android:layout_centerHorizontal="true"
-                    android:id="@+id/pictureButton"
-                    android:background="@android:color/transparent"
-                    android:scaleType="fitXY"
-                    android:onClick=""
-                    android:layout_marginBottom="6dp"
-                    android:contentDescription="captureButton" />
+                    <ImageButton
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:id="@+id/close_publisher"
+                        android:layout_margin="15dp"
+                        android:scaleType="fitXY"
+                        android:background="@android:color/transparent"
+                        android:src="@drawable/exit_preview"
+                        />
 
-                <!-- FLASH BUTTON -->
-                <ImageButton
-                    android:layout_width="25dp"
-                    android:layout_height="45dp"
-                    android:id="@+id/cameraFlashButton"
-                    android:layout_margin="10dp"
-                    android:scaleType="fitXY"
-                    android:layout_alignParentRight="true"
-                    android:src="@drawable/flash_button"
-                    android:background="@android:color/transparent"
-                    />
-
-                <!-- SWITCH CAMERA BUTTON -->
-                <ImageButton
-                    android:layout_width="40dp"
-                    android:layout_height="35dp"
-                    android:id="@+id/cameraSwitchButton"
-                    android:layout_margin="13dp"
-                    android:scaleType="fitXY"
-                    android:layout_alignParentLeft="true"
-                    android:src="@drawable/switch_cam"
-                    android:background="@android:color/transparent"
-                    />
-        </RelativeLayout>
-    </FrameLayout>
-
-    <!-- PUBLISH MODE UI -->
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/publishUI"
-        android:visibility="gone"
-        xmlns:android="http://schemas.android.com/apk/res/android">
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <FrameLayout
-                android:layout_width="match_parent" android:layout_height="match_parent"
-                android:id="@+id/publisherFrame">
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:id="@+id/publisherPhoto"
-                    android:layout_gravity="top"
-                    android:adjustViewBounds="true"
-                    android:scaleType="fitStart"
-                    android:src="@drawable/place_photo"/>
-
-                <ImageButton
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
-                    android:id="@+id/close_publisher"
-                    android:layout_margin="15dp"
-                    android:scaleType="fitXY"
-                    android:background="@android:color/transparent"
-                    android:src="@drawable/exit_preview"
-                    />
-
-                <EditText
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="5dp"
-                    android:id="@+id/captionView"
-                    android:gravity="center"
-                    android:layout_gravity="center"
-                    android:background="#90000000"
-                    android:theme="@style/Base.Widget.AppCompat.EditText"
-                    android:hint="ENTER CAPTION HERE"
-                    android:textColorHint="#70FFFFFF"
-                    />
+                    <EditText
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="5dp"
+                        android:id="@+id/captionView"
+                        android:gravity="center"
+                        android:layout_gravity="center"
+                        android:background="#90000000"
+                        android:theme="@style/Base.Widget.AppCompat.EditText"
+                        android:hint="ENTER CAPTION HERE"
+                        android:textColorHint="#70FFFFFF"
+                        />
 
 
-            </FrameLayout>
+                </FrameLayout>
 
-            <!-- Publish button -->
-            <ImageButton
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:id="@+id/publishButton"
-                android:src="@drawable/publish_cloud_button"
-                android:background="@android:color/transparent"
-                android:scaleType="fitXY"
-                android:layout_alignParentBottom="true"
-                android:layout_centerHorizontal="true"/>
-        </RelativeLayout>
+            </RelativeLayout>
 
 
-        <LinearLayout
-            android:layout_width="300dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/publisherPopup"
-            android:layout_gravity="bottom|center_horizontal"
-            android:layout_marginBottom="80dp"
-            android:orientation="horizontal"
-            android:paddingLeft="6dp"
-            android:paddingTop="10dp"
-            android:paddingRight="10dp"
-            android:background="@drawable/publish_popup">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_gravity="bottom"
-                android:layout_marginBottom="33dp">
-                <TextView
+                android:id="@+id/publisherPopup"
+                android:paddingBottom="90dp"
+                android:layout_gravity="bottom|center_horizontal"
+                android:orientation="horizontal">
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="5dp"
-                    android:textSize="16sp"
-                    android:gravity="center"
-                    style="@style/ThemeOverlay.AppCompat.Dark"
+                    android:orientation="vertical"
+                    android:layout_gravity="bottom">
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="4dp"
+                        android:background="@drawable/top_shadow"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:background="@color/colorSecondaryDark"
+                        android:padding="8dp">
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="5dp"
+                            android:textSize="16sp"
+                            android:gravity="center"
+                            android:textColor="@color/colorPrimary"
+                            style="@style/ThemeOverlay.AppCompat.Dark"
 
-                    android:text="Uploading to "/>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/publisherPlaceName"
-                    android:layout_margin="5dp"
-                    android:padding="3dp"
-                    android:textSize="16sp"
-                    android:gravity="center"
-                    style="@style/ThemeOverlay.AppCompat.Dark"
-                    android:textColor="@color/colorSecondaryLight"
-                    android:textStyle="italic"
-                    android:text="Placeholder place, placeholder address "
-                    android:visibility="gone"/>
-                <ProgressBar
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:id="@+id/publishLocationProgress"
-                    android:layout_gravity="center"/>
-                <View
-                    android:layout_width="fill_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"
-                    android:background="@android:color/darker_gray"/>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/publisherLocationButton"
-                    android:paddingTop="10dp"
-                    android:paddingBottom="10dp"
-                    android:layout_marginLeft="2dp"
-                    android:layout_marginRight="2dp"
-                    android:textSize="18sp"
-                    android:gravity="center"
-                    android:textColor="@color/mdtp_white"
-                    android:background="@color/colorSecondaryLight"
-                    android:text="Change location"
-                    />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/publisherConfirmButton"
-                    android:layout_gravity="bottom"
-                    android:paddingTop="15dp"
-                    android:paddingBottom="15dp"
-                    android:layout_marginLeft="2dp"
-                    android:layout_marginRight="2dp"
-                    android:textSize="18sp"
-                    android:gravity="center"
-                    android:textColor="@android:color/white"
-                    android:background="#43A047"
-                    android:text="Confirm"
-                    />
+                            android:text="Uploading to "/>
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_gravity="center_horizontal">
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_pin_icon"
+                            android:layout_gravity="center"
+                            />
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/publisherPlaceName"
+                            android:layout_margin="5dp"
+                            android:padding="3dp"
+                            android:textSize="16sp"
+                            android:gravity="center"
+                            android:singleLine="true"
+                            android:maxWidth="250dp"
+                            android:requiresFadingEdge="vertical"
+                            android:fadingEdge="vertical"
+                            android:fadingEdgeLength="100dp"
+                            style="@style/ThemeOverlay.AppCompat.Dark"
+                            android:textColor="@color/materialWhite200"
+                            android:textStyle="bold"
+                            android:text="Placeholder place, placeholder address "/>
+                        </LinearLayout>
+                        </LinearLayout>
+                    <ProgressBar
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:id="@+id/publishLocationProgress"
+                        android:layout_gravity="center"
+                        android:visibility="gone"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/publisherLocationButton"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp"
+                        android:textSize="18sp"
+                        android:gravity="center"
+                        android:textColor="@color/mdtp_white"
+                        android:background="@color/colorSecondaryLight"
+                        android:text="Change location"
+                        />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/publisherConfirmButton"
+                        android:layout_gravity="bottom"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp"
+                        android:textSize="18sp"
+                        android:gravity="center"
+                        android:textColor="@android:color/white"
+                        android:background="#43A047"
+                        android:text="Confirm"
+                        />
+                </LinearLayout>
             </LinearLayout>
-        </LinearLayout>
-    </FrameLayout>
 
+        <!-- Publish button -->
+        <ImageButton
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:id="@+id/publishButton"
+            android:layout_margin="5dp"
+            android:src="@drawable/ic_upload_arrow"
+            android:background="@android:color/transparent"
+            android:scaleType="fitXY"
+            android:layout_gravity="bottom|center_horizontal"/>
+        </FrameLayout>
+    </FrameLayout>
 </RelativeLayout>
 
 

@@ -35,13 +35,14 @@ public class Animations {
         switch(animation) {
             case ANIMATION_FADE_IN:
                 fadeAnimation = new AlphaAnimation(0, 1);
+                fadeAnimation.setStartOffset(200);
                 break;
             case ANIMATION_FADE_OUT:
                 fadeAnimation = new AlphaAnimation(1, 0);
                 break;
         }
         fadeAnimation.setInterpolator(new AccelerateInterpolator());
-        fadeAnimation.setDuration(300);
+        fadeAnimation.setDuration(400);
         view.setAnimation(fadeAnimation);
         fadeAnimation.start();
     }

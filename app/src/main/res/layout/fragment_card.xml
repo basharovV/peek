@@ -2,22 +2,33 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    app:contentPaddingRight="0dp"
+    app:contentPaddingLeft="0dp"
+    android:layout_margin="4dp"
+    android:background="@android:color/transparent"
+    >
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:cardCornerRadius="5dp">
+        android:id="@+id/cardView"
+        app:contentPaddingRight="0dp"
+        app:contentPaddingLeft="0dp"
+        app:cardCornerRadius="5dp"
+        app:cardBackgroundColor="@android:color/transparent"
+        >
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            >
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/card_header_layout"
                 android:orientation="vertical"
-                android:background="@drawable/card_header_gradient">
+                android:background="@drawable/bg_card_header_rounded">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -74,10 +85,9 @@
                         android:layout_width="10dp"
                         android:layout_height="match_parent"
                         android:scaleType="centerInside"
-
-                        android:adjustViewBounds="true"
-                        android:cropToPadding="true"
-                        android:src="@drawable/ic_clock_icon"/>
+                        android:layout_marginRight="3dp"
+                        android:layout_marginEnd="3dp"
+                        android:src="@drawable/ic_clock_icon_top_info"/>
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -108,12 +118,16 @@
             android:layout_height="130dp"
             >
 
-            <ImageView
+            <com.joooonho.SelectableRoundedImageView
                 android:id="@+id/placePhoto"
                 android:src="@drawable/no_img_bg"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
+                app:sriv_left_top_corner_radius="0dip"
+                app:sriv_right_top_corner_radius="0dip"
+                app:sriv_left_bottom_corner_radius="5dip"
+                app:sriv_right_bottom_corner_radius="5dip"
                 />
 
             <LinearLayout

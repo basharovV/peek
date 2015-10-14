@@ -3,7 +3,7 @@
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     android:id="@+id/feedFragment"
-    android:background="@color/materialBlueGrey800"
+    android:background="@color/colorMaterialLightGrey"
     android:paddingTop="50dp">
 
     <FrameLayout

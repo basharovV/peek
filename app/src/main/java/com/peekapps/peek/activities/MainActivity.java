@@ -22,12 +22,12 @@ public class MainActivity extends Activity{
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(getApplicationContext());
         updateWithToken(AccessToken.getCurrentAccessToken());
-        AccessTokenTracker tokenTracker = new AccessTokenTracker() {
-            @Override
-            protected void onCurrentAccessTokenChanged(AccessToken oldToken, AccessToken newToken) {
-                updateWithToken(newToken);
-            }
-        };
+//        AccessTokenTracker tokenTracker = new AccessTokenTracker() {
+//            @Override
+//            protected void onCurrentAccessTokenChanged(AccessToken oldToken, AccessToken newToken) {
+//                updateWithToken(newToken);
+//            }
+//        };
     }
 
     private void updateWithToken(AccessToken accessToken) {

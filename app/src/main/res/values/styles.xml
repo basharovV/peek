@@ -8,6 +8,11 @@
         <item name="android:textColorSecondary">#FFFFFF</item>
         <item name="android:dropDownListViewStyle">@style/DropDownListViewStyle</item>
         <item name="android:autoCompleteTextViewStyle">@style/AutoCompleteText</item>
+        <item name="android:textViewStyle">@style/RobotoTextViewStyle</item>
+    </style>
+
+    <style name="RobotoTextViewStyle" parent="android:Widget.TextView">
+        <item name="android:fontFamily">sans-serif-light</item>
     </style>
     
     <style name="Base.AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
@@ -74,8 +79,9 @@
     </style>
     <!-- Event feed style -->
     <style name="PlaceTitle">
-        <item name="android:textColor">@color/mdtp_dark_gray</item>
-        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/colorSecondaryLight</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
     <style name="PlaceType">

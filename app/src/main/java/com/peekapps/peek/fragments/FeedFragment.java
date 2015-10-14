@@ -119,10 +119,10 @@ public class FeedFragment extends Fragment implements GoogleApiClient.OnConnecti
         @Override
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
             super.onScrolled(recyclerView, dx, dy);
-            if (dy > 5 && optionsBarHolder.getAlpha() == 1) {
+            if (dy > 2 && optionsBarHolder.getAlpha() == 1) {
                 hideOptionsBar();
             }
-            else if (dy < -5 && optionsBarHolder.getAlpha() == 0) {
+            else if (dy < -2 && optionsBarHolder.getAlpha() == 0) {
                 showOptionsBar();
             }
         }

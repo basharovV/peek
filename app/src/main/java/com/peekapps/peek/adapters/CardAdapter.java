@@ -70,6 +70,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 //View
                 View cardLayoutView = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.fragment_card, parent, false);
+
                 //Viewholder
                 return new ViewHolder(cardLayoutView, this.context);
         }
@@ -80,7 +81,8 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public int getItemViewType(int position) {
         if (position == 0) {
             return 0;
-        } else return 1;
+        }
+        return 1;
     }
 
     @Override
@@ -116,7 +118,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             //Set the 'last updated' time attribute text
             int time = placeList.get(position).getTimeUpdated();
             ((ViewHolder) holder).time
-                    .setText(String.format("%d m", placeList.get(position).getTimeUpdated()));
+                    .setText(String.format("%d m", time));
 
             //Load place photo from cache
             String path = context.getExternalCacheDir() + "/" + placeList.get(position).getID() + "photo.jpg";
@@ -180,6 +182,9 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             type = (TextView) cardLayoutView.findViewById(R.id.card_type);
             sortAttribute = (TextView) cardLayoutView.findViewById(R.id.placeSortAttribute);
 
+            CardView cardView = (CardView) cardLayoutView.findViewById(R.id.cardView);
+            cardView.setPreventCornerOverlap(false);
+
             //Handle header clicks - leads to profile
             headerOnTouchListener = new HeaderOnTouchListener();
             header.setOnTouchListener(headerOnTouchListener);
@@ -210,10 +215,10 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         public boolean onTouch(View v, MotionEvent event) {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
-                    v.setBackgroundColor(context.getResources().getColor(R.color.colorMaterialLightGrey));
+                    v.setBackgroundResource(R.drawable.bg_card_header_rounded_pressed);
                     break;
                 case MotionEvent.ACTION_CANCEL:
-                    v.setBackgroundResource(R.drawable.card_header_gradient);            }
+                    v.setBackgroundResource(R.drawable.bg_card_header_rounded);            }
             return false;
         }
 

@@ -155,7 +155,7 @@ public class PlaceActions {
         placesList.add(getPlace("ChIJmQJIxlVYwokRLgeuocVOGVU", context));
         placesList.add(getPlace("ChIJPTacEpBQwokRKwIlDXelxkA", context));
         placesList.add(getPlace("ChIJR_bK295bwokR8gM6QgEdmkY", context));
-        updateDatabase(placesList, context);
+
 
         for (Place pl : placesList) {
             if (pl.hasPhoto()) {
@@ -172,6 +172,8 @@ public class PlaceActions {
                 pl.setDistance(distance);
             }
         }
+
+        updateDatabase(placesList, context);
 
         return placesList;
         }

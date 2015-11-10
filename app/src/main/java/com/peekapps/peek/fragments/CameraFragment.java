@@ -1,9 +1,11 @@
 package com.peekapps.peek.fragments;
 
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -16,9 +18,12 @@ import android.hardware.Camera;
 import android.hardware.SensorManager;
 import android.media.Image;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -57,7 +62,10 @@ import com.google.android.gms.location.places.ui.PlacePicker;
 import com.peekapps.peek.Animations;
 import com.peekapps.peek.R;
 import com.peekapps.peek.activities.MediaPublisher;
+import com.peekapps.peek.activities.PeekViewPager;
 import com.peekapps.peek.cloud_api.UploadTask;
+import com.peekapps.peek.fragments_utils.OnPermissionsListener;
+import com.peekapps.peek.place_api.LocationActions;
 import com.peekapps.peek.place_api.PlaceActions;
 import com.squareup.picasso.Picasso;
 
@@ -68,6 +76,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -77,10 +86,13 @@ import java.util.List;
  * Peek camera
  * Created by Slav on 27/05/2015.
  */
-public class CameraFragment extends Fragment {
+public class CameraFragment extends Fragment implements OnPermissionsListener{
+
+
 
     //-------------------------INSTANCE VARIABLES FOR THE CAMERA UI --------------------------
 
+    private boolean enabled = false;
     /*
     UI layers for both modes: capture and publish. Used
     for showing/hiding the appropriate UI.
@@ -95,6 +107,7 @@ public class CameraFragment extends Fragment {
 
     //CAMERA OBJECT PROPERTIES
     private Camera camera;
+    private FrameLayout previewLayout;
     private CameraPreview preview;
     private float ratio;
 
@@ -109,14 +122,16 @@ public class CameraFragment extends Fragment {
     private ImageButton switchCamButton;
 
     //FLASH MODE
-    private static final String FLASH_ON = "FLASH_MODE_ON";
-    private static final String FLASH_OFF = "FLASH_MODE_OFF";
-    private static final String FLASH_AUTO = "FLASH_MODE_AUTO";
-    private boolean flashOn = false;
-    private String[] flashModes = new String[] {FLASH_ON, FLASH_OFF, FLASH_AUTO};
+    private static final String FLASH_ON = Camera.Parameters.FLASH_MODE_ON;
+    private static final String FLASH_OFF = Camera.Parameters.FLASH_MODE_OFF;
+    private static final String FLASH_AUTO = Camera.Parameters.FLASH_MODE_AUTO;
+    private ArrayList<String> flashModes;
+    private String flashMode = FLASH_OFF;
+
+    //AUTOFOCUS MODE
+    private static final String AF_OFF = Camera.Parameters.FOCUS_MODE_AUTO;
 
     private SurfaceHolder surfaceHolder;
-    private CameraOrientationListener orientationListener;
 
     //Media type - to be implemented
     private static final int MEDIA_TYPE_IMAGE = 1;
@@ -168,6 +183,11 @@ public class CameraFragment extends Fragment {
     private Place selectedPlace;
 
     @Override
+    public void onPermissionsGranted() {
+        enable();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         //Main fragment view
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_camera, container, false);
@@ -183,19 +203,12 @@ public class CameraFragment extends Fragment {
         flashButton = (ImageButton) rootView.findViewById(R.id.cameraFlashButton);
         captureButton = (ImageButton) rootView.findViewById(R.id.pictureButton);
 
-        //Setup the camera
-        camera = getCameraInstance();
-        preview = new CameraPreview(this.getActivity(), camera);
-
-        //Setup the preview view and start it
         try {
-            FrameLayout previewLayout = (FrameLayout) rootView.findViewById(R.id.camera_preview);
-            previewLayout.addView(preview);
+            previewLayout = (FrameLayout) rootView.findViewById(R.id.camera_preview);
         } catch (NullPointerException e) {
             Log.d("onResume", "NPE in finding view");
             e.printStackTrace();
         }
-        start();
 
         //-------------------------- PUBLISH VIEW SETUP ---------------------------------------
 
@@ -213,12 +226,11 @@ public class CameraFragment extends Fragment {
         changeLocationButton = (TextView) rootView.findViewById(R.id.publisherLocationButton);
         locationProgress = (ProgressBar) rootView.findViewById(R.id.publishLocationProgress);
 
-        //Set up caption
-        captionView = (EditText) rootView.findViewById(R.id.captionView);
-
-        //Initialise and setup the interface elements for both modes
+        //Set up caption - disabled for now
+//        captionView = (EditText) rootView.findViewById(R.id.captionView);
         setUpCameraUI();
         setUpPublishUI();
+        enableLocation();
         return rootView;
     }
 
@@ -232,42 +244,36 @@ public class CameraFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 v.setAlpha(v.getAlpha() == 0.5f ? 1 : 0.5f);
-                if (preview.isEnabled()) {
-                    stop();
-                    camera.release();
-
-                    if (cameraID == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-                        cameraID = Camera.CameraInfo.CAMERA_FACING_BACK;
-                    }
-                    else {
-                        cameraID = Camera.CameraInfo.CAMERA_FACING_FRONT;
-                    }
-                    camera = Camera.open(cameraID);
-                    setCameraDisplayOrientation(cameraID, camera);
-                    start();
+                switchCamera();
                 }
-            }
-        });
+            });
+
 
         //Set up flash button
         flashButton.setAlpha(0.5f);
         flashButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                v.setAlpha(v.getAlpha() == 0.5f ? 1 : 0.5f);
+                /*
+                    Cycle: 1.Off 2.On 3.Auto
+                 */
+                switch (flashMode) {
+                    case FLASH_OFF:
+                        v.setAlpha(1f);
+                        setFlashMode(FLASH_ON);
 
-                Camera.Parameters params = camera.getParameters();
-                stop();
-                if (!flashOn) {
-                    params.setFlashMode(Camera.Parameters.FLASH_MODE_ON);
-                    flashOn = true;
+                        break;
+                    case FLASH_ON:
+                        v.setAlpha(1f);
+                        setFlashMode(FLASH_AUTO);
+
+                        break;
+                    case FLASH_AUTO:
+                        v.setAlpha(0.5f);
+                        setFlashMode(FLASH_OFF);
+
+                        break;
                 }
-                else {
-                    params.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
-                    flashOn = false;
-                }
-                camera.setParameters(params);
-                start();
             }
         });
 
@@ -289,13 +295,6 @@ public class CameraFragment extends Fragment {
      */
     private void setUpPublishUI() {
 
-        //Set up GoogleApiClient
-        apiClient = new GoogleApiClient.Builder(getActivity())
-                .addApi(Places.PLACE_DETECTION_API)
-                .build();
-
-        apiClient.connect();
-
         //Set up image
 //        photoFile = new File(getActivity().getExternalCacheDir() + "/temp_photo.jpg");
 //        Picasso.with(getActivity()).load(photoFile)
@@ -305,35 +304,35 @@ public class CameraFragment extends Fragment {
 //
 //        Picasso.with(getActivity()).invalidate(photoFile);
 
-        captionView.setFocusable(true);
-        captionView.setClickable(true);
-        captionView.setFocusableInTouchMode(true);
-        captionView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                MyDragShadowBuilder shadowBuilder = new MyDragShadowBuilder(v);
-                v.startDrag(null, shadowBuilder, null, 0);
-                return false;
-
-            }
-        });
-        captionView.setOnDragListener(new CaptionDragListener());
-        captionView.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
+//        captionView.setFocusable(true);
+//        captionView.setClickable(true);
+//        captionView.setFocusableInTouchMode(true);
+//        captionView.setOnLongClickListener(new View.OnLongClickListener() {
+//            @Override
+//            public boolean onLongClick(View v) {
+//                MyDragShadowBuilder shadowBuilder = new MyDragShadowBuilder(v);
+//                v.startDrag(null, shadowBuilder, null, 0);
+//                return false;
+//
+//            }
+//        });
+//        captionView.setOnDragListener(new CaptionDragListener());
+//        captionView.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence s, int start, int before, int count) {
+//
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable s) {
+//
+//            }
+//        });
 
         //Set up close button listener
         closeButton.setOnClickListener(new View.OnClickListener() {
@@ -353,9 +352,47 @@ public class CameraFragment extends Fragment {
         changeLocationButton.setOnClickListener(new OnChangeLocationListener());
         confirmButton.setOnClickListener(new OnConfirmPublishListener());
 
+        YoYo.with(Techniques.FadeOutDown)
+                .duration(100)
+                .playOn(popup);
+
         //Set up progress bar
         Animation fadeAnimation = AnimationUtils.loadAnimation(getActivity(), R.anim.anim_fadepulse);
+        locationProgress.setVisibility(View.VISIBLE);
         locationProgress.startAnimation(fadeAnimation);
+    }
+
+    public void enable() {
+        enableCamera();
+        enableLocation();
+    }
+
+    private void enableCamera() {
+        //Setup the camera
+        camera = getCameraInstance();
+        Camera.Parameters params = camera.getParameters();
+        params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+        camera.setParameters(params);
+
+        preview = new CameraPreview(this.getActivity(), camera);
+        surfaceHolder = preview.getHolder();
+        //Setup the preview view and start it
+        previewLayout.addView(preview);
+    }
+
+    private void disableCamera() {
+        stop();
+        releaseCamera();
+        enabled = false;
+    }
+
+    private void enableLocation() {
+        //Set up GoogleApiClient
+        apiClient = new GoogleApiClient.Builder(getActivity())
+                .addApi(Places.PLACE_DETECTION_API)
+                .build();
+
+        apiClient.connect();
     }
 
     /**
@@ -364,22 +401,26 @@ public class CameraFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (camera == null) {
-            camera = getCameraInstance();
-            start();
+        if (Build.VERSION.SDK_INT >= 23 && !enabled) {
+            if (((PeekViewPager) getActivity()).allPermissionsGranted()) {
+                enableCamera();
+            }
         }
+        else enableCamera();
+        enabled = true;
     }
 
     @Override
     public void onPause() {
         super.onPause();
 //        releaseMediaRecorder();       // if you are using MediaRecorder, release it first
-        releaseCamera();// release the camera immediately on pause event
+        disableCamera();                // release the camera immediately on pause event
     }
 
     private void releaseCamera() {
         if (camera != null) {
             preview.getHolder().removeCallback(preview);
+            preview = null;
             camera.release();        // release the camera for other applications
             camera = null;
         }
@@ -394,6 +435,7 @@ public class CameraFragment extends Fragment {
     public void start() {
         try {
             if (camera != null) {
+                setCameraDisplayOrientation(cameraID, camera);
                 camera.setPreviewDisplay(surfaceHolder);
                 camera.startPreview();
             }
@@ -404,68 +446,29 @@ public class CameraFragment extends Fragment {
         }
     }
 
+    private void switchCamera() {
+        if (preview.isEnabled()) {
+            stop();
+            camera.release();
 
-
-    private class CameraOrientationListener extends OrientationEventListener {
-        private int normalisedOrientation;
-        private int rememberedOrientation;
-
-        public CameraOrientationListener(Context context) {
-            super(context, SensorManager.SENSOR_DELAY_NORMAL);
-        }
-
-        @Override
-        public void onOrientationChanged(int i) {
-            if (i != ORIENTATION_UNKNOWN) {
-                normalisedOrientation = normalize(i);
+            if (cameraID == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+                cameraID = Camera.CameraInfo.CAMERA_FACING_BACK;
+            } else {
+                cameraID = Camera.CameraInfo.CAMERA_FACING_FRONT;
             }
-        }
-
-        private int normalize(int degrees) {
-            if (degrees > 315 || degrees <= 45) {
-                return 0;
-            }
-
-            if (degrees > 45 && degrees <= 135) {
-                return 90;
-            }
-
-            if (degrees > 135 && degrees <= 225) {
-                return 180;
-            }
-
-            if (degrees > 225 && degrees <= 315) {
-                return 270;
-            }
-
-            throw new RuntimeException("The physics as we know them are no more. Watch out for anomalies.");
-        }
-
-        public void rememberOrientation() {
-            rememberedOrientation = normalisedOrientation;
-        }
-
-        public int getRememberedOrientation() {
-            return rememberedOrientation;
+            camera = Camera.open(cameraID);
+            setCameraDisplayOrientation(cameraID, camera);
+            start();
         }
     }
 
-
-//    @Override
-//    public void setUserVisibleHint(boolean isVisibleToUser) {
-//        super.setUserVisibleHint(isVisibleToUser);
-//        if (getView() != null) {
-//            isCurrentView = true;
-//            if (camera != null) {
-//                if (!preview.isActivated()) {
-//                    camera.startPreview();
-//              }
-//            }
-//        } else {
-//            isCurrentView = false;
-//        }
-//    }
-
+    private void setFlashMode(String flashMode) {
+        Camera.Parameters params = camera.getParameters();
+        stop();
+        params.setFlashMode(flashMode);
+        camera.setParameters(params);
+        start();
+    }
 
     /**
      * A safe way to get an instance of the Camera object.
@@ -502,19 +505,10 @@ public class CameraFragment extends Fragment {
             // underlying surface is created and destroyed.
             surfaceHolder = getHolder();
             surfaceHolder.addCallback(this);
-            // deprecated setting, but required on Android versions prior to 3.0
-            surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
         }
 
         public void surfaceCreated(SurfaceHolder holder) {
-            // The Surface has been created, now tell the camera where to draw the preview.
-            try {
-                camera.setDisplayOrientation(90);
-                camera.setPreviewDisplay(holder);
-                camera.startPreview();
-            } catch (IOException e) {
-                Log.d(TAG, "Error setting camera preview: " + e.getMessage());
-            }
+            //All handled in SurfaceChanged
         }
 
         public void surfaceDestroyed(SurfaceHolder holder) {
@@ -538,19 +532,27 @@ public class CameraFragment extends Fragment {
             // set preview size and make any resize, rotate or reformatting changes here
             // start preview with new settings
             try {
+                if(previewSize.height >= previewSize.width)
+                    ratio = (float) previewSize.height / (float) previewSize.width;
+                else
+                    ratio = (float) previewSize.width / (float) previewSize.height;
+
+                //Set preview size
                 Camera.Parameters parameters = camera.getParameters();
                 parameters.setPreviewSize(previewSize.width, previewSize.height);
 
                 //Set the picture size
                 Camera.Size pictureSize = getOptimalPictureSize();
                 parameters.setPictureSize(pictureSize.width, pictureSize.height);
-                //Set overall parameters
-                camera.setParameters(parameters);
 
+//                //Set overall parameters
+                camera.setParameters(parameters);
+                setCameraDisplayOrientation(cameraID, camera);
                 camera.setPreviewDisplay(holder);
                 camera.startPreview();
 
             } catch (Exception e){
+                e.printStackTrace();
                 Log.d(TAG, "Error starting camera preview: " + e.getMessage());
             }
         }
@@ -564,17 +566,21 @@ public class CameraFragment extends Fragment {
             Camera.Parameters params = camera.getParameters();
             Camera.Size maxSize = null;
             for (Camera.Size size : params.getSupportedPictureSizes()) {
-                float sizeRatio;
+                float sizeRatio = 0;
                 //Horizontal orientation
                 if (size.width > size.height) {
-                    sizeRatio = size.width / size.height;
+                    sizeRatio = (float) size.width / (float) size.height;
                 }
                 //Vertical orientation
                 else {
-                    sizeRatio = size.height / size.width;
+                    sizeRatio = (float) size.height / (float) size.width;
                 }
                 if (sizeRatio == ratio) {
-                    maxSize = size;
+                    if (maxSize == null)
+                        maxSize = size;
+                    else if ((maxSize.width < size.width)&& ((maxSize.height < size.height))) {
+                        maxSize = size;
+                    }
                 }
             }
             return maxSize;
@@ -585,32 +591,32 @@ public class CameraFragment extends Fragment {
             final int width = resolveSize(getSuggestedMinimumWidth(), widthMeasureSpec);
             final int height = resolveSize(getSuggestedMinimumHeight(), heightMeasureSpec);
 
-            setMeasuredDimension(width, height);
 
             if (supportedPreviewSizes != null) {
                 previewSize = getOptimalPreviewSize(supportedPreviewSizes, width, height);
             }
 
-//            if(previewSize.height >= previewSize.width)
-//                ratio = (float) previewSize.height / (float) previewSize.width;
-//            else
-//                ratio = (float) previewSize.width / (float) previewSize.height;
+            if(previewSize.height >= previewSize.width)
+                ratio = (float) previewSize.height / (float) previewSize.width;
+            //Landscape only
+            else
+                ratio = (float) previewSize.width / (float) previewSize.height;
 //
-//            float camHeight = (int) (width * ratio);
-//            float newCamHeight;
-//            float newHeightRatio;
-//
-//            if (camHeight < height) {
-//                newHeightRatio = (float) height / (float) previewSize.height;
-//                newCamHeight = (newHeightRatio * camHeight);
-//                Log.e(TAG, camHeight + " " + height + " " + previewSize.height + " " + newHeightRatio + " " + newCamHeight);
-//                setMeasuredDimension((int) (width * newHeightRatio), (int) newCamHeight);
-//                Log.e(TAG, previewSize.width + " | " + previewSize.height + " | ratio - " + ratio + " | H_ratio - " + newHeightRatio + " | A_width - " + (width * newHeightRatio) + " | A_height - " + newCamHeight);
-//            } else {
-//                newCamHeight = camHeight;
-//                setMeasuredDimension(width, (int) newCamHeight);
-//                Log.e(TAG, previewSize.width + " | " + previewSize.height + " | ratio - " + ratio + " | A_width - " + (width) + " | A_height - " + newCamHeight);
-//            }
+            float camHeight = (int) (width * ratio);
+            float newCamHeight;
+            float newHeightRatio;
+
+            if (camHeight < height) {
+                newHeightRatio = (float) height / (float) previewSize.height;
+                newCamHeight = (newHeightRatio * camHeight);
+                Log.e(TAG, camHeight + " " + height + " " + previewSize.height + " " + newHeightRatio + " " + newCamHeight);
+                setMeasuredDimension((int) (width * newHeightRatio), (int) newCamHeight);
+                Log.e(TAG, previewSize.width + " | " + previewSize.height + " | ratio - " + ratio + " | H_ratio - " + newHeightRatio + " | A_width - " + (width * newHeightRatio) + " | A_height - " + newCamHeight);
+            } else {
+                newCamHeight = camHeight;
+                setMeasuredDimension(width, (int) newCamHeight);
+                Log.e(TAG, previewSize.width + " | " + previewSize.height + " | ratio - " + ratio + " | A_width - " + (width) + " | A_height - " + newCamHeight);
+            }
         }
 
         @Override
@@ -629,7 +635,7 @@ public class CameraFragment extends Fragment {
                 }
 
                 // Center the child SurfaceView within the parent.
-                if (width * previewHeight > height * previewWidth) {
+                if (width * previewHeight < height * previewWidth) {
                     final int scaledChildWidth = previewWidth * height / previewHeight;
                     rootView.layout((width - scaledChildWidth) / 2, 0,
                             (width + scaledChildWidth) / 2, height);
@@ -644,7 +650,7 @@ public class CameraFragment extends Fragment {
 
     private Camera.Size getOptimalPreviewSize(List<Camera.Size> sizes, int w, int h) {
         final double ASPECT_TOLERANCE = 0.1;
-        double targetRatio = (double) h / w;
+        double targetRatio = (double) w / h;
 
         if (sizes == null)
             return null;
@@ -732,10 +738,11 @@ public class CameraFragment extends Fragment {
         }
         // set the right preview orientation
         camera.setDisplayOrientation(result);
-        // make the camera output a rotated image
-        Camera.Parameters cameraParameters = camera.getParameters();
-        cameraParameters.setRotation(0);
-        camera.setParameters(cameraParameters);
+
+//        // make the camera output a rotated image
+//        Camera.Parameters cameraParameters = camera.getParameters();
+//        cameraParameters.setRotation(0);
+//        camera.setParameters(cameraParameters);
     }
     /**
      * Compares two {@code Size}s based on their areas.
@@ -799,18 +806,19 @@ public class CameraFragment extends Fragment {
 
         try {
             File photoFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
-            if (photoFile.exists()) {
-                photoFile.delete();
-            }
-            else{
-                photoFile.createNewFile();
-            }
+            if (photoFile != null) {
+                if (photoFile.exists())
+                    photoFile.delete();
+                else {
+                    photoFile.createNewFile();
+                }
 
-            //Save the photo file
-            FileOutputStream outputStream = new FileOutputStream(photoFile);
-            toPublish.compress(Bitmap.CompressFormat.JPEG, 50, outputStream);
-            outputStream.flush();
-            outputStream.close();
+                //Save the photo file
+                FileOutputStream outputStream = new FileOutputStream(photoFile);
+                toPublish.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+                outputStream.flush();
+                outputStream.close();
+            }
 
         } catch (IOException e) {
             Log.d("PhotoReq", "IOException");
@@ -866,6 +874,8 @@ public class CameraFragment extends Fragment {
                         .playOn(popup);
                 popupIsShown = true;
             }
+
+            // ----------------FETCH MOST LIKELY LOCATION FROM GOOGLE PLACES API -----------------
             //Temp - mock location to Times Square
             PlaceActions.getInstance().setMockLocation(getActivity());
             PendingResult<PlaceLikelihoodBuffer> result = Places.PlaceDetectionApi.getCurrentPlace(
@@ -873,26 +883,11 @@ public class CameraFragment extends Fragment {
             result.setResultCallback(new ResultCallback<PlaceLikelihoodBuffer>() {
                 @Override
                 public void onResult(PlaceLikelihoodBuffer likelyPlaces) {
-                    float highestLikelihood = 0;
-                    Place topPlace = null;
-                    for (PlaceLikelihood placeLikelihood : likelyPlaces) {
-                        float currentLikelihood = placeLikelihood.getLikelihood();
-                        Log.i(TAG, String.format("Place '%s' has likelihood: %g",
-                                placeLikelihood.getPlace().getName(),
-                                placeLikelihood.getLikelihood()));
-                        if (highestLikelihood == 0) {
-                            highestLikelihood = placeLikelihood.getLikelihood();
-                            topPlace = placeLikelihood.getPlace();
-                        } else {
-                            if (currentLikelihood > highestLikelihood) {
-                                highestLikelihood = currentLikelihood;
-                                topPlace = placeLikelihood.getPlace();
-                            }
-                        }
-                    }
-                    if (topPlace != null) {
-                        updatePlaceName(topPlace.getName().toString());
-                        selectedPlace = topPlace;
+                    Place mostLikelyPlace = PlaceActions.getInstance().
+                            getMostLikelyPlace(likelyPlaces);
+                    if (mostLikelyPlace != null) {
+                        updatePlaceName(mostLikelyPlace.getName().toString());
+                        selectedPlace = mostLikelyPlace;
                     }
                     likelyPlaces.release();
                 }

@@ -3,12 +3,13 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/colorMaterialLightGrey">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/plProfileRecView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
     <android.support.design.widget.AppBarLayout
@@ -20,6 +21,7 @@
             android:id="@+id/plProfileCollapsingToolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:fitsSystemWindows="true"
             android:foregroundGravity="bottom|right"
             android:clipToPadding="true"
             app:expandedTitleTextAppearance="@android:color/transparent"

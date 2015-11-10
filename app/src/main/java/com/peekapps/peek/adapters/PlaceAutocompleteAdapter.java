@@ -50,12 +50,16 @@ public class PlaceAutocompleteAdapter extends ArrayAdapter<PlaceAutocompleteAdap
 
     @Override
     public int getCount() {
-        return autocompleteResults.size();
+        if (autocompleteResults != null)
+            return autocompleteResults.size();
+        return 0;
     }
 
     @Override
     public AutoCompleteItem getItem(int position) {
-        return autocompleteResults.get(position);
+        if (autocompleteResults != null)
+            return autocompleteResults.get(position);
+        return null;
     }
 
     @Override

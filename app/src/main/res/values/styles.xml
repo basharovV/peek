@@ -7,8 +7,9 @@
         <!-- Overflow menu button color -->
         <item name="android:textColorSecondary">#FFFFFF</item>
         <item name="android:dropDownListViewStyle">@style/DropDownListViewStyle</item>
-        <item name="android:autoCompleteTextViewStyle">@style/AutoCompleteText</item>
         <item name="android:textViewStyle">@style/RobotoTextViewStyle</item>
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="android:windowBackground">@drawable/bg_window</item>
     </style>
 
     <style name="RobotoTextViewStyle" parent="android:Widget.TextView">
@@ -20,6 +21,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorPrimary</item>
+        <item name="android:windowTranslucentStatus">true</item>
     </style>
 
     <style name="DropDownListViewStyle" parent="@style/Widget.AppCompat.ListView.DropDown">
@@ -29,11 +31,15 @@
 
     <style name="AppTheme.Toolbar" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="android:iconifiedByDefault">true</item>
-        <item name="android:background">@color/colorPrimary</item>
-        <item name="android:minHeight">50dp</item>
-        <item name="android:maxHeight">50dp</item>
-        <item name="android:height">50dp</item>
+        <item name="android:background">@color/peek_orange_primary_trans</item>
+        <item name="android:minHeight">60dp</item>
+        <item name="android:maxHeight">60dp</item>
+        <item name="android:height">60dp</item>
         <item name="popupTheme">@style/Theme.AppCompat.Light</item>
+    </style>
+
+    <style name="FeedLocationToolbar">
+        <item name="android:gravity">center</item>
     </style>
 
     <!-- Overflow drop down style -->
@@ -104,9 +110,6 @@
         <item name="android:textSize">12sp</item>
     </style>
 
-    <style name="AutoCompleteText">
-        <item name="android:textSize">14sp</item>
-    </style>
     
     <!-- Place profile style -->
     <style name="RatingStyle" parent="Widget.AppCompat.RatingBar">
@@ -119,12 +122,13 @@
 
     <style name="SortingIcons">
         <item name="android:layout_gravity">center_vertical</item>
-        <item name="android:scaleType">fitXY</item>
         <item name="android:paddingLeft">10dp</item>
         <item name="android:paddingRight">10dp</item>
         <item name="android:layout_marginRight">20dp</item>
         <item name="android:layout_marginLeft">20dp</item>
         <item name="android:background">@android:color/transparent</item>
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:layout_marginBottom">10dp</item>
     </style>
 
     <style name="RatingNumber">

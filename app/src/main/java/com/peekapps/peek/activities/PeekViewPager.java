@@ -1,17 +1,23 @@
 package com.peekapps.peek.activities;
 
+import android.Manifest;
 import android.app.ActionBar;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.PorterDuff;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
@@ -21,6 +27,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -32,6 +39,8 @@ import com.facebook.appevents.AppEventsLogger;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.peekapps.peek.DisplayMarkersTask;
+import com.peekapps.peek.PermissionActions;
+import com.peekapps.peek.fragments_utils.OnPermissionsListener;
 import com.peekapps.peek.place_api.PlaceActions;
 import com.peekapps.peek.place_api.PlacesFetchedEvent;
 import com.peekapps.peek.place_api.PlacesListener;
@@ -41,8 +50,12 @@ import com.peekapps.peek.fragments.MapFragment;
 import com.peekapps.peek.R;
 import com.peekapps.peek.place_api.PlacesTask;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Slav on 25/05/2015.
@@ -50,8 +63,14 @@ import java.util.List;
 
 public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallback, PlacesListener, LocationListener{
 
+    private View decorView;
+
+    boolean allGranted = false;
+
     private ViewPager viewPager;
-    private PagerAdapter viewPagerAdapter;
+    private ScreenPagerAdapter viewPagerAdapter;
+    private int currentPosition;
+
     private LinearLayout toolbarGroup;
     private Toolbar toolbar;
     private ImageButton createEventButton;
@@ -78,21 +97,80 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pager);
 
-        setUpPager();
+        startBasic();
+
+        if (Build.VERSION.SDK_INT >= 23) {
+            final ArrayList<String> missingPermissions = PermissionActions.getMissingPermissions(this);
+            //Request permissions (if any)
+            if (missingPermissions.isEmpty()) {
+                allGranted = true;
+                startLocationWithPermission();
+            }
+            else {
+                Snackbar.make(findViewById(R.id.pagerFrame),
+                        R.string.pager_perm_snackbar, Snackbar.LENGTH_INDEFINITE)
+                        .setAction(R.string.pager_perm_action,
+                                new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        PermissionActions.
+                                                requestMissingPermissions(PeekViewPager.this, missingPermissions);
+                                    }
+                                }
+                        )
+                        .show();
+            }
+             //Enable features after fragments are loaded
+        }
+        else    startLocationWithPermission();
+    }
+
+    public boolean allPermissionsGranted() {
+        return allGranted;
+    }
+
+    private void startBasic() {
         setUpUI();
+    }
 
-        //Show loading dialog white fetching places
-        progressDialog = new MaterialDialog.Builder(this)
-                .title(R.string.load_dialog_title)
-                .content(R.string.load_dialog_content)
-                .progress(true, 0)
-                .show();
-
+    private void startLocationWithPermission() {
         //Start listening for location
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+        try {
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+        }
+        catch (SecurityException e) {
+            Log.d("PeekViewPager" , "security exception");
+            e.printStackTrace();
+        }
         PlaceActions.getInstance().setMockLocation(this); //Demo only - set location to Times Square
+    }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        int grantedCount = 0;
+        // If request is cancelled, the result arrays are empty.
+        if (requestCode == 0 && grantResults.length > 0)
+            for (int result : grantResults) {
+                if (result == PackageManager.PERMISSION_DENIED) {
+                    allGranted = false;
+                }
+                else grantedCount++;
+            }
+        if (grantedCount == grantResults.length) notifyPermissionListeners();
+    }
+
+    private void notifyPermissionListeners() {
+        try {
+            ((MapFragment) fragments[0]).onPermissionsGranted();
+            ((FeedFragment) fragments[2]).onPermissionsGranted();
+            ((CameraFragment) fragments[1]).onPermissionsGranted();
+        }
+        catch (NullPointerException e) {
+            Log.d("PeekViewPager", "Null fragment");
+            e.printStackTrace();
+        }
     }
 
 
@@ -105,11 +183,21 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
         FragmentManager fragmentManager = getSupportFragmentManager();
         viewPagerAdapter = new ScreenPagerAdapter(fragmentManager);
         viewPager.setAdapter(viewPagerAdapter);
+
         viewPager.setCurrentItem(1);
         viewPager.setOffscreenPageLimit(2);
     }
 
     private void setUpUI() {
+        //Hide the status bar
+        if (getSupportActionBar() != null) getSupportActionBar().hide();
+        decorView = getWindow().getDecorView();
+        decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
+        setUpPager();
+        setupToolbar();
+    }
+
+    private void setupToolbar() {
         //Initialise the toolbar
         toolbar = (Toolbar) findViewById(R.id.peek_toolbar);
         toolbarGroup = (LinearLayout) findViewById(R.id.peek_toolbar_group);
@@ -149,30 +237,6 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
         @Override
         public void onClick(View v) {
             launchSettings();
-            //Not yet
-//            bottomSheet = new BottomSheet.Builder(PeekViewPager.this)
-//                    .title("Options")
-//                    .sheet(R.menu.bottom_options)
-//                    .listener(new DialogInterface.OnClickListener() {
-//                        @Override
-//                        public void onClick(DialogInterface dialog, int which) {
-//                            switch (which) {
-//                                case R.id.createEventItem:
-//                                    launchCreateEvent();
-//                                    break;
-//                                case R.id.settings_item:
-//                                    launchSettings();
-//                                    break;
-//                                case R.id.profileItem:
-//                                    launchProfile();
-//                                    break;
-//                            }
-//                            Toast.makeText(getApplicationContext(),
-//                                    "Clicked " + which, Toast.LENGTH_LONG).show();
-//                        }
-//                    }).show();
-//            overflowButton.setColorFilter(0xCCFFFFFF, PorterDuff.Mode.MULTIPLY);
-
         }
     }
 
@@ -191,10 +255,15 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
         });
     }
 
-
     @Override
-    public void onMapReady(GoogleMap googleMap) {
-        this.googleMap = googleMap;
+    public void onMapReady(GoogleMap map) {
+        this.googleMap = map;
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                new DisplayMarkersTask(PeekViewPager.this, googleMap).run();
+            }
+        });
     }
 
 
@@ -218,20 +287,26 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
 
     @Override
     public void onLocationChanged(Location location) {
-        progressDialog.setTitle(R.string.load_dialog_done);
-        progressDialog.setContent(R.string.load_dialog_done_content);
-        progressDialog.cancel();
+//        progressDialog.setTitle(R.string.load_dialog_done);
+//        progressDialog.setContent(R.string.load_dialog_done_content);
+//        progressDialog.cancel();
 
         PlacesTask placesTask = new PlacesTask();
         placesTask.attachListener(this);
         placesTask.execute();
 
-        ((MapFragment) fragments[0]).updateLocation(location);
+//        ((MapFragment) fragments[0]).updateLocation(location);
         stopLocationListening();
     }
 
     private void stopLocationListening() {
-        locationManager.removeUpdates(this);
+        try {
+            locationManager.removeUpdates(this);
+        }
+        catch (SecurityException e) {
+            Log.d("PeekViewPager" , "security exception");
+            e.printStackTrace();
+        }
     }
     /**
      * Listener for user scrolling the ViewPager - animate toolbar accordingly
@@ -265,8 +340,8 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
 
             switch (currentPage) {
                 case 0:
-                    toolbarGroup.setY(-toolbarHeight * (positionOffset));
-                    toolbarGroup.setAlpha(1 - positionOffset);
+//                    toolbarGroup.setY(-toolbarHeight * (positionOffset));
+//                    toolbarGroup.setAlpha(1 - positionOffset);
                     break;
                 case 1:
                     //If not been initialised
@@ -277,8 +352,8 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
                     if (previousOffset > positionOffset) {
                         //towards MAP
                         if (position == 0) {
-                            toolbarGroup.setAlpha(1 - positionOffset);
-                            toolbarGroup.setTranslationY(-toolbarHeight * (positionOffset));
+//                            toolbarGroup.setAlpha(1 - positionOffset);
+//                            toolbarGroup.setTranslationY(-toolbarHeight * (positionOffset));
                         }
                         //towards CAMERA
                         else {
@@ -295,8 +370,8 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
                         }
                         //towards CAMERA
                         else {
-                            toolbarGroup.setAlpha(1.0f - positionOffset);
-                            toolbarGroup.setTranslationY(-toolbarHeight * positionOffset);
+//                            toolbarGroup.setAlpha(1.0f - positionOffset);
+//                            toolbarGroup.setTranslationY(-toolbarHeight * positionOffset);
                         }
                     }
                     previousOffset = positionOffset;
@@ -319,21 +394,12 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
             currentPage = position;
             switch (position) {
                 case 0:
-                    toolbarGroup.setAlpha(0x1);
-                    if (fragments[1] != null) {
-                        ((CameraFragment) fragments[1]).stop();
-                    }
+//                    toolbarGroup.setAlpha(0x1);
                     break;
                 case 1:
-                    if (fragments[1] != null) {
-                        ((CameraFragment) fragments[1]).start();
-                    }
                     toolbarGroup.setAlpha(0x0);
                     break;
                 case 2:
-                    if (fragments[1] != null) {
-                        ((CameraFragment) fragments[1]).stop();
-                    }
                     toolbarGroup.setAlpha(0x1);
                     break;
             }
@@ -347,12 +413,33 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
             if (state == ViewPager.SCROLL_STATE_IDLE) {
                 switch (currentPage) {
                     case 0:
-                        toolbarGroup.setAlpha(0x1);
+                        //Stop the camera preview
+                        if (fragments[1] != null) {
+                            ((CameraFragment) fragments[1]).stop();
+                        }
+                        //Show the status bar
+                        decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+
+//                        toolbarGroup.setTranslationY(0);
+//                        toolbarGroup.setAlpha(0x1);
                         break;
                     case 1:
+                        //Start the camera preview
+                        if (fragments[1] != null) {
+                            ((CameraFragment) fragments[1]).start();
+                        }
+                        decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
+
                         toolbarGroup.setAlpha(0x0);
                         break;
                     case 2:
+                        //Stop the camera preview
+                        if (fragments[1] != null) {
+                            ((CameraFragment) fragments[1]).stop();
+                        }
+                        decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+
+                        toolbarGroup.setTranslationY(0);
                         toolbarGroup.setAlpha(0x1);
                         break;
                 }
@@ -367,18 +454,15 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
             super(fm);
         }
 
+
         @Override
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    if (fragments[0] == null) {
-                        fragments[0] = new MapFragment();
-                    }
+                    fragments[0] = new MapFragment();
                     return fragments[0];
                 case 1:
-                    if (fragments[1] == null) {
-                        fragments[1] = new CameraFragment();
-                    }
+                    fragments[1] = new CameraFragment();
                     return fragments[1];
                 case 2:
                     if (fragments[2] == null) {
@@ -392,7 +476,6 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
                     return fragments[1];
             }
         }
-
 
         @Override
         public int getCount() {
@@ -414,9 +497,22 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
     }
 
     @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("fragmentIndex", viewPager.getCurrentItem());
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        currentPosition = savedInstanceState.getInt("fragmentIndex");
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         AppEventsLogger.activateApp(this);
+        viewPager.setAdapter(viewPagerAdapter);
     }
 
     @Override

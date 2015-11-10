@@ -11,8 +11,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.AutoCompleteTextView;
 import android.widget.ImageButton;
+import android.support.v7.widget.AppCompatAutoCompleteTextView;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.places.AutocompleteFilter;
@@ -34,7 +34,7 @@ import java.util.List;
 
 public class SearchBarFragment extends Fragment {
 
-    private AutoCompleteTextView autocompleteView;
+    private AppCompatAutoCompleteTextView autocompleteView;
     private ImageButton search;
 
     private GoogleApiClient apiClient;
@@ -56,7 +56,7 @@ public class SearchBarFragment extends Fragment {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_search_bar, container, false);
 
         //Set up autocomplete
-        autocompleteView = (AutoCompleteTextView) rootView.findViewById(R.id.feedAutocompleteView);
+        autocompleteView = (AppCompatAutoCompleteTextView) rootView.findViewById(R.id.feedAutocompleteView);
         autocompleteView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {

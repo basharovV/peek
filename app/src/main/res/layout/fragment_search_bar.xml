@@ -2,27 +2,27 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="50dp"
-    android:background="#CC000000">
+    android:background="#f2303030">
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <AutoCompleteTextView
+        <android.support.v7.widget.AppCompatAutoCompleteTextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"
-            android:layout_margin="5dp"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:dropDownSelector="@color/peek_orange"
             android:hint="Search for places"
+            android:drawablePadding="5dp"
             android:textColorHint="@color/gray"
-            android:drawableRight="@android:drawable/ic_menu_close_clear_cancel"
-            android:drawableLeft="@android:drawable/ic_menu_search"
-            android:background="#CC5E5E5E"
+            android:drawableEnd="@drawable/ic_cancel"
+            android:drawableStart="@drawable/ic_search"
             android:singleLine="true"
             android:textSize="16sp"
+            android:backgroundTint="@color/colorPrimaryDark"
             android:id="@+id/feedAutocompleteView"
             android:textColor="@android:color/white"
             />

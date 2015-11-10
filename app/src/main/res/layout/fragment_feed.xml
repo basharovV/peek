@@ -1,14 +1,17 @@
 <!-- fragment_screen_slide_page.xml -->
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     android:id="@+id/feedFragment"
-    android:background="@color/colorMaterialLightGrey"
-    android:paddingTop="50dp">
+    android:background="@android:color/transparent"
+    >
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/colorMaterialLightGrey"
+        >
 
         <android.support.v4.widget.SwipeRefreshLayout
             android:id="@+id/swipeRefreshLayout"
@@ -28,17 +31,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/optionsBarHolder"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_marginTop="60dp"
+            android:fitsSystemWindows="true">
             <android.support.v4.view.ViewPager
                 android:layout_width="wrap_content"
                 android:layout_height="50dp"
-                android:id="@+id/scrollOptionsBar"/>
+                android:id="@+id/scrollOptionsBar"
+                android:fitsSystemWindows="true"/>
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@drawable/toolbar_shadow" />
+                android:background="@drawable/toolbar_shadow"
+                android:fitsSystemWindows="true"/>
         </LinearLayout>
 </FrameLayout>
 
 
-</RelativeLayout>
+</FrameLayout>

@@ -2,6 +2,7 @@ package com.peekapps.peek.activities;
 
 import android.animation.ObjectAnimator;
 import android.app.Activity;
+import android.os.Build;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -15,6 +16,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
@@ -34,13 +36,21 @@ import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.facebook.rebound.SimpleSpringListener;
+import com.facebook.rebound.Spring;
+import com.facebook.rebound.SpringConfig;
+import com.facebook.rebound.SpringListener;
+import com.facebook.rebound.SpringLooper;
+import com.facebook.rebound.SpringSystem;
 import com.facebook.shimmer.ShimmerFrameLayout;
+import com.flaviofaria.kenburnsview.KenBurnsView;
 import com.google.android.gms.ads.identifier.AdvertisingIdClient;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.peekapps.peek.R;
 import com.peekapps.peek.fragments.InfoImageFragment;
+import com.squareup.picasso.Picasso;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -57,6 +67,7 @@ public class LoginActivity extends FragmentActivity {
 
     ImageButton googleButton;
     ImageView loginLogo;
+    ImageView loginPhoto;
     ImageView loginTextLogo;
     TextView loginSlogan;
     AutoScrollViewPager scrollInfoPager;
@@ -109,24 +120,30 @@ public class LoginActivity extends FragmentActivity {
         AppEventsLogger.deactivateApp(this);
     }
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(getApplicationContext());
         callbackManager = CallbackManager.Factory.create();
-        setTheme(android.R.style.Theme_DeviceDefault_NoActionBar);
         setContentView(R.layout.activity_login);
+
 
         //Set up header UI elements
         loginLogo = (ImageView) findViewById(R.id.loginLogo);
         loginTextLogo = (ImageView) findViewById(R.id.loginTextLogo);
         loginSlogan = (TextView) findViewById(R.id.loginSlogan);
-
+        loginPhoto = (KenBurnsView) findViewById(R.id.loginPhoto);
         //Fade in header
         Animation fadeIn = new AlphaAnimation(0, 1);
         fadeIn.setInterpolator(new LinearInterpolator());
         fadeIn.setDuration(2000);
         fadeIn.setStartOffset(500);
+
+        Picasso.with(this).load(R.drawable.login_chicago)
+                .centerCrop()
+                .fit()
+                .into(loginPhoto);
 
         loginLogo.setVisibility(View.VISIBLE);
         loginTextLogo.setVisibility(View.VISIBLE);
@@ -134,6 +151,8 @@ public class LoginActivity extends FragmentActivity {
         loginLogo.startAnimation(fadeIn);
         loginTextLogo.startAnimation(fadeIn);
         loginSlogan.startAnimation(fadeIn);
+
+
 
         //Info slides
         scrollInfoPager = (AutoScrollViewPager) findViewById(R.id.loginInfoPager);

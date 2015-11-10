@@ -32,9 +32,14 @@ public class LocationActions {
                 getSystemService(Context.LOCATION_SERVICE);
         Criteria placeCriteria = new Criteria();
         String networkProvider = LocationManager.NETWORK_PROVIDER;
-        Location location = locationManager.getLastKnownLocation(networkProvider);
-        if (location == null) {
-            locationManager.requestLocationUpdates(networkProvider, 0, 0, locationListener);
+        try {
+            Location location = locationManager.getLastKnownLocation(networkProvider);
+            if (location == null) {
+                locationManager.requestLocationUpdates(networkProvider, 0, 0, locationListener);
+            }
+        }
+        catch (SecurityException e) {
+            e.printStackTrace();
         }
 
     }

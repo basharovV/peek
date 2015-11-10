@@ -31,6 +31,8 @@ public class PlaceDbHelper extends SQLiteOpenHelper {
     public static final String COLUMN_NAME_LATITUDE = "latitude";
     public static final String COLUMN_NAME_LONGITUDE = "longitude";
     public static final String COLUMN_NAME_TYPE = "type";
+    public static final String COLUMN_NAME_NUMBER_OF_PHOTOS = "number_of_photos";
+    public static final String COLUMN_NAME_MINUTES_AGO_UPDATED = "minutes_ago_updated";
     public static final String COLUMN_NAME_TIME_UPDATED = "time_updated";
     public static final String COLUMN_NAME_DISTANCE = "distance";
 
@@ -49,7 +51,9 @@ public class PlaceDbHelper extends SQLiteOpenHelper {
                 + COLUMN_NAME_LATITUDE + " REAL" + COMMA_SEP
                 + COLUMN_NAME_LONGITUDE + " REAL" + COMMA_SEP
                 + COLUMN_NAME_TYPE + " TEXT" + COMMA_SEP
+                + COLUMN_NAME_NUMBER_OF_PHOTOS + " INTEGER" + COMMA_SEP
                 + COLUMN_NAME_TIME_UPDATED + " INTEGER" + COMMA_SEP
+                + COLUMN_NAME_MINUTES_AGO_UPDATED + " INTEGER" + COMMA_SEP
                 + COLUMN_NAME_DISTANCE + " INTEGER" + ")";
         db.execSQL(SQL_CREATE_TABLE);
     }
@@ -76,6 +80,8 @@ public class PlaceDbHelper extends SQLiteOpenHelper {
         values.put(COLUMN_NAME_LATITUDE, pl.getLatitude());
         values.put(COLUMN_NAME_LONGITUDE, pl.getLongitude());
         values.put(COLUMN_NAME_TYPE, pl.getType());
+        values.put(COLUMN_NAME_MINUTES_AGO_UPDATED, pl.getMinutesAgoUpdated());
+        values.put(COLUMN_NAME_NUMBER_OF_PHOTOS, pl.getNumberOfPhotos());
         values.put(COLUMN_NAME_TIME_UPDATED, pl.getTimeUpdated());
         values.put(COLUMN_NAME_DISTANCE, pl.getDistance());
         db.insertWithOnConflict(TABLE_NAME, "null", values, SQLiteDatabase.CONFLICT_IGNORE);
@@ -96,6 +102,8 @@ public class PlaceDbHelper extends SQLiteOpenHelper {
                 pl.setLatitude(Double.parseDouble(cursor.getString((cursor.getColumnIndex(COLUMN_NAME_LATITUDE)))));
                 pl.setLongitude(Double.parseDouble(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_LONGITUDE))));
                 pl.setType(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_TYPE)));
+                pl.setNumberOfPhotos(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_NUMBER_OF_PHOTOS))));
+                pl.setMinutesAgoUpdated(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_MINUTES_AGO_UPDATED))));
                 pl.setTimeUpdated(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_TIME_UPDATED))));
                 pl.setDistance(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_NAME_DISTANCE))));
                 placesList.add(pl);

@@ -36,16 +36,6 @@ public class DisplayMarkersTask implements Runnable{
         googleMap = map;
 
         markerMap = new HashMap<Marker, Place>();
-    }
-
-    @Override
-    public void run() {
-        googleMap.clear();
-        //Fetch all place data from database and populate map with markers
-        PlaceDbHelper dbHelper = new PlaceDbHelper(context);
-        for (Place place : dbHelper.getAllPlaces()) {
-            putMarker(place);
-        }
 
         //Initialise the adapter for displaying a marker info window.
         //Set marker map for associating marker objects to place objects.
@@ -63,6 +53,19 @@ public class DisplayMarkersTask implements Runnable{
                 context.startActivity(profileIntent);
             }
         });
+    }
+
+    @Override
+    public void run() {
+        googleMap.clear();
+        //Fetch all place data from database and populate map with markers
+        PlaceDbHelper dbHelper = new PlaceDbHelper(context);
+        List<Place> databaseList = dbHelper.getAllPlaces();
+        if (databaseList != null) {
+            for (Place place : dbHelper.getAllPlaces()) {
+                putMarker(place);
+            }
+        }
     }
 
     public void putMarker(Place pl) {
@@ -85,7 +88,7 @@ public class DisplayMarkersTask implements Runnable{
             LatLng latLng = new LatLng(latitude, longitude);
             markerOptions.position(latLng);
             markerOptions.title(placeName);
-            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.map_pin));
+            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_map_pin));
             Marker m = googleMap.addMarker(markerOptions);
 
             markerMap.put(m, pl);
@@ -114,7 +117,7 @@ public class DisplayMarkersTask implements Runnable{
 
                 if (t > 0.0) {
                     // Post again 15ms later.
-                    handler.postDelayed(this, 15);
+                    handler.postDelayed(this, 10);
                 } else {
 
                 }

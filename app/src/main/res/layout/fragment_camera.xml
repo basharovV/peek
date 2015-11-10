@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal"
-    android:background="@android:color/black">
+    android:orientation="vertical"
+    android:background="@android:color/transparent">
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -12,10 +12,7 @@
         <FrameLayout
             android:id="@+id/camera_preview"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"/>
+            android:layout_height="match_parent"/>
 
         <!--CAPTURE MODE UI-->
         <FrameLayout
@@ -28,7 +25,8 @@
 
                 <!-- IMAGE CAPTURE BUTTON -->
                     <ImageButton
-                        android:src="@drawable/capture_button"
+                        android:src="@drawable/ic_capture_button"
+                        android:alpha="0.85"
                         android:layout_width="70dp"
                         android:layout_height="70dp"
                         android:layout_alignParentBottom="true"
@@ -44,25 +42,25 @@
 
                     <!-- FLASH BUTTON -->
                     <ImageButton
-                        android:layout_width="25dp"
-                        android:layout_height="45dp"
+                        android:layout_width="45dp"
+                        android:layout_height="50dp"
                         android:id="@+id/cameraFlashButton"
                         android:layout_margin="10dp"
                         android:scaleType="fitXY"
-                        android:layout_alignParentRight="true"
-                        android:src="@drawable/flash_button"
+                        android:layout_alignParentEnd="true"
+                        android:src="@drawable/ic_flash_button"
                         android:background="@android:color/transparent"
                         />
 
                     <!-- SWITCH CAMERA BUTTON -->
                     <ImageButton
-                        android:layout_width="40dp"
-                        android:layout_height="35dp"
+                        android:layout_width="45dp"
+                        android:layout_height="50dp"
                         android:id="@+id/cameraSwitchButton"
                         android:layout_margin="13dp"
                         android:scaleType="fitXY"
-                        android:layout_alignParentLeft="true"
-                        android:src="@drawable/switch_cam"
+                        android:layout_alignParentStart="true"
+                        android:src="@drawable/ic_switch_cam_button"
                         android:background="@android:color/transparent"
                         />
             </RelativeLayout>
@@ -92,18 +90,19 @@
                         android:src="@drawable/exit_preview"
                         />
 
-                    <EditText
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="5dp"
-                        android:id="@+id/captionView"
-                        android:gravity="center"
-                        android:layout_gravity="center"
-                        android:background="#90000000"
-                        android:theme="@style/Base.Widget.AppCompat.EditText"
-                        android:hint="ENTER CAPTION HERE"
-                        android:textColorHint="#70FFFFFF"
-                        />
+                    <!--<EditText-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:padding="5dp"-->
+                        <!--android:id="@+id/captionView"-->
+                        <!--android:gravity="center"-->
+                        <!--android:layout_gravity="center"-->
+                        <!--android:background="#90000000"-->
+                        <!--android:theme="@style/Base.Widget.AppCompat.EditText"-->
+                        <!--android:hint="ENTER CAPTION HERE"-->
+                        <!--android:textColorHint="#70FFFFFF"-->
+                        <!--/>-->
+
 
 
                 </FrameLayout>
@@ -170,7 +169,8 @@
                             style="@style/ThemeOverlay.AppCompat.Dark"
                             android:textColor="@color/materialWhite200"
                             android:textStyle="bold"
-                            android:text="Placeholder place, placeholder address "/>
+                            android:text="Placeholder place, placeholder address "
+                            android:visibility="gone"/>
                         </LinearLayout>
                         </LinearLayout>
                     <ProgressBar
@@ -220,6 +220,6 @@
             android:layout_gravity="bottom|center_horizontal"/>
         </FrameLayout>
     </FrameLayout>
-</RelativeLayout>
+</FrameLayout>
 
 

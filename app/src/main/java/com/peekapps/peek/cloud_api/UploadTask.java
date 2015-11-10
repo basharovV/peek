@@ -25,6 +25,9 @@ public class UploadTask extends AsyncTask<Object, File, Void> {
             CloudActions.uploadStream(context, pl.getId(), "image/jpeg", new FileInputStream(photo),
                     "peekphotos");
         }
+        catch (NullPointerException e) {
+            e.printStackTrace();
+        }
         catch (IOException e) {
             e.printStackTrace();
             Log.e("Upload task" , "File not found");

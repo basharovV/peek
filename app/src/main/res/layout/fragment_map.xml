@@ -1,7 +1,8 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent" tools:context="com.peekapps.peek.fragments.MapFragment"
-    android:id="@+id/mapFragment">
+    android:id="@+id/mapFragment"
+    android:background="@android:color/transparent">
     <com.google.android.gms.maps.MapView
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/mapView"
@@ -9,4 +10,4 @@
         android:layout_height="wrap_content"
         />
 
-</RelativeLayout>
+</FrameLayout>

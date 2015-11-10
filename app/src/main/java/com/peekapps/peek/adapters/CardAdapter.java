@@ -22,6 +22,8 @@ import com.peekapps.peek.place_api.Place;
 import com.peekapps.peek.place_api.PlaceActions;
 import com.peekapps.peek.views.*;
 import com.squareup.picasso.Picasso;
+import com.tonicartos.superslim.LayoutManager;
+import com.tonicartos.superslim.LinearSLM;
 
 import java.io.File;
 import java.io.InputStream;
@@ -87,11 +89,12 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
+
         int adjusted_pos = position - 1;
         if (position > 0) {
             ((ViewHolder) holder).title.setText(placeList.get(position).getName());
 //            ((ViewHolder) holder).location.setText(placeList.get(position).getVicinity());
-            ((ViewHolder) holder).sortAttribute.setText(String.valueOf(position));
+//            ((ViewHolder) holder).rank.setText(String.valueOf(position));
             ((ViewHolder) holder).image.setOnClickListener(
                     new View.OnClickListener() {
                         @Override
@@ -116,9 +119,13 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             ((ViewHolder) holder).type.setText(formattedType);
 
             //Set the 'last updated' time attribute text
-            int time = placeList.get(position).getTimeUpdated();
+            int time = placeList.get(position).getMinutesAgoUpdated();
             ((ViewHolder) holder).time
                     .setText(String.format("%d m", time));
+
+            int numberOfPhotos = placeList.get(position).getNumberOfPhotos();
+            ((ViewHolder) holder).ranking
+                    .setText(String.format("%d", numberOfPhotos));
 
             //Load place photo from cache
             String path = context.getExternalCacheDir() + "/" + placeList.get(position).getID() + "photo.jpg";
@@ -166,7 +173,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         public TextView time;
         public TextView type;
         public ImageView image;
-        public TextView sortAttribute;
+        public TextView ranking;
         public View startMediaButton;
 
         private Context context;
@@ -180,7 +187,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             image = (ImageView) cardLayoutView.findViewById(R.id.placePhoto);
             time = (TextView) cardLayoutView.findViewById(R.id.card_time);
             type = (TextView) cardLayoutView.findViewById(R.id.card_type);
-            sortAttribute = (TextView) cardLayoutView.findViewById(R.id.placeSortAttribute);
+            ranking = (TextView) cardLayoutView.findViewById(R.id.placeRanking);
 
             CardView cardView = (CardView) cardLayoutView.findViewById(R.id.cardView);
             cardView.setPreventCornerOverlap(false);

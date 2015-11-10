@@ -4,8 +4,14 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.peekapps.peek.activities.LoginActivity"
-    android:background="@color/colorTertiary">
+    android:background="@color/loginBackground">
 
+    <com.flaviofaria.kenburnsview.KenBurnsView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/loginPhoto"
+        android:alpha="0.9"
+        android:scaleType="centerCrop"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -31,25 +37,26 @@
                             android:layout_gravity="center_vertical"
                             android:cropToPadding="false"
                             android:adjustViewBounds="true"
-                            android:visibility="invisible"/>
+                            android:visibility="visible"
+                            android:focusable="false" />
                         <ImageView
                             android:layout_width="200dp"
                             android:layout_height="match_parent"
                             android:id="@+id/loginTextLogo"
                             android:src="@drawable/peek_toolbar_logo"
-                            android:visibility="invisible"/>
+                            android:visibility="visible"/>
                 </LinearLayout>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/loginSlogan"
                     android:layout_below="@+id/loginHeaderLogo"
-                    android:textColor="#FFB74D"
+                    android:textColor="#fffb00"
                     android:text="Your world. Different eyes."
-                    android:textSize="20sp"
-                    android:visibility="invisible"
-                    android:layout_centerHorizontal="true"
-                    android:fontFamily="sans-serif-light"/>
+                    android:textSize="18sp"
+                    android:visibility="visible"
+                    android:fontFamily="sans-serif-light"
+                    android:layout_centerHorizontal="true"/>
         </RelativeLayout>
 
         <LinearLayout

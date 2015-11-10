@@ -1,14 +1,19 @@
 package com.peekapps.peek.place_api;
 
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.SystemClock;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
+import com.google.android.gms.location.places.PlaceLikelihood;
+import com.google.android.gms.location.places.PlaceLikelihoodBuffer;
 import com.peekapps.peek.database.PlaceDbHelper;
 
 import java.io.BufferedReader;
@@ -61,6 +66,15 @@ public class PlaceActions {
     }
 
     public void setMockLocation(Context context) {
+        if ( Build.VERSION.SDK_INT >= 23 &&
+                ContextCompat.checkSelfPermission(context,
+                        android.Manifest.permission.
+                                ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(context,
+                        android.Manifest.permission.
+                                ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ) {
+            return;
+        }
         LocationManager locationManager = (LocationManager) context.
                 getSystemService(Context.LOCATION_SERVICE);
         String gpsProvider = LocationManager.GPS_PROVIDER;
@@ -122,7 +136,11 @@ public class PlaceActions {
         Place pl = reqTask.fetchSinglePlace(url);
         if (pl != null) {
             if (pl.hasPhoto()) {
-                downloadPhoto(pl, context);
+                GooglePhotoFetchTask photoFetchTask = new GooglePhotoFetchTask();
+                Object[] toPass = new Object[3];
+                toPass[0] = context;
+                toPass[1] = pl;
+                photoFetchTask.execute(toPass);
             }
         }
         return pl;
@@ -137,6 +155,15 @@ public class PlaceActions {
     }
 
     public Location getLocation(Context context) {
+        if ( Build.VERSION.SDK_INT >= 23 &&
+                ContextCompat.checkSelfPermission(context,
+                        android.Manifest.permission.
+                                ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(context,
+                        android.Manifest.permission.
+                                ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ) {
+            return null;
+        }
         LocationManager locationManager = (LocationManager) context.
                 getSystemService(Context.LOCATION_SERVICE);
         currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
@@ -156,27 +183,53 @@ public class PlaceActions {
         placesList.add(getPlace("ChIJPTacEpBQwokRKwIlDXelxkA", context));
         placesList.add(getPlace("ChIJR_bK295bwokR8gM6QgEdmkY", context));
 
+        GooglePhotoFetchTask photoTask = new GooglePhotoFetchTask();
+        Object[] toPass = new Object[3];
+        toPass[0] = context;
+        toPass[2] = placesList;
+        photoTask.execute(toPass);
 
         for (Place pl : placesList) {
-            if (pl.hasPhoto()) {
-                //Create a Photo Request for the place, store in cache
-                downloadPhoto(pl, context);
-                /* Retrieve the 'last updated' time attribute (eg. 9 min ago)
-                 * Set and format the time of upload -RANDOMISED FOR TEST VERSION
-                 */
-                Random random = new Random();
-                int randomTime = random.nextInt(31);
-                pl.setTimeUpdated(randomTime);
-                //Calculate and set the distance to the place
-                int distance = distanceToPlace(context, pl);
-                pl.setDistance(distance);
-            }
+            //Create a Photo Request for the place, store in cache
+            /* Retrieve the 'last updated' time attribute (eg. 9 min ago)
+             * Set and format the time of upload -RANDOMISED FOR TEST VERSION
+             */
+            Random random = new Random();
+            int randomTime = random.nextInt(31);
+            pl.setMinutesAgoUpdated(randomTime);
+            //Calculate and set the distance to the place
+            int distance = distanceToPlace(context, pl);
+            pl.setDistance(distance);
+
+            int randomPopularity = random.nextInt(placesList.size());
+            pl.setNumberOfPhotos(randomPopularity);
         }
 
         updateDatabase(placesList, context);
 
         return placesList;
         }
+
+    public com.google.android.gms.location.places.Place getMostLikelyPlace(PlaceLikelihoodBuffer likelyPlaces) {
+        float highestLikelihood = 0;
+        com.google.android.gms.location.places.Place topPlace = null;
+        for (PlaceLikelihood placeLikelihood : likelyPlaces) {
+            float currentLikelihood = placeLikelihood.getLikelihood();
+            Log.i("PlaceLikelihood", String.format("Place '%s' has likelihood: %g",
+                    placeLikelihood.getPlace().getName(),
+                    placeLikelihood.getLikelihood()));
+            if (highestLikelihood == 0) {
+                highestLikelihood = placeLikelihood.getLikelihood();
+                topPlace = placeLikelihood.getPlace();
+            } else {
+                if (currentLikelihood > highestLikelihood) {
+                    highestLikelihood = currentLikelihood;
+                    topPlace = placeLikelihood.getPlace();
+                }
+            }
+        }
+        return topPlace;
+    }
 
     public String generateUrl(String placeID) {
         StringBuilder placesUrl = new StringBuilder(
@@ -206,50 +259,4 @@ public class PlaceActions {
             dbHelper.addPlace(place);
         }
     }
-
-
-    private void downloadPhoto(Place pl, Context context) {
-
-        try {
-            StringBuilder urlBuilder = new StringBuilder
-                    ("https://maps.googleapis.com/maps/api/place/photo?");
-            urlBuilder.append("maxwidth=3000");
-            urlBuilder.append("&maxheight=3000");
-            urlBuilder.append("&photoreference=" + pl.getPhoto().getPhotoRef());
-            urlBuilder.append("&key=" + API_KEY);
-
-            URL url = new URL(urlBuilder.toString());
-            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-            urlConnection.connect();
-            InputStream inputStream = urlConnection.getInputStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-            //Download bitmap
-            Bitmap photo = BitmapFactory.decodeStream(inputStream);
-            savePhoto(photo, pl.getID(), context);
-            reader.close();
-            inputStream.close();
-            urlConnection.disconnect();
-        }
-        catch (MalformedURLException e) {
-            Log.d("PhotoReq", "Malformed URL");
-        }
-        catch (IOException e) {
-            Log.d("PhotoReq", "IOException");
-        }
-    }
-
-    private void savePhoto(Bitmap bmp, String id, Context context) {
-        try {
-            File photoFile = new File(context.getExternalCacheDir() + "/" + id + "photo.jpg");
-            FileOutputStream outputStream = new FileOutputStream(photoFile);
-            bmp.compress(Bitmap.CompressFormat.JPEG, 50, outputStream);
-            outputStream.flush();
-            outputStream.close();
-        }
-        catch (IOException e) {
-            Log.d("PhotoReq", "IOException");
-        }
-    }
-
-
 }

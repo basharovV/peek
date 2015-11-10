@@ -6,6 +6,8 @@ import java.io.Serializable;
  * Created by Slav on 26/05/2015.
  */
 public class Place implements Serializable {
+
+
     private String ID;
     private String name;
     private String type;
@@ -14,6 +16,11 @@ public class Place implements Serializable {
     private double latitude;
     private double longitude;
     private int timeUpdated;
+
+
+
+    private int numberOfPhotos;
+    private int minutesAgoUpdated;
     private int distance;
     private PlacePhoto placePhoto;
 
@@ -90,6 +97,14 @@ public class Place implements Serializable {
         this.timeUpdated = timeUpdated;
     }
 
+    public int getMinutesAgoUpdated() {
+        return minutesAgoUpdated;
+    }
+
+    public void setMinutesAgoUpdated(int minutes) {
+        this.minutesAgoUpdated = minutes;
+    }
+
     public int getDistance() {
         return distance;
     }
@@ -98,10 +113,22 @@ public class Place implements Serializable {
         this.distance = distance;
     }
 
-    public PlacePhoto getPhoto() { return placePhoto; }
+    public PlacePhoto getPhoto() {
+        return placePhoto;
+    }
+
     public void setPhoto(PlacePhoto placePhoto) {
         this.placePhoto = placePhoto;
     }
+
+    public int getNumberOfPhotos() {
+        return numberOfPhotos;
+    }
+
+    public void setNumberOfPhotos(int numberOfPhotos) {
+        this.numberOfPhotos = numberOfPhotos;
+    }
+
     public boolean hasPhoto() {
         return placePhoto != null;
     }

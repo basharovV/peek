@@ -6,12 +6,25 @@
     <color name="pale_white">#FAFAFA</color>
     <color name="peek_orange">#CC4910</color>
     <color name="peek_orangeOLD">#D64E13</color>
+    
+    <color name="peek_orange_primary">#D84315</color>
+    <color name="peek_orange_primary_trans">#F2D84315</color>
+    <color name="peek_orange_secondary">#F7931E</color>
+    <color name="peek_orange_secondary_trans">#F2F7931E</color>
+    <color name="peek_yellow_primary">#F7C51E</color>
 
     <!--<color name="colorPrimary">#CC4910</color>-->
     <color name="colorPrimary">#D84315</color>
+    <color name="colorPrimaryTrans">#AAD84315</color>
     <color name="colorPrimaryDarkest">#8F350D</color>
     <color name="colorPrimaryDark">#B5410E</color>
     <color name="colorPrimaryLight">#FF8F7D</color>
+    <color name="logoColor">#FF5722</color>
+    <color name="logoColorTrans">#AAFF5722</color>
+
+    <color name="loginBackground">#d7201a</color>
+
+    <color name="toolbarWhiteTrans">#CCFFFFFF</color>
 
     <color name="colorSecondary">#325059</color>
     <color name="colorSecondaryDark">#092E39</color>
@@ -21,6 +34,7 @@
     <color name="colorSecondaryLight">#317B90</color>
     <color name="colorSecondaryLightTrans">#CC317B90</color>
 
+    <color name="toolbarBlue">#DD317B90</color>
     <color name="colorLight">#F4F4F4</color>
     <color name="colorTertiaryLight">#D3DCC6</color>
     <color name="colorTertiary">#D84315</color>

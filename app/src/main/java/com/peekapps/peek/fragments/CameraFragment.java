@@ -401,12 +401,13 @@ public class CameraFragment extends Fragment implements OnPermissionsListener{
     @Override
     public void onResume() {
         super.onResume();
-        if (Build.VERSION.SDK_INT >= 23 && !enabled) {
-            if (((PeekViewPager) getActivity()).allPermissionsGranted()) {
-                enableCamera();
-            }
+        if (mode == CAPTURE_MODE) {
+            if (Build.VERSION.SDK_INT >= 23 && !enabled) {
+                if (((PeekViewPager) getActivity()).allPermissionsGranted()) {
+                    enableCamera();
+                }
+            } else enableCamera();
         }
-        else enableCamera();
         enabled = true;
     }
 

@@ -33,7 +33,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.cocosw.bottomsheet.BottomSheet;
 import com.facebook.appevents.AppEventsLogger;
 import com.google.android.gms.maps.GoogleMap;
@@ -69,7 +68,7 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
 
     private ViewPager viewPager;
     private ScreenPagerAdapter viewPagerAdapter;
-    private int currentPosition;
+    private Object currentPosition;
 
     private LinearLayout toolbarGroup;
     private Toolbar toolbar;
@@ -84,7 +83,6 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
     private List<HashMap<String, String>> placesList;
     private GoogleMap googleMap;
 
-    private MaterialDialog progressDialog;
     private LocationManager locationManager;
 
     //Use superclass constructor
@@ -183,9 +181,6 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
         FragmentManager fragmentManager = getSupportFragmentManager();
         viewPagerAdapter = new ScreenPagerAdapter(fragmentManager);
         viewPager.setAdapter(viewPagerAdapter);
-
-        viewPager.setCurrentItem(1);
-        viewPager.setOffscreenPageLimit(2);
     }
 
     private void setUpUI() {
@@ -247,12 +242,12 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
 
     @Override
     public void onPlacesFetched(PlacesFetchedEvent e) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                new DisplayMarkersTask(PeekViewPager.this, googleMap).run();
-            }
-        });
+//        runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                new DisplayMarkersTask(PeekViewPager.this, googleMap).run();
+//            }
+//        });
     }
 
     @Override
@@ -505,14 +500,20 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        currentPosition = savedInstanceState.getInt("fragmentIndex");
+        currentPosition = savedInstanceState.get("fragmentIndex");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         AppEventsLogger.activateApp(this);
-        viewPager.setAdapter(viewPagerAdapter);
+        if (currentPosition != null) {
+            viewPager.setCurrentItem((int) currentPosition);
+        }
+        else {
+            viewPager.setCurrentItem(1);
+            viewPager.setOffscreenPageLimit(2);
+        }
     }
 
     @Override

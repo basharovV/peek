@@ -43,6 +43,14 @@
                 android:scaleType="fitCenter"
                 style="@style/SortingIcons"/>
 
+            <com.peekapps.peek.views.SortButtonView
+                android:layout_width="60dp"
+                android:layout_height="match_parent"
+                android:id="@+id/friendsSortButton"
+                android:src="@drawable/ic_friends_icon"
+                android:scaleType="fitCenter"
+                style="@style/SortingIcons"/>
+
         </LinearLayout>
             <ImageView
                 android:layout_width="10dp"

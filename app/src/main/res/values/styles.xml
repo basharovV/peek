@@ -21,7 +21,14 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorPrimary</item>
+        <item name="android:windowTranslucentNavigation">false</item>
         <item name="android:windowTranslucentStatus">true</item>
+    </style>
+
+    <style name="AppTheme.NoTranslucent" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorPrimary</item>
     </style>
 
     <style name="DropDownListViewStyle" parent="@style/Widget.AppCompat.ListView.DropDown">
@@ -120,12 +127,29 @@
         <item name="android:progressDrawable">@drawable/ic_ratingdrawable</item>
     </style>
 
+    <style name="PeekCount">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="PlProfileUserSelector">
+        <item name="android:layout_marginLeft">10dp</item>
+        <item name="android:layout_marginRight">10dp</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/colorMaterialLightGrey</item>
+        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
+    </style>
+
     <style name="SortingIcons">
         <item name="android:layout_gravity">center_vertical</item>
         <item name="android:paddingLeft">10dp</item>
         <item name="android:paddingRight">10dp</item>
-        <item name="android:layout_marginRight">20dp</item>
-        <item name="android:layout_marginLeft">20dp</item>
+        <item name="android:layout_marginRight">10dp</item>
+        <item name="android:layout_marginLeft">10dp</item>
         <item name="android:background">@android:color/transparent</item>
         <item name="android:layout_marginTop">10dp</item>
         <item name="android:layout_marginBottom">10dp</item>
@@ -141,6 +165,7 @@
 
     <style name="HeaderTitleStyle" parent="android:TextAppearance">
         <item name="android:textSize">22sp</item>
+
 
     </style>
 

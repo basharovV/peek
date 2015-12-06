@@ -18,6 +18,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageButton;
@@ -53,7 +54,7 @@ public class FeedFragment extends Fragment implements GoogleApiClient.OnConnecti
 
     private RecyclerView recyclerView;
     private CardAdapter cardAdapter;
-    private RecyclerView.LayoutManager layoutManager;
+    private LinearLayoutManager layoutManager;
 
     private SwipeRefreshLayout refreshLayout;
     private RefreshListener refreshListener;
@@ -63,7 +64,7 @@ public class FeedFragment extends Fragment implements GoogleApiClient.OnConnecti
     public static final int POSITION_SORT_BAR = 0;
     public static final int POSITION_SEARCH_BAR = 1;
 
-    private LinearLayout optionsBarHolder;
+    LinearLayout optionsBarHolder;
     private FragmentManager fragmentManager;
     private ViewPager optionsBar;
     private ImageButton search;
@@ -98,7 +99,7 @@ public class FeedFragment extends Fragment implements GoogleApiClient.OnConnecti
         WindowManager windowManager = (WindowManager) getActivity().getSystemService(Context.WINDOW_SERVICE);
         Point size = new Point();
         windowManager.getDefaultDisplay().getSize(size);
-        refreshLayout.setProgressViewOffset(false, size.y / 9, size.y / 6);
+        refreshLayout.setProgressViewOffset(false, size.y / 9, size.y / 5);
 
 
         //Set up options bar
@@ -162,12 +163,27 @@ public class FeedFragment extends Fragment implements GoogleApiClient.OnConnecti
         }
 
 
-
     private class ScrollListener extends RecyclerView.OnScrollListener {
         @Override
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
             super.onScrollStateChanged(recyclerView, newState);
-
+            if (Build.VERSION.SDK_INT >= 21) {
+//                if (layoutManager.findFirstCompletelyVisibleItemPosition() == 0) {
+//                    Window window = getActivity().getWindow();
+//                    // clear FLAG_TRANSLUCENT_STATUS flag:
+//                    window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+//                    // add
+//                    window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+//                    // finally change the color
+//                    window.setStatusBarColor(getActivity().getResources().getColor(R.color.colorPrimaryDark));
+//                } else {
+//                    Window window = getActivity().getWindow();
+//                    // clear FLAG_TRANSLUCENT_STATUS flag:
+//                    window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+//                    // add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
+//                    window.clearFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+//                }
+            }
         }
 
         @Override

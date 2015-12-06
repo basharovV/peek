@@ -49,6 +49,17 @@
         <item name="android:gravity">center</item>
     </style>
 
+    <style name="AreaSelectorToolbarText">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:shadowColor">@android:color/background_dark</item>
+        <item name="android:shadowRadius">4</item>
+    </style>
+
+    <style name="AreaSelectorToolbarCenterText" parent="AreaSelectorToolbarText">
+        <item name="android:textSize">22sp</item>
+    </style>
+
     <!-- Overflow drop down style -->
     <style name="AppTheme.ActionBar.Popup" parent="Widget.AppCompat.Light.PopupMenu.Overflow">
         <item name="android:background">@color/peek_orange</item>

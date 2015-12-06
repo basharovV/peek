@@ -42,7 +42,7 @@
                                     android:id="@+id/plProfilePhoto"
                                     android:scaleType="centerCrop"
                                     app:layout_collapseMode="parallax"
-                                    android:src="@color/peek_orange_primary"/>
+                                    android:src="@drawable/bg_window"/>
 
                                 <View
                                     android:layout_width="match_parent"

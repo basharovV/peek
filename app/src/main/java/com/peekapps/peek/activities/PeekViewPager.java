@@ -39,6 +39,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.peekapps.peek.DisplayMarkersTask;
 import com.peekapps.peek.PermissionActions;
+import com.peekapps.peek.adapters.TextFocusPagerAdapter;
 import com.peekapps.peek.fragments_utils.OnPermissionsListener;
 import com.peekapps.peek.place_api.PlaceActions;
 import com.peekapps.peek.place_api.PlacesFetchedEvent;
@@ -48,6 +49,8 @@ import com.peekapps.peek.fragments.FeedFragment;
 import com.peekapps.peek.fragments.MapFragment;
 import com.peekapps.peek.R;
 import com.peekapps.peek.place_api.PlacesTask;
+import com.peekapps.peek.views.OnAreaSelectorReadyListener;
+import com.peekapps.peek.views.TextFocusViewPager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -60,7 +63,8 @@ import java.util.Map;
  * Created by Slav on 25/05/2015.
  */
 
-public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallback, PlacesListener, LocationListener{
+public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallback, PlacesListener,
+        LocationListener, OnAreaSelectorReadyListener {
 
     private View decorView;
 
@@ -72,6 +76,8 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
 
     private LinearLayout toolbarGroup;
     private Toolbar toolbar;
+    private TextFocusViewPager areaSelectorPager;
+    private TextFocusPagerAdapter areaSelectorAdapter;
     private ImageButton createEventButton;
     private ImageView overflowButton;
 
@@ -219,6 +225,14 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
             });
         }
 
+        //Area selector view pager setup
+        areaSelectorPager = (TextFocusViewPager) findViewById(R.id.areaSelectorViewPager);
+        areaSelectorAdapter = new TextFocusPagerAdapter(getSupportFragmentManager());
+        areaSelectorAdapter.setOnReadyListener(this);
+        areaSelectorPager.setAdapter(areaSelectorAdapter);
+
+
+
         overflowButton = (ImageView) findViewById(R.id.overflowButton);
         overflowButton.setOnClickListener(new OverflowClickListener());
 //
@@ -227,6 +241,14 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
 
     }
 
+    @Override
+    public void onSelectorReady() {
+        //Set text (testing)
+        areaSelectorAdapter.setFragmentText(0, "World");
+        areaSelectorAdapter.setFragmentText(1, "NY");
+        areaSelectorAdapter.setFragmentText(2, "New York");
+        areaSelectorAdapter.setFragmentText(3, "My area");
+    }
 
     private class OverflowClickListener implements View.OnClickListener {
         @Override
@@ -242,12 +264,12 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
 
     @Override
     public void onPlacesFetched(PlacesFetchedEvent e) {
-//        runOnUiThread(new Runnable() {
-//            @Override
-//            public void run() {
-//                new DisplayMarkersTask(PeekViewPager.this, googleMap).run();
-//            }
-//        });
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                new DisplayMarkersTask(PeekViewPager.this, googleMap).run();
+            }
+        });
     }
 
     @Override
@@ -282,15 +304,9 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
 
     @Override
     public void onLocationChanged(Location location) {
-//        progressDialog.setTitle(R.string.load_dialog_done);
-//        progressDialog.setContent(R.string.load_dialog_done_content);
-//        progressDialog.cancel();
-
         PlacesTask placesTask = new PlacesTask();
         placesTask.attachListener(this);
         placesTask.execute();
-
-//        ((MapFragment) fragments[0]).updateLocation(location);
         stopLocationListening();
     }
 
@@ -303,6 +319,7 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
             e.printStackTrace();
         }
     }
+
     /**
      * Listener for user scrolling the ViewPager - animate toolbar accordingly
      *  If current fragment is 'Camera', animate toolbar 'in'
@@ -312,23 +329,14 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
     public class ScrollListener implements OnPageChangeListener {
         //Hold the height to change the y-offset on user scroll
         private int toolbarHeight;
-        private int viewPagerHeight;
-
-        /**
-         * Scroll direction:
-         * 0 - left | 1 - stationary |2 - right
-         */
         private float previousOffset = 2;
-        private int scrollDir = 0;
         private int currentPage = 0;
 
         public ScrollListener() {
             super();
             toolbar.measure(ActionBar.LayoutParams.WRAP_CONTENT, ActionBar.LayoutParams.WRAP_CONTENT);
             toolbarHeight = toolbarGroup.getHeight();
-            viewPagerHeight = viewPager.getHeight();
         }
-
 
         @Override
         public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -379,28 +387,28 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
                     }
                     break;
             }
-//            Log.d("ViewPager", "Alpha = " + toolbarGroup.getAlpha()
-//                    + " | Offset =" + positionOffset + " | Position = " + position
-//                    + " | Current page = " + currentPage);
-
         }
 
+        //Handle status bar here (when page is selected, scroll not finished)
         public void onPageSelected(int position) {
             currentPage = position;
             switch (position) {
                 case 0:
-//                    toolbarGroup.setAlpha(0x1);
+                    decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
                     break;
                 case 1:
+                    decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
                     toolbarGroup.setAlpha(0x0);
                     break;
                 case 2:
+                    decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
                     toolbarGroup.setAlpha(0x1);
                     break;
             }
         }
 
 
+        //Handle camera preview here (after scroll has stopped)
         public void onPageScrollStateChanged(int state) {
             if (state == ViewPager.SCROLL_STATE_DRAGGING) {
                 currentPage = viewPager.getCurrentItem();
@@ -412,19 +420,12 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
                         if (fragments[1] != null) {
                             ((CameraFragment) fragments[1]).stop();
                         }
-                        //Show the status bar
-                        decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
-
-//                        toolbarGroup.setTranslationY(0);
-//                        toolbarGroup.setAlpha(0x1);
                         break;
                     case 1:
                         //Start the camera preview
                         if (fragments[1] != null) {
                             ((CameraFragment) fragments[1]).start();
                         }
-                        decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
-
                         toolbarGroup.setAlpha(0x0);
                         break;
                     case 2:
@@ -432,8 +433,6 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
                         if (fragments[1] != null) {
                             ((CameraFragment) fragments[1]).stop();
                         }
-                        decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
-
                         toolbarGroup.setTranslationY(0);
                         toolbarGroup.setAlpha(0x1);
                         break;
@@ -449,6 +448,10 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
             super(fm);
         }
 
+        @Override
+        public void destroyItem(ViewGroup container, int position, Object object) {
+            super.destroyItem(container, position, object);
+        }
 
         @Override
         public Fragment getItem(int position) {

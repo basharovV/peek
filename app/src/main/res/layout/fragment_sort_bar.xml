@@ -4,7 +4,7 @@
     android:layout_height="50dp"
     android:orientation="horizontal"
     android:id="@+id/optionsBar"
-    android:background="@color/peek_orange_secondary_trans">
+    android:background="@color/peek_white_trans">
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">

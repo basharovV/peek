@@ -78,5 +78,6 @@ dependencies {
     compile 'com.marshalchen.ultimaterecyclerview:library:0.3.17'
     compile 'com.facebook.rebound:rebound:0.3.8'
     compile 'com.android.support:percent:23.1.1'
+    compile 'com.sothree.slidinguppanel:library:3.2.0'
 }
 

@@ -20,12 +20,10 @@ public class SortButtonView extends ImageView implements View.OnTouchListener {
 
     public SortButtonView(Context context) {
         super(context);
-        this.setOnClickListener(new SortButtonClickListener());
     }
 
     public SortButtonView(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
-        this.setOnClickListener(new SortButtonClickListener());
     }
 
     @Override
@@ -45,21 +43,5 @@ public class SortButtonView extends ImageView implements View.OnTouchListener {
 
     public void setAction(int action) {
         this.action = action;
-    }
-
-    public void setSortListener(OnChangeSortListener listener) {
-        this.listener = listener;
-    }
-
-
-    public class SortButtonClickListener implements View.OnClickListener {
-
-        public SortButtonClickListener() {
-        }
-        @Override
-        public void onClick(View v) {
-            Log.d("SortButton", "CLICKED!!");
-            listener.onRequestFeedSort(action);
-        }
     }
 }

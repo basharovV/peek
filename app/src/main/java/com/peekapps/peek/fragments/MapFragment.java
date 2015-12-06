@@ -22,11 +22,13 @@ import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.peekapps.peek.activities.PeekViewPager;
 import com.peekapps.peek.fragments_utils.OnPermissionsListener;
 import com.peekapps.peek.place_api.PlaceActions;
 import com.peekapps.peek.place_api.PlacesListener;
 import com.peekapps.peek.R;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.util.HashMap;
 import java.util.List;
@@ -37,16 +39,19 @@ public class MapFragment extends Fragment implements OnPermissionsListener {
     //Implement a observer/listeners
     private CopyOnWriteArrayList<PlacesListener> placesListeners;
 
+
+    //------Views
+    //Sliding panel layout
+    private SlidingUpPanelLayout mapSlidingPanel;
     private MapView mapView;
     private GoogleMap googleMap;
-    private Toolbar toolbar;
-    private SearchView searchView;
-    private List<HashMap<String, String>> placesList;
+
+    private Location currentLocation;
+
 
     private int RADIUS = 6000;
     double latitude = 40.7127; //NYC coordinates
     double longitude = -74.0059;
-    private Location currentLocation;
 //    double latitude = 36.5167; //Marbella coordinates
 //    double longitude = -4.8833;
 
@@ -77,13 +82,16 @@ public class MapFragment extends Fragment implements OnPermissionsListener {
     savedInstanceState) {
         View rootView = (ViewGroup) inflater.inflate(R.layout.fragment_map, container, false);
 
+        //Find views
+        mapSlidingPanel = (SlidingUpPanelLayout) rootView.findViewById(R.id.mapFragment);
         mapView = (MapView) rootView.findViewById(R.id.mapView);
+
         mapView.onCreate(savedInstanceState);
         mapView.onResume();
         mapView.getMapAsync((OnMapReadyCallback) getActivity());
-        googleMap = mapView.getMap();
-        //Set up listeners
-        this.placesListeners = new CopyOnWriteArrayList<PlacesListener>();
+
+        setupMap();
+        setupSlidingPanel();
 
         if (Build.VERSION.SDK_INT >= 23) {
             if (((PeekViewPager) getActivity()).allPermissionsGranted()) {
@@ -95,16 +103,28 @@ public class MapFragment extends Fragment implements OnPermissionsListener {
         return rootView;
     }
 
+    private void setupMap() {
+        googleMap = mapView.getMap();
+    }
+
+    private void setupSlidingPanel() {
+        //Init
+        mapSlidingPanel.setEnabled(false);
+    }
+
+    public class OnPlaceSelectedListener implements GoogleMap.OnMarkerClickListener {
+        @Override
+        public boolean onMarkerClick(Marker marker) {
+            return false;
+        }
+    }
+
     public void enableLocation() {
         currentLocation = PlaceActions.getInstance().getLocation(getActivity());
         CameraPosition camPosition = new CameraPosition.Builder().target(new LatLng(currentLocation.getLatitude(),
                 currentLocation.getLongitude()))
                 .zoom(5).build();
         googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(camPosition));
-    }
-
-    public List<HashMap<String, String>> getPlacesList() {
-        return placesList;
     }
 
     public void updateLocation(Location location) {

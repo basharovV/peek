@@ -16,6 +16,7 @@ import com.peekapps.peek.R;
 public class TextFocusFragment extends Fragment {
 
     private TextView item;
+    private String areaText = "";
 
     @Nullable
     @Override
@@ -23,12 +24,18 @@ public class TextFocusFragment extends Fragment {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_text_focus, container, false);
 
         item = (TextView) rootView.findViewById(R.id.textFocusItem);
+        item.setText(areaText);
 
         return rootView;
     }
 
     public void setText(String text) {
-        item.setText(text);
+        if (item == null) {
+            areaText = text;
+        }
+        else {
+            item.setText(text);
+        }
     }
 
     public void setTextSize(float size) {

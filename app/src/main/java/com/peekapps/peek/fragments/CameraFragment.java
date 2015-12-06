@@ -169,13 +169,13 @@ public class CameraFragment extends Fragment implements OnPermissionsListener{
     private TextView confirmButton;
     private ImageButton placePickerButton;
     private ImageButton closeButton;
-    private LinearLayout popup;
+    LinearLayout popup;
     private TextView placeName;
     private TextView changeLocationButton;
     private ProgressBar locationProgress;
     private EditText captionView;
 
-    private boolean popupIsShown = false;
+    boolean popupIsShown = false;
 
     //Place stuff
     private GoogleApiClient apiClient;

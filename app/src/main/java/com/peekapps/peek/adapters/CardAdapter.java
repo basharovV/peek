@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.peekapps.peek.R;
 import com.peekapps.peek.activities.PlaceProfile;
 import com.peekapps.peek.place_api.Place;
@@ -131,11 +132,11 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             String path = context.getExternalCacheDir() + "/" + placeList.get(position).getID() + "photo.jpg";
             File photo = new File(path);
             if (photo.exists()) {
-                Picasso.with(context)
+                Glide.with(context)
                         .load(photo)
-                        .fit()
                         .centerCrop()
                         .into(((ViewHolder) holder).image);
+
 //                ImageLoader loader = ImageLoader.getInstance();
 //                DisplayImageOptions options = new DisplayImageOptions.Builder()
 //                        .cacheOnDisk(true)

@@ -13,6 +13,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.flaviofaria.kenburnsview.KenBurnsView;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
@@ -54,7 +55,7 @@ public class PlaceProfile extends AppCompatActivity {
     private TextView nameView;
     private TextView vicinityView;
     private TextView typeView;
-    private ImageView photoView;
+    private KenBurnsView photoView;
 
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
@@ -89,7 +90,7 @@ public class PlaceProfile extends AppCompatActivity {
         nameView = (TextView) findViewById(R.id.plProfileName);
         vicinityView = (TextView) findViewById(R.id.plProfileVic);
         typeView = (TextView) findViewById(R.id.plProfileType);
-        photoView = (ImageView) findViewById(R.id.plProfilePhoto);
+        photoView = (KenBurnsView) findViewById(R.id.plProfilePhoto);
 
         setUpButtons();
 

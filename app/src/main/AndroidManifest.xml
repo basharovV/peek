@@ -31,7 +31,7 @@
 
     <!-- Creating permission to use the Places API -->
     <application
-        android:name="android.support.multidex.MultiDexApplication"
+        android:name=".PeekApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -69,12 +69,14 @@
         <activity
             android:name=".activities.LoginActivity"
             android:windowSoftInputMode="adjustResize|stateHidden"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:launchMode="singleInstance">
         </activity>
 
         <activity android:name=".activities.PeekViewPager"
             android:windowSoftInputMode="adjustPan"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:launchMode="singleInstance"/>
 
         <activity android:name=".activities.SettingsActivity" />
         <activity android:name=".activities.ProfileActivity" />
@@ -83,7 +85,8 @@
             android:label="@string/title_activity_create_event" />
         <activity
             android:name=".activities.PlaceProfile"
-            android:label="Place Profile" />
+            android:label="Place Profile"
+            android:launchMode="singleTop"/>
         <activity android:name=".activities.MediaPublisher" />
 
         <meta-data
@@ -92,6 +95,9 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyC8z0CVSAYqKGkxE6afqHpq98iZT59qIsM" />
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="de4a10087bb51dd327f279044ca67eb447471c2d" />
     </application>
 
 </manifest>

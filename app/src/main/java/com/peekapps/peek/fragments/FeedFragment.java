@@ -274,5 +274,10 @@ public class FeedFragment extends Fragment implements GoogleApiClient.OnConnecti
         super.onSaveInstanceState(outState);
 
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
 }
 

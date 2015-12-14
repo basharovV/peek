@@ -39,20 +39,20 @@ public class DisplayMarkersTask implements Runnable{
 
         //Initialise the adapter for displaying a marker info window.
         //Set marker map for associating marker objects to place objects.
-        PlaceInfoWindowAdapter infoWindowAdapter = new PlaceInfoWindowAdapter(context);
-        infoWindowAdapter.setMarkerMap(markerMap);
-        googleMap.setInfoWindowAdapter(infoWindowAdapter);
-
-        //When clicked, display the correct place profile.
-        googleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
-            @Override
-            public void onInfoWindowClick(Marker marker) {
-                Place pl = markerMap.get(marker);
-                Intent profileIntent = new Intent(context, PlaceProfile.class);
-                profileIntent.putExtra("place_object", pl);
-                context.startActivity(profileIntent);
-            }
-        });
+//        PlaceInfoWindowAdapter infoWindowAdapter = new PlaceInfoWindowAdapter(context);
+//        infoWindowAdapter.setMarkerMap(markerMap);
+//        googleMap.setInfoWindowAdapter(infoWindowAdapter);
+//
+//        //When clicked, display the correct place profile.
+//        googleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+//            @Override
+//            public void onInfoWindowClick(Marker marker) {
+//                Place pl = markerMap.get(marker);
+//                Intent profileIntent = new Intent(context, PlaceProfile.class);
+//                profileIntent.putExtra("place_object", pl);
+//                context.startActivity(profileIntent);
+//            }
+//        });
     }
 
     @Override

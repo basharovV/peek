@@ -4,10 +4,12 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.SparseArray;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -51,10 +53,14 @@ public class PlaceProfile extends AppCompatActivity {
     private TextView myUploadsButton;
     private TextView friendsButton;
 
+    private SparseArray<TextView> contentModeButtons;
+    private ContentModeChangeListener clickListener;
+
     //Header info
     private TextView nameView;
     private TextView vicinityView;
     private TextView typeView;
+    private ImageView uploadCountView;
     private KenBurnsView photoView;
 
     private RecyclerView recyclerView;
@@ -68,6 +74,14 @@ public class PlaceProfile extends AppCompatActivity {
     private String placeVicinity;
     private String placeType;
     private String placePhoto;
+
+    private static final int CONTENT_MODE_MY_UPLOADS = 3;
+    private static final int CONTENT_MODE_WORLD = 4;
+    private static final int CONTENT_MODE_FRIENDS = 5;
+
+    private int contentMode = CONTENT_MODE_WORLD;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,7 +105,10 @@ public class PlaceProfile extends AppCompatActivity {
         vicinityView = (TextView) findViewById(R.id.plProfileVic);
         typeView = (TextView) findViewById(R.id.plProfileType);
         photoView = (KenBurnsView) findViewById(R.id.plProfilePhoto);
+        uploadCountView = (ImageView) findViewById(R.id.uploadCountIcon);
 
+        contentModeButtons = new SparseArray<>();
+        setUpUI();
         setUpButtons();
 
         setSupportActionBar(toolbar);
@@ -109,16 +126,49 @@ public class PlaceProfile extends AppCompatActivity {
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onBackPressed();
+                finish();
             }
         });
         populateUI();
     }
 
+    private void setUpUI() {
+        uploadCountView.setColorFilter(ContextCompat.getColor(this, R.color.peek_orange_logo));
+    }
     private void setUpButtons() {
         OnTimeFilterClickListener timeFilterClickListener = new OnTimeFilterClickListener();
         todayButton.setOnClickListener(timeFilterClickListener);
         weekButton.setOnClickListener(timeFilterClickListener);
+
+        myUploadsButton = (TextView) findViewById(R.id.plProfileMyUploads);
+        worldButton = (TextView) findViewById(R.id.plProfileWorld);
+        friendsButton = (TextView) findViewById(R.id.plProfileFriends);
+
+        contentModeButtons.put(0, myUploadsButton);
+        contentModeButtons.put(1, worldButton);
+        contentModeButtons.put(2, friendsButton);
+
+        clickListener = new ContentModeChangeListener();
+
+        for (int i = 0; i < contentModeButtons.size(); i++) {
+            contentModeButtons.get(i).setOnClickListener(clickListener);
+        }
+
+        myUploadsButton.setTextColor(getResources().getColor(R.color.peek_inactive));
+        worldButton.setTextColor(getResources().getColor(R.color.peek_orange));
+        friendsButton.setTextColor(getResources().getColor(R.color.peek_inactive));
+
+    }
+
+    public class ContentModeChangeListener implements View.OnClickListener {
+
+        public void onClick(View v) {
+            ((TextView) v).setTextColor(getResources().getColor(R.color.peek_orange));
+            for (int i = 0; i < contentModeButtons.size(); i++) {
+                contentModeButtons.get(i).setTextColor(getResources().getColor(R.color.peek_inactive));
+            }
+            ((TextView) v).setTextColor(getResources().getColor(R.color.peek_orange));
+        }
     }
 
     private void populateUI() {

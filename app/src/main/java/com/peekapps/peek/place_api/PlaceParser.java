@@ -59,6 +59,7 @@ public class PlaceParser {
     public Place getPlace(JSONObject placeObj) {
         Place pl = new Place();
 
+        if (placeObj == null) return null;
         try {
             pl.setID(placeObj.getString("place_id"));
             if (!placeObj.isNull("name")) {

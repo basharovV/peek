@@ -22,6 +22,8 @@ public class PlacesTask extends AsyncTask<Void, Void, Void> {
         if (placesList != null) {
             notifyListener();
         }
+        placesListener = null;
+        placesList = null;
         return null;
     }
 
@@ -32,6 +34,7 @@ public class PlacesTask extends AsyncTask<Void, Void, Void> {
     private void notifyListener() {
         PlacesFetchedEvent event = new PlacesFetchedEvent(this);
         placesListener.onPlacesFetched(event);
+
     }
 
 }

@@ -16,8 +16,11 @@
     <color name="peek_orange_secondary_trans2">#f2f57f17</color>
     <color name="peek_yellow_primary">#f7b61e</color>
     <color name="peek_yellow_primary2">#f2f7a71e</color>
+    <color name="peek_white">#ffffff</color>
     <color name="peek_white_trans">#f2FFFFFF</color>
     <color name="peek_inactive">#d4d4d4</color>
+    <color name="peek_orange_logo">#FF5722</color>
+
 
     <!--<color name="colorPrimary">#CC4910</color>-->
     <color name="colorPrimary">#D84315</color>

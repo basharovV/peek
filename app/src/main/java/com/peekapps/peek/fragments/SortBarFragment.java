@@ -22,8 +22,6 @@ import java.util.ArrayList;
  */
 public class SortBarFragment extends Fragment {
 
-    private Context context;
-
     private static final int NUMBER_OF_BUTTONS = 4;
 
     int mode = FeedFragment.FEED_TYPE_POPULARITY; //Default mode

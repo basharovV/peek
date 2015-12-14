@@ -2,6 +2,7 @@ package com.peekapps.peek.activities;
 
 import android.Manifest;
 import android.app.ActionBar;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,6 +12,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
+import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -24,6 +26,7 @@ import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -40,6 +43,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.peekapps.peek.DisplayMarkersTask;
 import com.peekapps.peek.PermissionActions;
 import com.peekapps.peek.adapters.TextFocusPagerAdapter;
+import com.peekapps.peek.fragments.TextFocusFragment;
 import com.peekapps.peek.fragments_utils.OnPermissionsListener;
 import com.peekapps.peek.place_api.PlaceActions;
 import com.peekapps.peek.place_api.PlacesFetchedEvent;
@@ -68,26 +72,27 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
 
     private View decorView;
 
+    //Startup, waiting for location dialog
+    private ProgressDialog startDialog;
+    //Flag to indicate all permissions granted (for Android 6.0+)
     boolean allGranted = false;
 
+    //Pager attributes
     private ViewPager viewPager;
     private ScreenPagerAdapter viewPagerAdapter;
     private Object currentPosition;
 
+    private static final int N_OF_FRAGMENTS = 3;
+    SparseArray<Fragment> registeredFragments = new SparseArray<Fragment>(N_OF_FRAGMENTS);
+
+
+    //Toolbar attributes
     private LinearLayout toolbarGroup;
     private Toolbar toolbar;
     private TextFocusViewPager areaSelectorPager;
     private TextFocusPagerAdapter areaSelectorAdapter;
-    private ImageButton createEventButton;
+    private ImageButton createEventButton;  //Not for current release
     private ImageView overflowButton;
-
-    private BottomSheet bottomSheet;
-
-    private Fragment[] fragments;
-    private static final int N_OF_FRAGMENTS = 3;
-
-    private List<HashMap<String, String>> placesList;
-    private GoogleMap googleMap;
 
     private LocationManager locationManager;
 
@@ -102,6 +107,7 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
         setContentView(R.layout.activity_pager);
 
         startBasic();
+        showDialog();
 
         if (Build.VERSION.SDK_INT >= 23) {
             final ArrayList<String> missingPermissions = PermissionActions.getMissingPermissions(this);
@@ -129,6 +135,7 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
         else    startLocationWithPermission();
     }
 
+
     public boolean allPermissionsGranted() {
         return allGranted;
     }
@@ -142,12 +149,44 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         try {
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+            PlaceActions.getInstance().setMockLocation(this);
         }
         catch (SecurityException e) {
             Log.d("PeekViewPager" , "security exception");
+
             e.printStackTrace();
         }
-        PlaceActions.getInstance().setMockLocation(this); //Demo only - set location to Times Square
+         //Demo only - set location to Times Square
+    }
+
+    private void showDialog() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                startDialog = new ProgressDialog(PeekViewPager.this, ProgressDialog.STYLE_SPINNER);
+                startDialog.setMessage("Waiting for location...");
+                startDialog.setTitle("One moment");
+                startDialog.show();
+            }
+        });
+    }
+
+    private void hideDialog() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                startDialog.setTitle("Ready");
+                startDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.ic_done));
+                //Wait 1 sec before hiding dialog
+                Handler hideDialogHandler = new Handler();
+                hideDialogHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        startDialog.hide();
+                    }
+                }, 1000);
+            }
+        });
     }
 
     @Override
@@ -162,14 +201,17 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
                 }
                 else grantedCount++;
             }
-        if (grantedCount == grantResults.length) notifyPermissionListeners();
+        if (grantedCount == grantResults.length) {
+            startLocationWithPermission();
+            notifyPermissionListeners();
+        }
     }
 
     private void notifyPermissionListeners() {
         try {
-            ((MapFragment) fragments[0]).onPermissionsGranted();
-            ((FeedFragment) fragments[2]).onPermissionsGranted();
-            ((CameraFragment) fragments[1]).onPermissionsGranted();
+            ((MapFragment) registeredFragments.get(0)).onPermissionsGranted();
+            ((FeedFragment) registeredFragments.get(1)).onPermissionsGranted();
+            ((CameraFragment) registeredFragments.get(2)).onPermissionsGranted();
         }
         catch (NullPointerException e) {
             Log.d("PeekViewPager", "Null fragment");
@@ -182,7 +224,6 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
         //Initialise the pager and pager adapter
         viewPager = (ViewPager) findViewById(R.id.pager);
         //Empty list of fragments to begin with
-        fragments = new Fragment[N_OF_FRAGMENTS];
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         viewPagerAdapter = new ScreenPagerAdapter(fragmentManager);
@@ -264,23 +305,29 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
 
     @Override
     public void onPlacesFetched(PlacesFetchedEvent e) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                new DisplayMarkersTask(PeekViewPager.this, googleMap).run();
-            }
-        });
+        hideDialog();
+        if (!(getMapFragment().hasMarkers())) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    getMapFragment().setPlacesList();
+                    getMapFragment().displayAllMarkers();
+                }
+            });
+        }
     }
 
     @Override
     public void onMapReady(GoogleMap map) {
-        this.googleMap = map;
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                new DisplayMarkersTask(PeekViewPager.this, googleMap).run();
-            }
-        });
+        if (!(getMapFragment().hasMarkers())) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    getMapFragment().setPlacesList();
+                    getMapFragment().displayAllMarkers();
+                }
+            });
+        }
     }
 
 
@@ -392,9 +439,10 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
         //Handle status bar here (when page is selected, scroll not finished)
         public void onPageSelected(int position) {
             currentPage = position;
+            currentPosition = position;
             switch (position) {
                 case 0:
-                    decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+                    decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
                     break;
                 case 1:
                     decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
@@ -417,21 +465,21 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
                 switch (currentPage) {
                     case 0:
                         //Stop the camera preview
-                        if (fragments[1] != null) {
-                            ((CameraFragment) fragments[1]).stop();
+                        if (getCameraFragment() != null) {
+                            (getCameraFragment()).stop();
                         }
                         break;
                     case 1:
                         //Start the camera preview
-                        if (fragments[1] != null) {
-                            ((CameraFragment) fragments[1]).start();
+                        if (getCameraFragment() != null) {
+                            ((CameraFragment) getCameraFragment()).start();
                         }
                         toolbarGroup.setAlpha(0x0);
                         break;
                     case 2:
                         //Stop the camera preview
-                        if (fragments[1] != null) {
-                            ((CameraFragment) fragments[1]).stop();
+                        if (getCameraFragment() != null) {
+                            ((CameraFragment) getCameraFragment()).stop();
                         }
                         toolbarGroup.setTranslationY(0);
                         toolbarGroup.setAlpha(0x1);
@@ -449,29 +497,30 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
         }
 
         @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+            Fragment fragment = (Fragment) super.instantiateItem(container, position);
+            registeredFragments.put(position, fragment);
+            return fragment;
+        }
+
+        @Override
         public void destroyItem(ViewGroup container, int position, Object object) {
             super.destroyItem(container, position, object);
+            registeredFragments.remove(position);
         }
+
 
         @Override
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    fragments[0] = new MapFragment();
-                    return fragments[0];
+                    return new MapFragment();
                 case 1:
-                    fragments[1] = new CameraFragment();
-                    return fragments[1];
+                    return new CameraFragment();
                 case 2:
-                    if (fragments[2] == null) {
-                        fragments[2] = new FeedFragment();
-                    }
-                    return fragments[2];
+                    return new FeedFragment();
                 default:
-                    if (fragments[1] == null) {
-                        fragments[1] = new CameraFragment();
-                    }
-                    return fragments[1];
+                    return new CameraFragment();
             }
         }
 
@@ -479,6 +528,17 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
         public int getCount() {
             return 3;
         }
+    }
+
+    public MapFragment getMapFragment() {
+        return (MapFragment) registeredFragments.get(0);
+    }
+
+    public CameraFragment getCameraFragment() {
+        return (CameraFragment) registeredFragments.get(1);
+    }
+    public FeedFragment getFeedFragment() {
+        return (FeedFragment) registeredFragments.get(2);
     }
 
     private void launchCreateEvent() {
@@ -497,7 +557,7 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt("fragmentIndex", viewPager.getCurrentItem());
+        outState.putInt("fragmentIndex", (int) currentPosition);
     }
 
     @Override

@@ -10,6 +10,7 @@
         <item name="android:textViewStyle">@style/RobotoTextViewStyle</item>
         <item name="android:windowActionBarOverlay">true</item>
         <item name="android:windowBackground">@drawable/bg_window</item>
+        <item name="android:alertDialogTheme">@style/PeekAlertDialog</item>
     </style>
 
     <style name="RobotoTextViewStyle" parent="android:Widget.TextView">
@@ -43,6 +44,16 @@
         <item name="android:maxHeight">60dp</item>
         <item name="android:height">60dp</item>
         <item name="popupTheme">@style/Theme.AppCompat.Light</item>
+    </style>
+
+    <!-- Material dialog theme -->
+    <style name="PeekAlertDialog">
+        <item name="colorAccent">@color/peek_white</item>
+        <item name="android:textColorPrimary">@color/peek_white</item>
+        <item name="android:textColorSecondary">@color/peek_white</item>
+        <item name="android:windowBackground">@color/peek_orange</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:textColor">@color/peek_white</item>
     </style>
 
     <style name="FeedLocationToolbar">
@@ -96,11 +107,32 @@
     </style>
 
     <!-- Map style -->
-    <!-- Event feed style -->
-    <style name="MapInfoTitle">
-        <item name="android:textColor">@android:color/white</item>
-        <item name="android:textSize">15sp</item>
+    <style name="MapPanelText">
     </style>
+    <style name="MapPanelPlaceName" parent="MapPanelText">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:maxLines">2</item>
+        <item name="android:fontFamily">sans-serif-light</item>
+    </style>
+    <style name="MapPanelPlaceVic" parent="MapPanelText">
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="MapPanelHeaderCounts" parent="PeekCount">
+        <item name="android:textColor">@color/peek_orange_statusbar_dark</item>
+    </style>
+
+    <style name="MapPanelToolbar">
+        <item name="android:iconifiedByDefault">true</item>
+        <item name="android:background">@color/peek_white_trans</item>
+        <item name="android:minHeight">80dp</item>
+        <item name="android:maxHeight">80dp</item>
+        <item name="android:height">80dp</item>
+        <item name="popupTheme">@style/Theme.AppCompat.Light</item>
+    </style>
+
+
     <!-- Event feed style -->
     <style name="PlaceTitle">
         <item name="android:textColor">@color/colorSecondaryLight</item>
@@ -142,13 +174,14 @@
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">22sp</item>
         <item name="android:textColor">@android:color/white</item>
+        <item name="android:gravity">center_vertical</item>
     </style>
 
     <style name="PlProfileUserSelector">
         <item name="android:layout_marginLeft">10dp</item>
         <item name="android:layout_marginRight">10dp</item>
         <item name="android:textSize">15sp</item>
-        <item name="android:textColor">@color/colorMaterialLightGrey</item>
+        <item name="android:textColor">@color/peek_inactive</item>
         <item name="android:fontFamily">sans-serif-light</item>
         <item name="android:gravity">center</item>
         <item name="android:layout_centerVertical">true</item>

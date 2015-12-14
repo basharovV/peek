@@ -7,6 +7,7 @@
     <string name="load_dialog_done">Done!</string>
     <string name="load_dialog_done_content">Wow!</string>
 
+    <string name="mapbox_token">pk.eyJ1IjoidmJhc2giLCJhIjoiY2lpNXlvamU5MDA1dnY1bHh4OXZwOWM1ZCJ9.renUilD6tlXalAVSJOm8ug</string>
     <!-- PERMISSION SNACKBAR -->
     <string name="pager_perm_snackbar">
         Your permission is required to activate Peek\'s features.

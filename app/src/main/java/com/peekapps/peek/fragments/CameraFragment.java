@@ -12,6 +12,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Point;
+import android.graphics.SurfaceTexture;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.hardware.Camera;
@@ -33,6 +34,7 @@ import android.view.OrientationEventListener;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -89,7 +91,6 @@ import java.util.List;
 public class CameraFragment extends Fragment implements OnPermissionsListener{
 
 
-
     //-------------------------INSTANCE VARIABLES FOR THE CAMERA UI --------------------------
 
     private boolean enabled = false;
@@ -107,8 +108,8 @@ public class CameraFragment extends Fragment implements OnPermissionsListener{
 
     //CAMERA OBJECT PROPERTIES
     private Camera camera;
-    private FrameLayout previewLayout;
-    private CameraPreview preview;
+    private FrameLayout previewFrame;
+    private CameraTextureView preview;
     private float ratio;
 
     /* Camera ID for switching between front-facing and back-facing.
@@ -131,7 +132,6 @@ public class CameraFragment extends Fragment implements OnPermissionsListener{
     //AUTOFOCUS MODE
     private static final String AF_OFF = Camera.Parameters.FOCUS_MODE_AUTO;
 
-    private SurfaceHolder surfaceHolder;
 
     //Media type - to be implemented
     private static final int MEDIA_TYPE_IMAGE = 1;
@@ -204,7 +204,7 @@ public class CameraFragment extends Fragment implements OnPermissionsListener{
         captureButton = (ImageButton) rootView.findViewById(R.id.pictureButton);
 
         try {
-            previewLayout = (FrameLayout) rootView.findViewById(R.id.camera_preview);
+            previewFrame = (FrameLayout) rootView.findViewById(R.id.camera_preview);
         } catch (NullPointerException e) {
             Log.d("onResume", "NPE in finding view");
             e.printStackTrace();
@@ -369,15 +369,10 @@ public class CameraFragment extends Fragment implements OnPermissionsListener{
 
     private void enableCamera() {
         //Setup the camera
-        camera = getCameraInstance();
-        Camera.Parameters params = camera.getParameters();
-        params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
-        camera.setParameters(params);
-
-        preview = new CameraPreview(this.getActivity(), camera);
-        surfaceHolder = preview.getHolder();
+        preview = new CameraTextureView(this.getActivity());
+        
         //Setup the preview view and start it
-        previewLayout.addView(preview);
+        previewFrame.addView(preview);
     }
 
     private void disableCamera() {
@@ -420,7 +415,6 @@ public class CameraFragment extends Fragment implements OnPermissionsListener{
 
     private void releaseCamera() {
         if (camera != null) {
-            preview.getHolder().removeCallback(preview);
             preview = null;
             camera.release();        // release the camera for other applications
             camera = null;
@@ -437,7 +431,6 @@ public class CameraFragment extends Fragment implements OnPermissionsListener{
         try {
             if (camera != null) {
                 setCameraDisplayOrientation(cameraID, camera);
-                camera.setPreviewDisplay(surfaceHolder);
                 camera.startPreview();
             }
         }
@@ -486,76 +479,82 @@ public class CameraFragment extends Fragment implements OnPermissionsListener{
     }
 
 
-    public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
+    public class CameraTextureView extends TextureView implements TextureView.SurfaceTextureListener {
 
-        private Camera camera;
         private List<Camera.Size> supportedPreviewSizes;
         private Camera.Size previewSize;
         private static final String TAG = "Camera Fragment";
 
-        public CameraPreview(Context context, Camera camera) {
+
+        public CameraTextureView(Context context) {
             super(context);
-            this.camera = camera;
+            setSurfaceTextureListener(this);
+        }
+
+        @Override
+        public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
+            camera = getCameraInstance();
+            Camera.Parameters params = camera.getParameters();
+            params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+            camera.setParameters(params);
 
             // supported preview sizes
             supportedPreviewSizes = camera.getParameters().getSupportedPreviewSizes();
             for(Camera.Size str: supportedPreviewSizes)
                 Log.e(TAG, str.width + "/" + str.height);
 
-            // Install a SurfaceHolder.Callback so we get notified when the
-            // underlying surface is created and destroyed.
-            surfaceHolder = getHolder();
-            surfaceHolder.addCallback(this);
-        }
-
-        public void surfaceCreated(SurfaceHolder holder) {
-            //All handled in SurfaceChanged
-        }
-
-        public void surfaceDestroyed(SurfaceHolder holder) {
-            this.getHolder().removeCallback(this);
-            camera.stopPreview();
-            camera.release();
-        }
-
-        public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
-            // If your preview can change or rotate, take care of those events here.
-            // Make sure to stop the preview before resizing or reformatting it.
-            if (holder.getSurface() == null) {
-                return;
-            }
+//            if (holder.getSurface() == null) {
+//                return;
+//            }
             // stop preview before making changes
             try {
-                camera.stopPreview();
-            } catch (Exception e){
+//                camera.stopPreview();
+//            } catch (Exception e){
                 // ignore: tried to stop a non-existent preview
-            }
+//            }
             // set preview size and make any resize, rotate or reformatting changes here
             // start preview with new settings
-            try {
-                if(previewSize.height >= previewSize.width)
-                    ratio = (float) previewSize.height / (float) previewSize.width;
-                else
-                    ratio = (float) previewSize.width / (float) previewSize.height;
-
-                //Set preview size
-                Camera.Parameters parameters = camera.getParameters();
-                parameters.setPreviewSize(previewSize.width, previewSize.height);
-
-                //Set the picture size
-                Camera.Size pictureSize = getOptimalPictureSize();
-                parameters.setPictureSize(pictureSize.width, pictureSize.height);
-
-//                //Set overall parameters
-                camera.setParameters(parameters);
+//            try {
+//                if(previewSize.height >= previewSize.width)
+//                    ratio = (float) previewSize.height / (float) previewSize.width;
+//                else
+//                    ratio = (float) previewSize.width / (float) previewSize.height;
+//
+//                //Set preview size
+//                Camera.Parameters parameters = camera.getParameters();
+//                parameters.setPreviewSize(previewSize.width, previewSize.height);
+//
+//                //Set the picture size
+//                Camera.Size pictureSize = getOptimalPictureSize();
+//                parameters.setPictureSize(pictureSize.width, pictureSize.height);
+//
+////                //Set overall parameters
+//                camera.setParameters(parameters);
                 setCameraDisplayOrientation(cameraID, camera);
-                camera.setPreviewDisplay(holder);
+                camera.setPreviewTexture(surface);
                 camera.startPreview();
 
             } catch (Exception e){
                 e.printStackTrace();
                 Log.d(TAG, "Error starting camera preview: " + e.getMessage());
             }
+        }
+
+        @Override
+        public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
+            setDimension(width, height);
+        }
+
+        @Override
+        public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
+            camera.stopPreview();
+            camera.release();
+            return false;
+        }
+
+        @Override
+        public void onSurfaceTextureUpdated(SurfaceTexture surface) {
+
         }
 
         /**
@@ -587,36 +586,37 @@ public class CameraFragment extends Fragment implements OnPermissionsListener{
             return maxSize;
         }
 
-        @Override
-        protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        private void setDimension(int widthMeasureSpec, int heightMeasureSpec) {
             final int width = resolveSize(getSuggestedMinimumWidth(), widthMeasureSpec);
             final int height = resolveSize(getSuggestedMinimumHeight(), heightMeasureSpec);
 
 
-            if (supportedPreviewSizes != null) {
+            if (supportedPreviewSizes != null ) {
                 previewSize = getOptimalPreviewSize(supportedPreviewSizes, width, height);
             }
+            if (previewSize != null & camera != null) {
 
-            if(previewSize.height >= previewSize.width)
-                ratio = (float) previewSize.height / (float) previewSize.width;
-            //Landscape only
-            else
-                ratio = (float) previewSize.width / (float) previewSize.height;
-//
-            float camHeight = (int) (width * ratio);
-            float newCamHeight;
-            float newHeightRatio;
+                if (previewSize.height >= previewSize.width)
+                    ratio = (float) previewSize.height / (float) previewSize.width;
+                    //Landscape only
+                else
+                    ratio = (float) previewSize.width / (float) previewSize.height;
+                //
+                float camHeight = (int) (width * ratio);
+                float newCamHeight;
+                float newHeightRatio;
 
-            if (camHeight < height) {
-                newHeightRatio = (float) height / (float) previewSize.height;
-                newCamHeight = (newHeightRatio * camHeight);
-                Log.e(TAG, camHeight + " " + height + " " + previewSize.height + " " + newHeightRatio + " " + newCamHeight);
-                setMeasuredDimension((int) (width * newHeightRatio), (int) newCamHeight);
-                Log.e(TAG, previewSize.width + " | " + previewSize.height + " | ratio - " + ratio + " | H_ratio - " + newHeightRatio + " | A_width - " + (width * newHeightRatio) + " | A_height - " + newCamHeight);
-            } else {
-                newCamHeight = camHeight;
-                setMeasuredDimension(width, (int) newCamHeight);
-                Log.e(TAG, previewSize.width + " | " + previewSize.height + " | ratio - " + ratio + " | A_width - " + (width) + " | A_height - " + newCamHeight);
+                if (camHeight < height) {
+                    newHeightRatio = (float) height / (float) previewSize.height;
+                    newCamHeight = (newHeightRatio * camHeight);
+                    Log.e(TAG, camHeight + " " + height + " " + previewSize.height + " " + newHeightRatio + " " + newCamHeight);
+                    setMeasuredDimension((int) (width * newHeightRatio), (int) newCamHeight);
+                    Log.e(TAG, previewSize.width + " | " + previewSize.height + " | ratio - " + ratio + " | H_ratio - " + newHeightRatio + " | A_width - " + (width * newHeightRatio) + " | A_height - " + newCamHeight);
+                } else {
+                    newCamHeight = camHeight;
+                    setMeasuredDimension(width, (int) newCamHeight);
+                    Log.e(TAG, previewSize.width + " | " + previewSize.height + " | ratio - " + ratio + " | A_width - " + (width) + " | A_height - " + newCamHeight);
+                }
             }
         }
 
@@ -683,18 +683,6 @@ public class CameraFragment extends Fragment implements OnPermissionsListener{
         }
 
         return optimalSize;
-    }
-
-    private void startPreview() {
-        try
-        {
-            camera.setPreviewDisplay(surfaceHolder);
-            camera.startPreview();
-        }
-        catch(Exception e)
-        {
-            Log.d(TAG, "Cannot start preview", e);
-        }
     }
 
     /**

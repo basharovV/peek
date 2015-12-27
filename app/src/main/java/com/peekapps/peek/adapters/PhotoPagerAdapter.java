@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import com.peekapps.peek.R;
 import com.peekapps.peek.fragments.PhotoFragment;
 import com.peekapps.peek.fragments.TextFocusFragment;
+import com.peekapps.peek.place_api.Place;
 import com.peekapps.peek.views.OnAreaSelectorReadyListener;
 import com.peekapps.peek.views.OnPhotoPagerReadyListener;
 
@@ -19,30 +20,54 @@ import java.util.ArrayList;
  * Created by Slav on 30/11/2015.
  */
 public class PhotoPagerAdapter extends FragmentStatePagerAdapter {
-    private int[] imageResources;
+    //Test purposes
+    private int[] imageResources = new int[] {
+            R.drawable.rockerfeller1,
+            R.drawable.rockerfeller2,
+            R.drawable.rockerfeller3,
+            R.drawable.rockerfeller4 };
 
-    private static final int NUMBER_OF_FRAGMENTS = 4;
+    //The place selected (from map or feed)
+    private Place selectedPlace;
+
+    // Total number of photos for this place
+    private static final int PHOTO_COUNT = 4;
+
+    // Current photo being shown in pager
+    private int currentIndex = 0;
+
     private OnPhotoPagerReadyListener listener;
     SparseArray<PhotoFragment> registeredFragments = new SparseArray<PhotoFragment>();
 
     public PhotoPagerAdapter(FragmentManager fm) {
         super(fm);
-
-        imageResources = new int[] {
-            R.drawable.rockerfeller1,
-            R.drawable.rockerfeller2,
-            R.drawable.rockerfeller3,
-            R.drawable.rockerfeller4 };
     }
 
     @Override
     public int getCount() {
-        return NUMBER_OF_FRAGMENTS;
+        return PHOTO_COUNT;
     }
 
     @Override
     public Fragment getItem(int position) {
-        return new PhotoFragment();
+
+        Bundle photoArg = new Bundle();
+        photoArg.putInt("res", getNextPhoto());
+        Fragment photoFragment = new PhotoFragment();
+        photoFragment.setArguments(photoArg);
+        return photoFragment;
+    }
+
+    public void setPlace(Place pl) {
+        selectedPlace = pl;
+    }
+
+    private int getNextPhoto() {
+        currentIndex++;
+        if (currentIndex < imageResources.length) {
+            return imageResources[currentIndex];
+        }
+        return 0;
     }
 
 //    @Override
@@ -53,21 +78,6 @@ public class PhotoPagerAdapter extends FragmentStatePagerAdapter {
 //        return 0.4f;
 //    }
 
-    @Override
-    public Object instantiateItem(ViewGroup container, int position) {
-        PhotoFragment fragment = (PhotoFragment) super.instantiateItem(container, position);
-        Bundle photoArg = new Bundle();
-        photoArg.putInt("resource", imageResources[position]);
-        fragment.setArguments(photoArg);
-        registeredFragments.put(position, fragment);
-        return fragment;
-    }
-
-    @Override
-    public void destroyItem(ViewGroup container, int position, Object object) {
-        registeredFragments.remove(position);
-        super.destroyItem(container, position, object);
-    }
 
     public Fragment getRegisteredFragment(int position) {
         return registeredFragments.get(position);

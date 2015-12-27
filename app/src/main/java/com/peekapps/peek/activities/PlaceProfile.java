@@ -126,7 +126,7 @@ public class PlaceProfile extends AppCompatActivity {
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                supportFinishAfterTransition();
             }
         });
         populateUI();
@@ -163,11 +163,10 @@ public class PlaceProfile extends AppCompatActivity {
     public class ContentModeChangeListener implements View.OnClickListener {
 
         public void onClick(View v) {
-            ((TextView) v).setTextColor(getResources().getColor(R.color.peek_orange));
             for (int i = 0; i < contentModeButtons.size(); i++) {
-                contentModeButtons.get(i).setTextColor(getResources().getColor(R.color.peek_inactive));
+                contentModeButtons.get(i).setTextAppearance(getApplicationContext(), R.style.PlProfileUploaderType);
             }
-            ((TextView) v).setTextColor(getResources().getColor(R.color.peek_orange));
+            ((TextView) v).setTextAppearance(getApplicationContext(), R.style.PlProfileUploaderTypePressed);
         }
     }
 

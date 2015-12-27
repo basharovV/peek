@@ -410,7 +410,7 @@ public class MediaPublisher extends Activity{
         try {
 
             PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
-            startActivityForResult(builder.build(getApplicationContext()), PLACE_PICKER_REQUEST);
+            startActivityForResult(builder.build(this), PLACE_PICKER_REQUEST);
         }
         catch (GooglePlayServicesNotAvailableException e) {
             Log.e("MediaPublisher", "Google Play Services not available");

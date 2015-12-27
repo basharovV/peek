@@ -76,17 +76,15 @@
         <activity android:name=".activities.PeekViewPager"
             android:windowSoftInputMode="adjustPan"
             android:screenOrientation="portrait"
-            android:launchMode="singleInstance"/>
+            android:launchMode="singleTask"/>
 
         <activity android:name=".activities.SettingsActivity" />
-        <activity android:name=".activities.ProfileActivity" />
         <activity
-            android:name=".activities.CreateEventActivity"
-            android:label="@string/title_activity_create_event" />
+            android:name=".activities.CreateEventActivity" />
         <activity
             android:name=".activities.PlaceProfile"
             android:label="Place Profile"
-            android:launchMode="singleTop"/>
+            android:launchMode="singleTask"/>
         <activity android:name=".activities.MediaPublisher" />
 
         <meta-data

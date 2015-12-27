@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/pagerFrame"
-    android:background="@android:color/transparent"
+    android:background="@drawable/bg_window"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <FrameLayout
@@ -14,7 +14,7 @@
             android:id="@+id/pager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@android:color/transparent"
+            android:background="@android:color/black"
         />
 
         <View
@@ -31,10 +31,26 @@
             android:fitsSystemWindows="true"
             >
 
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                >
+                <!-- BACKGROUND eg. map Not currently used-->
+                <!--<ImageView-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="60dp"-->
+                    <!--android:src="@drawable/bg_feed_loc_toolbar"-->
+                    <!--android:scaleType="centerCrop"/>-->
+                <!--<View-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="match_parent"-->
+                    <!--android:alpha="0.7"-->
+                    <!--android:background="@color/peek_toolbar_bg"/>-->
+
             <android.support.v7.widget.Toolbar
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                style="@style/AppTheme.Toolbar"
+                style="@style/AppTheme.LocationToolbar"
                 android:id="@+id/peek_toolbar"
                 android:contentInsetStart="0dp"
                 app:contentInsetStart="0dp">
@@ -47,10 +63,9 @@
                         >
 
                         <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="30dp"
+                            android:layout_width="40dp"
+                            android:layout_height="match_parent"
                             android:src="@drawable/ic_overflow"
-                            android:layout_marginStart="20dp"
                             android:scaleType="center"
                             android:background="@null"
 
@@ -61,7 +76,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_gravity="center_horizontal"
-                            android:clipToPadding="false"
+                            android:clipToPadding="true"
+                            android:clipChildren="true"
                             android:id="@+id/areaSelectorViewPager"
                             android:paddingLeft="0dp"
                             android:paddingRight="40dp"/>
@@ -96,7 +112,7 @@
 
                 </LinearLayout>
                 </android.support.v7.widget.Toolbar>
-
+            </FrameLayout>
             <!--<android.support.v7.widget.Toolbar-->
                 <!--android:layout_height="50dp"-->
                 <!--android:layout_width="match_parent"-->

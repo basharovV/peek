@@ -14,6 +14,7 @@ import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
 import com.facebook.login.widget.LoginButton;
 import com.peekapps.peek.R;
+import com.peekapps.peek.fragments.SettingsFragment;
 
 /**
  * Created by Slav on 19/08/2015.
@@ -22,36 +23,16 @@ public class SettingsActivity extends AppCompatActivity {
 
     private Toolbar settingsToolbar;
     private LoginButton logoutButton;
-    private ListView settingsList;
 
     private AccessToken accessToken;
     private AccessTokenTracker accessTokenTracker;
-
-    //Modify the list of settings here
-    private static final String[] SETTINGS_LIST = new String[]{
-                "General",
-                "Location",
-                "Sharing",
-                "Feedback",
-                "About Peek"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
+        setTheme(android.R.style.Theme_Material_Light);
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-
-        settingsToolbar = (Toolbar) findViewById(R.id.settingsToolbar);
-        setSupportActionBar(settingsToolbar);
-        settingsToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
-        settingsToolbar.setTitle("Settings");
-        settingsList = (ListView) findViewById(R.id.settingsList);
         logoutButton = (LoginButton) findViewById(R.id.settingsFBButton);
         logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override

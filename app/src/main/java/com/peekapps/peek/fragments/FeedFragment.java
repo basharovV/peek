@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -55,6 +56,7 @@ public class FeedFragment extends Fragment implements GoogleApiClient.OnConnecti
     private RecyclerView recyclerView;
     private CardAdapter cardAdapter;
     private LinearLayoutManager layoutManager;
+    private View statusBarBackground;
 
     private SwipeRefreshLayout refreshLayout;
     private RefreshListener refreshListener;
@@ -84,7 +86,6 @@ public class FeedFragment extends Fragment implements GoogleApiClient.OnConnecti
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         layoutManager = new LinearLayoutManager(getActivity());
-        mediaDialog =  new MediaDialog(getActivity());
         cardAdapter = new CardAdapter(getActivity(), mediaDialog);
     }
 
@@ -109,6 +110,7 @@ public class FeedFragment extends Fragment implements GoogleApiClient.OnConnecti
         fragmentManager = getChildFragmentManager();
 
         //Set up the recycler view
+
         recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setOnScrollListener(new ScrollListener());

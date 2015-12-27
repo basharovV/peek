@@ -8,7 +8,7 @@
         android:id="@+id/peek_toolbar"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        style="@style/AppTheme.Toolbar">
+        style="@style/AppTheme.SettingsToolbar">
         <ImageButton
             android:src="@drawable/back_button"
             android:layout_width="35dp"

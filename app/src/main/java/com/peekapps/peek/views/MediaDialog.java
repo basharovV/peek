@@ -5,16 +5,24 @@ import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.peekapps.peek.R;
+import com.peekapps.peek.adapters.PhotoPagerAdapter;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -23,82 +31,93 @@ import java.util.Iterator;
 /**
  * Created by Slav on 16/06/2015.
  */
-public class MediaDialog extends Dialog implements Iterator{
+public class MediaDialog extends DialogFragment{
     //Photos currently on the device
     private File[] photos;
     private int currentPos = 0;
+
+    private Toolbar mediaToolbar;
+    private PhotoPager photoPager;
+    private PhotoPagerAdapter photoPagerAdapter;
     private ImageView photo;
 
-    public MediaDialog(Context context) {
-        super(context, android.R.style.Theme_Light);
-        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(((FragmentActivity) context).getLayoutInflater().
-                inflate(R.layout.dialog_feed_media
-                        , null));
-        getWindow().setLayout(LinearLayout.LayoutParams.FILL_PARENT,
-                LinearLayout.LayoutParams.FILL_PARENT);
-        photo = (ImageView) findViewById(R.id.dialogImage);
-        photo.setOnClickListener(new View.OnClickListener() {
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.dialog_feed_media, container, false);
+
+        photoPager = (PhotoPager) rootView.findViewById(R.id.dialogPhotoPager);
+        photoPagerAdapter = new PhotoPagerAdapter(getChildFragmentManager());
+        photoPager.setCurrentItem(0);
+        photoPager.setAdapter(photoPagerAdapter);
+        photoPager.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (hasNext()) {
-                    next();
-                }
-                else {
-                    hide();
-                }
+                getDialog().hide();
             }
         });
-        photo.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                hide();
-                return false;
-            }
-        });
+
+        mediaToolbar = (Toolbar) rootView.findViewById(R.id.mediaDialogToolbar);
+        mediaToolbar.setTitle("Selected place");
+        mediaToolbar.setNavigationIcon(R.drawable.ic_arrow_back);
+        mediaToolbar.setSubtitle("Uploaded 15:38");
+        return rootView;
     }
 
+    @NonNull
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        // the content
+        final RelativeLayout root = new RelativeLayout(getActivity());
+        root.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+
+        // creating the fullscreen dialog
+        final Dialog dialog = new Dialog(getActivity());
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(root);
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+
+        return dialog;
     }
 
-    public void getDirectory(String placeID) {
-        File dir = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES).getAbsolutePath()
-                + "/PeekMedia/" +
-                placeID +
-                "/");
-        photos = dir.listFiles();
-    }
+    //    public void getDirectory(String placeID) {
+//        File dir = new File(Environment.getExternalStoragePublicDirectory(
+//                Environment.DIRECTORY_PICTURES).getAbsolutePath()
+//                + "/PeekMedia/" +
+//                placeID +
+//                "/");
+//        photos = dir.listFiles();
+//    }
 
-    public void reset() {
-        currentPos = 0;
-        photos = null;
-    }
+//    public void reset() {
+//        currentPos = 0;
+//        photos = null;
+//    }
 
 
-    @Override
-    public boolean hasNext() {
-        if (photos == null || photos.length == 0) {
-            Toast.makeText(getContext(), "No photos available for this location", Toast.LENGTH_LONG)
-                    .show();
-            return false;
-        }
-        else if (currentPos < photos.length) {
-                return true;
-            }
-        hide();
-        reset();
-        return false;
-    }
+//    @Override
+//    public boolean hasNext() {
+//        if (photos == null || photos.length == 0) {
+//            Toast.makeText(getContext(), "No photos available for this location", Toast.LENGTH_LONG)
+//                    .show();
+//            return false;
+//        }
+//        else if (currentPos < photos.length) {
+//                return true;
+//            }
+//        hide();
+//        reset();
+//        return false;
+//    }
 
-    @Override
-    public Object next() {
-        showPhoto();
-        currentPos++;
-        return null;
-    }
+//    @Override
+//    public Object next() {
+//        showPhoto();
+//        currentPos++;
+//        return null;
+//    }
 
     private void showPhoto() {
         Picasso.with(getContext())
@@ -108,16 +127,16 @@ public class MediaDialog extends Dialog implements Iterator{
                 .into(photo);
     }
 
-    public void start() {
-        show();
-        if (hasNext()) {
-            next();
-        }
-        else {
-            photo.setImageResource(R.drawable.no_img_bg);
-        }
-    }
-    @Override
-    public void remove() {
-    }
+//    public void start() {
+//        show();
+//        if (hasNext()) {
+//            next();
+//        }
+//        else {
+//            photo.setImageResource(R.drawable.no_img_bg);
+//        }
+//    }
+//    @Override
+//    public void remove() {
+//    }
 }

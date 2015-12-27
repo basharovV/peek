@@ -1,17 +1,26 @@
 package com.peekapps.peek.adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Rect;
 import android.location.Location;
 import android.location.LocationManager;
 import android.support.annotation.UiThread;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.*;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -23,8 +32,6 @@ import com.peekapps.peek.place_api.Place;
 import com.peekapps.peek.place_api.PlaceActions;
 import com.peekapps.peek.views.*;
 import com.squareup.picasso.Picasso;
-import com.tonicartos.superslim.LayoutManager;
-import com.tonicartos.superslim.LinearSLM;
 
 import java.io.File;
 import java.io.InputStream;
@@ -68,7 +75,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             case 0:
                 View emptyView = LayoutInflater.from(parent.getContext()).inflate(
                         R.layout.empty_cell, parent, false);
-                return new EmptyHolder(emptyView);
+                return new EmptyHolder(emptyView, this.context);
             case 1:
                 //View
                 View cardLayoutView = LayoutInflater.from(parent.getContext())
@@ -100,10 +107,19 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            if (mDialog != null) {
-                                mDialog.getDirectory(placeList.get(position).getID());
-                                mDialog.start();
+//                                mDialog.getDirectory(placeList.get(position).getID());
+//                                mDialog.start();
+                            FragmentTransaction ft = ((FragmentActivity) context).getSupportFragmentManager().beginTransaction();
+                            Fragment prev = ((FragmentActivity) context).getSupportFragmentManager().findFragmentByTag("feed_fragment");
+                            if (prev != null) {
+                                ft.remove(prev);
                             }
+                            ft.addToBackStack(null);
+
+                            // Create and show the dialog.
+                            mDialog = new MediaDialog();
+                            mDialog.setStyle(DialogFragment.STYLE_NO_FRAME, R.style.MediaDialogFragment);
+                            mDialog.show(ft, "dialog");
                         }
                     });
             ((ViewHolder) holder).headerOnTouchListener.setCurrentPosition(position);
@@ -159,8 +175,22 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     public class EmptyHolder extends RecyclerView.ViewHolder {
-        public EmptyHolder(final View emptyView) {
+
+        public View topView;
+
+        public EmptyHolder(final View emptyView, Context context) {
             super(emptyView);
+
+            topView = emptyView.findViewById(R.id.feedStatusBarBg);
+
+            //Set up height of status bar background (empty recycler view)
+            Rect rect= new Rect();
+            Window window= ((Activity) context).getWindow();
+            window.getDecorView().getWindowVisibleDisplayFrame(rect);
+            int statusBarHeight= rect.top;
+            ViewGroup.LayoutParams layoutParams = topView.getLayoutParams();
+            layoutParams.height = statusBarHeight;
+            topView.setLayoutParams(layoutParams);
         }
     }
 
@@ -201,8 +231,10 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 public void onClick(View v) {
                     Intent plProfileIntent = new Intent(context, PlaceProfile.class).
                             setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                            (Activity) context, (View) title, "plProfile");
                     plProfileIntent.putExtra("place_object", getPlace(getAdapterPosition()));
-                    context.startActivity(plProfileIntent);
+                    context.startActivity(plProfileIntent, optionsCompat.toBundle());
                 }
             });
         }

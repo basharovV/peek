@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/peek_white"
+    android:background="@color/peek_dark"
     >
 
     <LinearLayout
@@ -14,7 +14,7 @@
         app:layout_widthPercent="100%"
         app:layout_heightPercent="40%"
         android:orientation="vertical"
-        android:background="@color/peek_white">
+        android:background="@color/peek_dark">
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
@@ -63,11 +63,13 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="vertical"
-                            android:layout_gravity="center">
+                            android:layout_gravity="center"
+                            android:fitsSystemWindows="true">
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:id="@+id/plProfileName"
+                                android:transitionName="plProfile"
                                 android:textColor="#FFFFFF"
                                 android:textSize="24sp"
                                 android:shadowColor="#000000"
@@ -169,12 +171,13 @@
 
                 <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:fitsSystemWindows="true">
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="top"
                         android:orientation="vertical"
                         android:fitsSystemWindows="true">
 
@@ -226,7 +229,6 @@
                         <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="35dp"
-                            android:background="?attr/selectableItemBackground"
                             android:id="@+id/plProfileTodayButton"
                             android:scaleType="centerInside"
                             android:adjustViewBounds="true"
@@ -235,7 +237,7 @@
                         <ImageView
                             android:layout_width="wrap_content"
                             android:layout_height="35dp"
-                            android:background="?attr/selectableItemBackground"
+                            android:background="@android:color/transparent"
                             android:id="@+id/plProfileWeekButton"
                             android:adjustViewBounds="true"
                             android:src="@drawable/profile_week_unpressed"/>
@@ -264,57 +266,54 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="2"
-            android:background="@color/peek_white"
+            android:background="@color/peek_dark"
             android:id="@+id/plProfileUserSection"
             android:orientation="vertical"
             android:paddingBottom="10dp"
             android:layout_below="@+id/plProfileHeader">
 
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
                 android:layout_marginTop="15dp"
-                android:padding="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
                 android:orientation="horizontal"
-                android:weightSum="4">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/plProfileWorld"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:layout_centerInParent="true"
-                    style="@style/PlProfileUserSelector"
-                    android:textColor="@color/peek_orange"
-                    android:textStyle="bold"
-                    android:textSize="22sp"
-                    android:shadowColor="@color/mdtp_dark_gray"
-                    android:shadowDx="0"
-                    android:shadowDy="0"
-                    android:shadowRadius="2"
-                    android:text="WORLD"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/plProfileMyUploads"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:layout_toLeftOf="@+id/plProfileWorld"
-                    android:text="MY UPLOADS"
-                    android:layout_marginRight="25dp"
-                    style="@style/PlProfileUserSelector"/>
+                android:weightSum="3">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:id="@+id/plProfileMyUploads"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:text="MY UPLOADS"
+                    style="@style/PlProfileUploaderType"/>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:id="@+id/plProfileWorld"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    style="@style/PlProfileUploaderTypePressed"
+
+                    android:text="WORLD"/>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:id="@+id/plProfileFriends"
                     android:background="?attr/selectableItemBackgroundBorderless"
-                    android:layout_toRightOf="@id/plProfileWorld"
-                    android:layout_marginLeft="40dp"
-                    style="@style/PlProfileUserSelector"
+                    android:gravity="center"
+                    style="@style/PlProfileUploaderType"
                     android:text="FRIENDS"/>
 
 
-            </RelativeLayout>
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -377,7 +376,7 @@
             android:layout_height="0dp"
             android:layout_weight="3.5"
             android:orientation="horizontal"
-            android:background="@color/colorMaterialLightGrey">
+            android:background="@color/peek_light_grey">
 
             <LinearLayout
                 android:layout_width="match_parent"

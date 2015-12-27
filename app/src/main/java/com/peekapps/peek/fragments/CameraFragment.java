@@ -547,8 +547,7 @@ public class CameraFragment extends Fragment implements OnPermissionsListener{
 
         @Override
         public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
-            camera.stopPreview();
-            camera.release();
+            //Handled by onPause
             return false;
         }
 

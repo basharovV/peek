@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
+    android:tag="feed_fragment"
     android:id="@+id/feedFragment"
     android:background="@android:color/transparent"
     >
@@ -10,7 +11,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorMaterialLightGrey"
+        android:background="@color/peek_dark_grey"
         >
 
         <android.support.v4.widget.SwipeRefreshLayout

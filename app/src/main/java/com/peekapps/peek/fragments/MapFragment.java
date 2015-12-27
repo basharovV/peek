@@ -12,12 +12,15 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.Shader;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
@@ -37,6 +40,14 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.GlideBuilder;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
+import com.google.android.gms.maps.OnMapReadyCallback;
+//import com.mapbox.mapboxsdk.annotations.Marker;
+//import com.mapbox.mapboxsdk.annotations.MarkerOptions;
+//import com.mapbox.mapboxsdk.annotations.Sprite;
+//import com.mapbox.mapboxsdk.annotations.SpriteFactory;
+//import com.mapbox.mapboxsdk.constants.Style;
+//import com.mapbox.mapboxsdk.geometry.LatLng;
+//import com.mapbox.mapboxsdk.views.MapView;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -47,10 +58,13 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.TileOverlayOptions;
+import com.mapbox.mapboxsdk.annotations.SpriteFactory;
 import com.peekapps.peek.activities.PeekViewPager;
 import com.peekapps.peek.adapters.PhotoPagerAdapter;
 import com.peekapps.peek.database.PlaceDbHelper;
 import com.peekapps.peek.fragments_utils.OnPermissionsListener;
+import com.peekapps.peek.map.MapboxTileProvider;
 import com.peekapps.peek.place_api.Place;
 import com.peekapps.peek.place_api.PlaceActions;
 import com.peekapps.peek.place_api.PlacesListener;
@@ -78,6 +92,8 @@ public class MapFragment extends Fragment implements OnPermissionsListener, OnPh
     private GoogleMap googleMap;
 
     //Map elements
+    //Mapbox SDK only
+    SpriteFactory spriteFactory;
 
     //Panel elements
     private Toolbar panelToolbar;
@@ -119,8 +135,8 @@ public class MapFragment extends Fragment implements OnPermissionsListener, OnPh
                 ContextCompat.checkSelfPermission(getActivity(),
                         android.Manifest.permission.
                                 ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
         }
+//        //GoogleMapsApiV2 only
         try {
             MapsInitializer.initialize(getActivity().getApplicationContext());
         } catch (Exception e) {
@@ -136,10 +152,15 @@ public class MapFragment extends Fragment implements OnPermissionsListener, OnPh
         //Find views
         mapSlidingPanel = (SlidingUpPanelLayout) rootView.findViewById(R.id.mapFragment);
         mapView = (MapView) rootView.findViewById(R.id.mapView);
-
         mapView.onCreate(null);
         mapView.onResume();
         mapView.getMapAsync((OnMapReadyCallback) getActivity());
+        //---------MAPBOX SDK only
+//        mapView.setStyleUrl(Style.MAPBOX_STREETS);
+//        mapView.setAccessToken(getResources().getString(R.string.mapbox_token));
+//        mapView.setZoomLevel(11);
+//        mapView.onCreate(savedInstanceState);
+//        spriteFactory = new SpriteFactory(mapView);
 
         //-----------Panel---------------
         //Header
@@ -157,8 +178,18 @@ public class MapFragment extends Fragment implements OnPermissionsListener, OnPh
         if (Build.VERSION.SDK_INT >= 23) {
             if (((PeekViewPager) getActivity()).allPermissionsGranted()) {
                 enableLocation();
+                //MapBox
+//                mapView.setMyLocationEnabled(false);
+                //GoogleMap
+                googleMap.setMyLocationEnabled(true);
             }
-        } else enableLocation();
+        } else {
+            enableLocation();
+            //MapBox only
+//            mapView.setMyLocationEnabled(true);
+            //GoogleMap
+            googleMap.setMyLocationEnabled(true);
+        }
 
         return rootView;
     }
@@ -166,7 +197,6 @@ public class MapFragment extends Fragment implements OnPermissionsListener, OnPh
     public void setPlacesList() {
         PlaceDbHelper dbHelper = new PlaceDbHelper(getActivity());
         placesList = dbHelper.getAllPlaces();
-        displayAllMarkers();
     }
 
     public boolean hasMarkers() {
@@ -181,7 +211,24 @@ public class MapFragment extends Fragment implements OnPermissionsListener, OnPh
     }
 
     private void setupMap() {
+        //----------MapBox-----------
+//      mapView.setOnMarkerClickListener(new OnPlaceSelectedListener());
+//      mapView.setOnMapClickListener(new MapView.OnMapClickListener() {
+//            @Override
+//            public void onMapClick(@NonNull com.mapbox.mapboxsdk.geometry.LatLng point) {
+//                if (mapSlidingPanel.isEnabled()) {
+//                    mapSlidingPanel.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
+//                }
+//            }
+//        });
+
+        //-----------GOOGLE MAP ---------
         googleMap = mapView.getMap();
+//       // Mapbox tiles
+//        MapboxTileProvider mbTileProvider = new MapboxTileProvider();
+//        mbTileProvider.setAccessToken(getResources().getString(R.string.mapbox_token));
+//        googleMap.addTileOverlay(new TileOverlayOptions().tileProvider(mbTileProvider));
+
         googleMap.setOnMarkerClickListener(new OnPlaceSelectedListener());
         googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
@@ -211,7 +258,7 @@ public class MapFragment extends Fragment implements OnPermissionsListener, OnPh
     public class OnPlaceSelectedListener implements GoogleMap.OnMarkerClickListener {
         @Override
         public boolean onMarkerClick(Marker marker) {
-            if (marker != null && markerMap.containsKey(marker)) {
+            if (markerMap.containsKey(marker)) {
                 Place selectedPlace = markerMap.get(marker);
                 if (selectedPlace != null) {
                     panelHeaderName.setText(selectedPlace.getName());
@@ -221,25 +268,39 @@ public class MapFragment extends Fragment implements OnPermissionsListener, OnPh
             if (mapSlidingPanel.getPanelState() == SlidingUpPanelLayout.PanelState.HIDDEN) {
                 mapSlidingPanel.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
             }
+            //MapBox
+//            mapView.setCenterCoordinate(marker.getPosition(), true);
+            //GoogleMap
             googleMap.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
             return true;
         }
+
+//        @Override
+//        public boolean onMarkerClick(@NonNull com.mapbox.mapboxsdk.annotations.Marker marker) {
+//
     }
 
     public void enableLocation() {
         currentLocation = PlaceActions.getInstance().getLocation(getActivity());
+        //--------GOOGLE MAP----------
         CameraPosition camPosition = new CameraPosition.Builder().target(new LatLng(currentLocation.getLatitude(),
                 currentLocation.getLongitude()))
                 .zoom(5).build();
         googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(camPosition));
+
+        //----------MapBox-----------
+//        mapView.setCenterCoordinate(new LatLng(currentLocation.getLatitude(),
+//        currentLocation.getLongitude()), true);
     }
 
     public void updateLocation(Location location) {
         currentLocation = location;
-        CameraPosition camPosition = new CameraPosition.Builder().target
-                (new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()))
-                .zoom(10).build();
-        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(camPosition));
+        //GOOGLE MAP
+//        CameraPosition camPosition = new CameraPosition.Builder().target
+//                (new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()))
+//                .zoom(10).build();
+//        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(camPosition));
+
     }
 
     @Override
@@ -265,8 +326,9 @@ public class MapFragment extends Fragment implements OnPermissionsListener, OnPh
             markerOptions.position(latLng);
             markerOptions.title(placeName);
             markerOptions.icon(BitmapDescriptorFactory.fromBitmap(generateMarkerBitmap()));
+            //-----MapBox-----
+//            Marker m = mapView.addMarker(markerOptions);
             Marker m = googleMap.addMarker(markerOptions);
-
             markerMap.put(m, pl);
             dropPinAnimation(m);
         }
@@ -274,24 +336,11 @@ public class MapFragment extends Fragment implements OnPermissionsListener, OnPh
 
 
     public Bitmap generateMarkerBitmap() {
-        SimpleTarget markerTarget = new SimpleTarget() {
-
-            private Bitmap bitmap;
-
-            @Override
-            public void onResourceReady(Object resource, GlideAnimation glideAnimation) {
-                bitmap = (Bitmap) resource;
-            }
-
-            public Bitmap getBitmap() {
-                return bitmap;
-            }
-        };
-        Bitmap output = Bitmap.createBitmap(81,
-                81, Bitmap.Config.ARGB_8888);
+        Bitmap output = Bitmap.createBitmap(72,
+                72, Bitmap.Config.ARGB_8888);
         Bitmap markerBitmap = Bitmap.createScaledBitmap(
                 BitmapFactory.decodeResource(getResources(), R.drawable.profile2)
-                , 81, 81, false);
+                , 72, 72, false);
         Canvas markerCanvas = new Canvas(output);
         Rect rect = new Rect(0, 0, markerBitmap.getWidth(), markerBitmap.getHeight());
         Paint paint = new Paint();
@@ -302,6 +351,7 @@ public class MapFragment extends Fragment implements OnPermissionsListener, OnPh
                 markerBitmap.getWidth() / 2, paint);
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
         markerCanvas.drawBitmap(markerBitmap, rect, rect, paint);
+        markerBitmap.recycle();
         return output;
     }
 
@@ -338,8 +388,12 @@ public class MapFragment extends Fragment implements OnPermissionsListener, OnPh
         });
     }
 
+
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
+//        super.onSaveInstanceState(outState);
+//        mapView.onSaveInstanceState(outState);
         //This MUST be done before saving any of your own or your base class's variables
         final Bundle mapViewSaveState = new Bundle(outState);
         mapView.onSaveInstanceState(mapViewSaveState);
@@ -374,6 +428,36 @@ public class MapFragment extends Fragment implements OnPermissionsListener, OnPh
         public void onPanelHidden(View panel) {
 
         }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+//        mapView.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+//        mapView.onStop();
+    }
+
+    @Override
+    public void onPause()  {
+        super.onPause();
+//        mapView.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+//        mapView.onResume();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+//        mapView.onDestroy();
     }
 }
 

@@ -12,6 +12,7 @@ import com.bumptech.glide.Glide;
 import com.peekapps.peek.R;
 import com.squareup.picasso.Picasso;
 
+import uk.co.senab.photoview.PhotoView;
 import uk.co.senab.photoview.PhotoViewAttacher;
 
 /**
@@ -19,19 +20,24 @@ import uk.co.senab.photoview.PhotoViewAttacher;
  */
 public class PhotoFragment extends Fragment {
 
-    private ImageView photoView;
-    private PhotoViewAttacher photoAttacher;
-    private int resourcePhoto = R.drawable.rockerfeller1;
+    //Test purposes
+    private int[] imageResources = new int[] {
+            R.drawable.rockerfeller1,
+            R.drawable.rockerfeller2,
+            R.drawable.rockerfeller3,
+            R.drawable.rockerfeller4 };
+
+    private PhotoView photoView;
+    private int resource = 0;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_photopager_photo, container, false);
-        photoView = (ImageView) rootView.findViewById(R.id.photoPagerPhoto);
-        photoAttacher = new PhotoViewAttacher(photoView);
+        photoView = (PhotoView) rootView.findViewById(R.id.photoPagerPhoto);
         Bundle args = getArguments();
-        resourcePhoto = args.getInt("resource");
-        Picasso.with(getContext())
-                .load(resourcePhoto)
+        resource = args.getInt("res");
+        Glide.with(getContext())
+                .load(resource)
                 .into(photoView);
 
         return rootView;

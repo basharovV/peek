@@ -1,11 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent"
     android:orientation="vertical"
+    android:fitsSystemWindows="true"
     android:background="@android:color/black"
     android:id="@+id/media_dialog">
-    <ImageView android:layout_width="match_parent"
-        android:layout_height="match_parent" android:id="@+id/dialogImage"
-        android:layout_gravity="center"
-        android:src="@drawable/bg_nophoto"/>
-</LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.peekapps.peek.views.PhotoPager
+            android:id="@+id/dialogPhotoPager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <android.support.v7.widget.Toolbar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/mediaDialogToolbar"
+            android:titleTextColor="@color/peek_white"
+            android:contentInsetStart="0dp"
+            style="@style/AppTheme.FeedMediaToolbar"
+            />
+    </FrameLayout>
+    <!--<ImageView android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent" android:id="@+id/dialogImage"-->
+        <!--android:layout_gravity="center"-->
+        <!--android:src="@drawable/bg_nophoto"/>-->
+</RelativeLayout>

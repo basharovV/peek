@@ -28,16 +28,6 @@
     <!--Bottom sheet items -->
     <string name="profile_item">My profile</string>
 
-<!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="title_activity_create_event">CreateEventActivity</string>
-
-    <string-array name="settings_list">
-        <item>General</item>
-        <item>Location</item>
-        <item>Sharing</item>
-        <item>Feedback</item>
-        <item>About Peek</item>
-    </string-array>
-
+    <string name="settings_switch_on">Light</string>
+    <string name="settings_switch_off">Dark</string>
 </resources>

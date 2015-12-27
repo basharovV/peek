@@ -10,7 +10,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/loginPhoto"
-        android:alpha="0.9"
         android:scaleType="centerCrop"/>
     <LinearLayout
         android:layout_width="match_parent"
@@ -76,7 +75,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="0.20"
-            android:padding="15dp"
+            android:paddingBottom="15dp"
             android:layout_alignParentBottom="true"
             android:orientation="vertical">
             <!--
@@ -92,6 +91,35 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <View
+                        android:layout_width="wrap_content"
+                        android:layout_height="0.5dp"
+                        android:background="@color/peek_light_grey"
+                        android:layout_marginRight="5dp"
+                        android:layout_toLeftOf="@+id/loginFacebookText"
+                        android:layout_centerVertical="true"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/loginFacebookText"
+                        android:layout_centerInParent="true"
+                        android:text="Login with Facebook"
+                        android:textColor="@color/peek_white"
+                        android:textStyle="bold"
+                        android:textSize="16sp"/>
+                    <View
+                        android:layout_width="wrap_content"
+                        android:layout_height="0.5dp"
+                        android:background="@color/peek_light_grey"
+                        android:layout_marginLeft="5dp"
+                        android:layout_toRightOf="@+id/loginFacebookText"
+                        android:layout_centerVertical="true"/>
+
+                </RelativeLayout>
             <android.support.design.widget.FloatingActionButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

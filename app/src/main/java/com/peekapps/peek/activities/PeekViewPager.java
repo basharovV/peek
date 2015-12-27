@@ -8,9 +8,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.PorterDuff;
+import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Handler;
 import android.support.design.widget.Snackbar;
@@ -34,9 +38,8 @@ import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Toast;
-
-import com.cocosw.bottomsheet.BottomSheet;
 import com.facebook.appevents.AppEventsLogger;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -142,6 +145,20 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
 
     private void startBasic() {
         setUpUI();
+        checkInternetConnection();
+    }
+
+    private void checkInternetConnection() {
+        ConnectivityManager cm =
+                (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
+
+        if (!isConnected) {
+
+        }
     }
 
     private void startLocationWithPermission() {
@@ -164,6 +181,7 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
             @Override
             public void run() {
                 startDialog = new ProgressDialog(PeekViewPager.this, ProgressDialog.STYLE_SPINNER);
+                startDialog.setCancelable(false);
                 startDialog.setMessage("Waiting for location...");
                 startDialog.setTitle("One moment");
                 startDialog.show();
@@ -175,18 +193,35 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                startDialog.setTitle("Ready");
-                startDialog.setIndeterminateDrawable(getResources().getDrawable(R.drawable.ic_done));
+                startDialog.setTitle("Done!");
+                startDialog.setMessage("Location ready");
+                setProgressDrawableDone(R.drawable.ic_done);
                 //Wait 1 sec before hiding dialog
                 Handler hideDialogHandler = new Handler();
                 hideDialogHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         startDialog.hide();
+                        startDialog = null;
                     }
                 }, 1000);
             }
         });
+    }
+
+    private void setProgressDrawableDone(int resId) {
+        //Getting a progressBar from dialog
+        ProgressBar bar = (ProgressBar) startDialog.findViewById(android.R.id.progress);
+        //Getting a DONE(new) drawable from resources
+        Drawable drawable = getResources().getDrawable(resId);
+        //Getting a drawable from progress dialog
+        Drawable indeterminateDrawable = bar.getIndeterminateDrawable();
+        //Obtain a bounds of current drawable
+        Rect bounds = indeterminateDrawable.getBounds();
+        //Set bounds to DONE(new) drawable
+        drawable.setBounds(bounds);
+        //Set a new drawable
+        startDialog.setIndeterminateDrawable(drawable);
     }
 
     @Override
@@ -286,9 +321,10 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
     public void onSelectorReady() {
         //Set text (testing)
         areaSelectorAdapter.setFragmentText(0, "World");
-        areaSelectorAdapter.setFragmentText(1, "NY");
-        areaSelectorAdapter.setFragmentText(2, "New York");
-        areaSelectorAdapter.setFragmentText(3, "My area");
+        areaSelectorAdapter.setFragmentText(1, "United States");
+        areaSelectorAdapter.setFragmentText(2, "NY");
+        areaSelectorAdapter.setFragmentText(3, "New York");
+        areaSelectorAdapter.setFragmentText(4, "My area withlong text");
     }
 
     private class OverflowClickListener implements View.OnClickListener {
@@ -306,27 +342,33 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
     @Override
     public void onPlacesFetched(PlacesFetchedEvent e) {
         hideDialog();
-        if (!(getMapFragment().hasMarkers())) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    getMapFragment().setPlacesList();
-                    getMapFragment().displayAllMarkers();
-                }
-            });
+        if (getMapFragment() == null) {
+            registeredFragments.put(0, new MapFragment());
+        } else {
+            if((getMapFragment().hasMarkers())) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        getMapFragment().setPlacesList();
+                        getMapFragment().displayAllMarkers();
+                    }
+                });
+            }
         }
     }
 
     @Override
     public void onMapReady(GoogleMap map) {
-        if (!(getMapFragment().hasMarkers())) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    getMapFragment().setPlacesList();
-                    getMapFragment().displayAllMarkers();
-                }
-            });
+        if (getMapFragment() != null) {
+            if (!(getMapFragment().hasMarkers())) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        getMapFragment().setPlacesList();
+                        getMapFragment().displayAllMarkers();
+                    }
+                });
+            }
         }
     }
 
@@ -549,15 +591,13 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
         Intent settingsIntent = new Intent(PeekViewPager.this, SettingsActivity.class);
         startActivity(settingsIntent);
     }
-    private void launchProfile() {
-        Intent createEventIntent = new Intent(PeekViewPager.this, ProfileActivity.class);
-        startActivity(createEventIntent);
-    }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
+        if (currentPosition != null) {
+            outState.putInt("fragmentIndex", (int) currentPosition);
+        }
         super.onSaveInstanceState(outState);
-        outState.putInt("fragmentIndex", (int) currentPosition);
     }
 
     @Override
@@ -583,6 +623,13 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
     protected void onPause() {
         super.onPause();
         AppEventsLogger.deactivateApp(this);
+        startDialog = null;
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        startDialog = null;
     }
 }
 

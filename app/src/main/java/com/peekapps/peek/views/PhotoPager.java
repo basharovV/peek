@@ -15,25 +15,50 @@ import com.peekapps.peek.R;
  */
 public class PhotoPager extends ViewPager {
 
+    private boolean isLocked;
+    private static final int OFFSCREEN_LIMIT = 2;
+
     public PhotoPager(Context context) {
         super(context);
+        isLocked = false;
     }
 
     public PhotoPager(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.setPageTransformer(false, new PhotoPageTransformer());
-        this.setOffscreenPageLimit(4);
+        this.setOffscreenPageLimit(OFFSCREEN_LIMIT);
+        isLocked = false;
 //        this.addOnPageChangeListener(new PhotoPageListener());
     }
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        try {
-            return super.onInterceptTouchEvent(ev);
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-            return false;
+        if (!isLocked) {
+            try {
+                return super.onInterceptTouchEvent(ev);
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
+                return false;
+            }
         }
+        return false;
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        return !isLocked && super.onTouchEvent(event);
+    }
+
+    public void toggleLock() {
+        isLocked = !isLocked;
+    }
+
+    public void setLocked(boolean isLocked) {
+        this.isLocked = isLocked;
+    }
+
+    public boolean isLocked() {
+        return isLocked;
     }
 
     private class PhotoPageTransformer implements PageTransformer {

@@ -3,6 +3,7 @@ package com.peekapps.peek.adapters;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.ViewGroup;
 
@@ -16,7 +17,7 @@ import java.util.ArrayList;
  * Created by Slav on 30/11/2015.
  */
 public class TextFocusPagerAdapter extends FragmentStatePagerAdapter {
-    private static final int NUMBER_OF_FRAGMENTS = 4;
+    private static final int NUMBER_OF_FRAGMENTS = 5;
     private String[] areaNames;
     private OnAreaSelectorReadyListener listener;
     SparseArray<TextFocusFragment> registeredFragments = new SparseArray<TextFocusFragment>();
@@ -24,7 +25,8 @@ public class TextFocusPagerAdapter extends FragmentStatePagerAdapter {
 
     public TextFocusPagerAdapter(FragmentManager fm) {
         super(fm);
-        areaNames = new String[NUMBER_OF_FRAGMENTS];
+        areaNames = new String[] {
+            "World", "United States", "NY", "New York", "My area withlong text"};
     }
 
     @Override
@@ -37,13 +39,22 @@ public class TextFocusPagerAdapter extends FragmentStatePagerAdapter {
         return new TextFocusFragment();
     }
 
-//    @Override
-//    public float getPageWidth(int position) {
-////        if (position == 0 || position == getCount() - 1) {
-////            return 0.3f;
-////        }
-//        return 0.4f;
-//    }
+    @Override
+    public float getPageWidth(int position) {
+//        TextFocusFragment focusFragment = ((TextFocusFragment) getRegisteredFragment(position));
+//        if (focusFragment != null) {
+//            float nChars = (float) areaNames[position].length();
+//            if (nChars == 0) {
+//                nChars = 1;
+//            }
+//            else if (nChars > 18) return 1.0f;
+//            float width = 0.5f + (0.5f - (1.0f / (nChars)));
+//            Log.d("TextFocusAdapter", "Width of position " + position + ": " + width + " (" + nChars + " chars)");
+//            return width;
+//        }
+
+        return super.getPageWidth(position);
+    }
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
@@ -80,6 +91,18 @@ public class TextFocusPagerAdapter extends FragmentStatePagerAdapter {
     public void setText(int position, String text) {
         areaNames[position] = text;
     }
+//
+//    public void setupConnectors() {
+//        TextFocusFragment textFragment = ((TextFocusFragment) getRegisteredFragment(0));
+//        if (textFragment != null) {
+//            textFragment.setLeftConnectorVisible(false);
+//        }
+//        textFragment = ((TextFocusFragment) getRegisteredFragment(getCount() - 1));
+//        if (textFragment != null) {
+//            textFragment.setRightConnectorVisible(false);
+//        }
+//    }
+
     public void setFragmentText(int position, String text) {
         TextFocusFragment textFragment = ((TextFocusFragment) getRegisteredFragment(position));
         if (textFragment != null) textFragment.setText(text);
@@ -91,4 +114,5 @@ public class TextFocusPagerAdapter extends FragmentStatePagerAdapter {
         if (textFragment != null) textFragment.setTextSize(size);
         notifyDataSetChanged();
     }
+
 }

@@ -20,7 +20,7 @@
                 android:layout_width="60dp"
                 android:layout_height="match_parent"
                 android:id="@+id/trendingSortButton"
-                android:src="@drawable/ic_chart_icon"
+                android:src="@drawable/ic_trending_icon"
                 android:scaleType="centerInside"
                 style="@style/SortingIcons"
             />

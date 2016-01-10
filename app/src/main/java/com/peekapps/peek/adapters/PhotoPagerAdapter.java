@@ -52,7 +52,7 @@ public class PhotoPagerAdapter extends FragmentStatePagerAdapter {
     public Fragment getItem(int position) {
 
         Bundle photoArg = new Bundle();
-        photoArg.putInt("res", getNextPhoto());
+        photoArg.putInt("res", getPhoto(position));
         Fragment photoFragment = new PhotoFragment();
         photoFragment.setArguments(photoArg);
         return photoFragment;
@@ -62,11 +62,11 @@ public class PhotoPagerAdapter extends FragmentStatePagerAdapter {
         selectedPlace = pl;
     }
 
-    private int getNextPhoto() {
-        currentIndex++;
+    private int getPhoto(int index) {
         if (currentIndex < imageResources.length) {
-            return imageResources[currentIndex];
+            return imageResources[index];
         }
+        currentIndex = index;
         return 0;
     }
 

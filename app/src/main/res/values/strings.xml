@@ -17,6 +17,12 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_splash">SplashActivity</string>
 
+    <string-array name="feed_sort_options">
+        <item>Popularity</item>
+        <item>Last updated</item>
+        <item>Distance from me</item>
+    </string-array>
+
     <string name="feed_text">Live feed of media\n\n\n\nLive feed of media</string>
 
     <!-- Create event -->

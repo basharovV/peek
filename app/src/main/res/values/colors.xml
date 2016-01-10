@@ -26,13 +26,14 @@
 
     <color name="peek_toolbar_centered_bg">#eceff1</color>
     <color name="peek_toolbar_bg">#282424</color>
+    <color name="peek_loc_toolbar_bg_trans">#FFFFFF</color>
     <color name="peek_toolbar_alt">#232323</color>
     <color name="peek_dark">#212121</color>
     <color name="peek_dark_trans">#F2212121</color>
     <color name="peek_dark_grey">#424242</color>
     <color name="peek_grey">#757575</color>
     <color name="peek_light_grey">#e0e0e0</color>
-
+    <color name="peek_lighter_grey">#f2f2f2</color>
 
     <!--<color name="colorPrimary">#CC4910</color>-->
     <color name="colorPrimary">#D84315</color>

@@ -79,14 +79,17 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/textFocusItem"
-            android:gravity="center"
-            android:layout_gravity="center"
-            android:requiresFadingEdge="horizontal"
-            android:fadingEdgeLength="10dp"
-            android:maxLength="15"
-            android:maxLines="1"
+            android:id="@+id/textFocusItemOrange"
             android:text="United States"
             style="@style/AreaSelectorToolbarCenterText"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/textFocusItemGrey"
+            android:text="United States"
+            android:textColor="@color/peek_grey"
+            android:alpha="0"
+            style="@style/AreaSelectorToolbarCenterText"/>
+
     </FrameLayout>
 </FrameLayout>

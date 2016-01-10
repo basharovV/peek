@@ -28,6 +28,7 @@ import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -178,17 +179,12 @@ public class MapFragment extends Fragment implements OnPermissionsListener, OnPh
         if (Build.VERSION.SDK_INT >= 23) {
             if (((PeekViewPager) getActivity()).allPermissionsGranted()) {
                 enableLocation();
-                //MapBox
-//                mapView.setMyLocationEnabled(false);
-                //GoogleMap
-                googleMap.setMyLocationEnabled(true);
             }
         } else {
             enableLocation();
             //MapBox only
 //            mapView.setMyLocationEnabled(true);
             //GoogleMap
-            googleMap.setMyLocationEnabled(true);
         }
 
         return rootView;
@@ -238,7 +234,6 @@ public class MapFragment extends Fragment implements OnPermissionsListener, OnPh
                 }
             }
         });
-        googleMap.setMyLocationEnabled(true);
     }
 
     private void setupSlidingPanel() {
@@ -281,6 +276,16 @@ public class MapFragment extends Fragment implements OnPermissionsListener, OnPh
     }
 
     public void enableLocation() {
+        //MapBox
+//                mapView.setMyLocationEnabled(false);
+        //GoogleMap
+        try {
+            googleMap.setMyLocationEnabled(true);
+        }
+        catch (SecurityException e) {
+            Log.d("MapFragment", "Setting location error: no permission");
+        }
+
         currentLocation = PlaceActions.getInstance().getLocation(getActivity());
         //--------GOOGLE MAP----------
         CameraPosition camPosition = new CameraPosition.Builder().target(new LatLng(currentLocation.getLatitude(),

@@ -42,7 +42,7 @@
 
     <style name="AppTheme.LocationToolbar" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="android:iconifiedByDefault">true</item>
-        <item name="android:background">@color/peek_toolbar_bg</item>
+        <item name="android:background">@color/peek_loc_toolbar_bg_trans</item>
         <item name="android:minHeight">60dp</item>
         <item name="android:maxHeight">60dp</item>
         <item name="android:height">60dp</item>
@@ -76,11 +76,18 @@
         <item name="android:textColor">@android:color/white</item>
         <item name="android:textSize">12sp</item>
         <item name="android:fontFamily">sans-serif-condensed</item>
+        <item name="android:textStyle">normal</item>
     </style>
 
     <style name="AreaSelectorToolbarCenterText" parent="AreaSelectorToolbarText">
         <item name="android:textSize">22sp</item>
         <item name="android:textColor">@color/peek_orange_primary</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:requiresFadingEdge">horizontal</item>
+        <item name="android:fadingEdgeLength">10dp</item>
+        <item name="android:maxLength">15</item>
+        <item name="android:maxLines">1</item>
     </style>
 
     <!-- Overflow drop down style -->
@@ -151,6 +158,14 @@
 
 
     <!-- Event feed style -->
+
+    <style name="FeedOptionsBarDesc">
+        <item name="android:textColor">@color/peek_white</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">sans-serif-condensed</item>
+        <item name="android:textStyle">normal</item>
+
+    </style>
     <style name="PlaceTitle">
         <item name="android:textColor">@color/colorSecondaryLight</item>
         <item name="android:textSize">14sp</item>
@@ -179,7 +194,9 @@
 
     <style name="MediaDialogFragment">
         <item name="android:windowIsFloating">true</item>
-        <item name="android:windowBackground">@null</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:padding">0dp</item>
+        <item name="android:windowNoTitle">true</item>
     </style>
 
     

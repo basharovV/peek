@@ -62,25 +62,24 @@
                         android:layout_gravity="center"
                         >
 
-                        <ImageView
-                            android:layout_width="40dp"
-                            android:layout_height="match_parent"
-                            android:src="@drawable/ic_overflow"
-                            android:scaleType="center"
-                            android:background="@null"
+                        <!-- OVERFLOW settings - Not current in use -->
+                        <!--<ImageView-->
+                            <!--android:layout_width="40dp"-->
+                            <!--android:layout_height="match_parent"-->
+                            <!--android:src="@drawable/ic_overflow"-->
+                            <!--android:scaleType="center"-->
+                            <!--android:background="@null"-->
 
-                            android:layout_gravity="left|center_vertical"
-                            android:id="@+id/overflowButton"/>
+                            <!--android:layout_gravity="left|center_vertical"-->
+                            <!--android:id="@+id/overflowButton"/>-->
 
                         <com.peekapps.peek.views.TextFocusViewPager
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_gravity="center_horizontal"
-                            android:clipToPadding="true"
-                            android:clipChildren="true"
-                            android:id="@+id/areaSelectorViewPager"
-                            android:paddingLeft="0dp"
-                            android:paddingRight="40dp"/>
+                            android:clipToPadding="false"
+                            android:clipChildren="false"
+                            android:id="@+id/areaSelectorViewPager"/>
                         <!--<TextView-->
                             <!--android:layout_width="0dp"-->
                             <!--android:layout_height="match_parent"-->
@@ -151,11 +150,11 @@
 
             <!--</android.support.v7.widget.Toolbar>-->
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:id="@+id/toolbar_shadow"
-                android:background="@drawable/toolbar_shadow" />
+            <!--<View-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="1dp"-->
+                <!--android:id="@+id/toolbar_shadow"-->
+                <!--android:background="@drawable/toolbar_shadow" />-->
 
        </LinearLayout>
     </FrameLayout>

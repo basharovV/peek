@@ -42,6 +42,26 @@ public class MediaDialog extends DialogFragment{
     private ImageView photo;
 
 
+    public static MediaDialog newInstance() {
+        Bundle args = new Bundle();
+        MediaDialog fragment = new MediaDialog();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        getDialog().getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+    }
+
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setStyle(STYLE_NO_FRAME, R.style.MediaDialogFragment);
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -64,22 +84,6 @@ public class MediaDialog extends DialogFragment{
         mediaToolbar.setNavigationIcon(R.drawable.ic_arrow_back);
         mediaToolbar.setSubtitle("Uploaded 15:38");
         return rootView;
-    }
-
-    @NonNull
-    @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        // the content
-        final RelativeLayout root = new RelativeLayout(getActivity());
-        root.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-
-        // creating the fullscreen dialog
-        final Dialog dialog = new Dialog(getActivity());
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(root);
-        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-
-        return dialog;
     }
 
     //    public void getDirectory(String placeID) {

@@ -118,7 +118,6 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
                             // Create and show the dialog.
                             mDialog = new MediaDialog();
-                            mDialog.setStyle(DialogFragment.STYLE_NO_FRAME, R.style.MediaDialogFragment);
                             mDialog.show(ft, "dialog");
                         }
                     });

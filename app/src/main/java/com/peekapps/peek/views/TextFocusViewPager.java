@@ -70,69 +70,72 @@ public class TextFocusViewPager extends ViewPager {
         @Override
         public void transformPage(View page, float position) {
             ImageView textItemBg;
-            TextView areaText;
+            TextView textItemOrange;
+            TextView textItemGrey;
             //Avoid hardware acceleration problems
             TextView areaTextDummy;
-            if (page.findViewById(R.id.textFocusItem) != null) {
-                areaText = (TextView) page.findViewById(R.id.textFocusItem);
+            if (page.findViewById(R.id.textFocusItemOrange) != null) {
+                textItemOrange = (TextView) page.findViewById(R.id.textFocusItemOrange);
+                textItemGrey = (TextView) page.findViewById(R.id.textFocusItemGrey);
                 textItemBg = (ImageView) page.findViewById(R.id.textFocusBackground);
                 areaTextDummy = (TextView) page.findViewById(R.id.textFocusItemDummy);
-                //This is the left page not currently visible
-                if (position < -1) { // [-Infinity,-1)
+
+                //This is the left or right page not currently visible
+                if (position < -1 || position > 1) { // [-Infinity,-1)
+                    //Text size
                     areaTextDummy.setTextSize(NORMAL_SIZE);
-                    areaText.setTextSize(NORMAL_SIZE);
+                    textItemOrange.setTextSize(NORMAL_SIZE);
+                    textItemGrey.setTextSize(NORMAL_SIZE);
+                    //Text colour
+                    textItemOrange.setAlpha(0);
+                    textItemGrey.setAlpha(1);
+                    //Background transparency
                     textItemBg.setAlpha(0f);
-                } else if (position <= 1) { // [-1,1]
-                    float abs_pos = Math.abs(position);
+                    //Visible page
+                } else { // [-1,1]
+                    float abs_pos = Math.abs(position); //Get absolute position
+                    //Text size
                     areaTextDummy.setTextSize(CENTER_SIZE - (Math.abs(SIZE_DIFF * (position))));
-                    areaText.setTextSize(CENTER_SIZE - (Math.abs(SIZE_DIFF * (position))));
-                    areaText.setAlpha(1 - (abs_pos / 3));
+                    textItemOrange.setTextSize(CENTER_SIZE - (Math.abs(SIZE_DIFF * (position))));
+                    textItemGrey.setTextSize(CENTER_SIZE - (Math.abs(SIZE_DIFF * (position))));
 
-
+                    //Background transparency
                     if (abs_pos < 0.5) {
-                        if (abs_pos > 0.4) {
-                            textItemBg.setAlpha(1 - (abs_pos * 4f));
-                        }
-                        else {
-                            textItemBg.setAlpha(1 - (abs_pos * 2f));
-                        }
+                        textItemBg.setAlpha(1 - (abs_pos * 4f));
+                        //Cross-fade
+                        textItemOrange.setAlpha(1 - (abs_pos * 4f));
+                        textItemGrey.setAlpha(abs_pos * 4f);
                     }
-
-                } else { // (1,+Infinity]
-                    // This page is way off-screen to the right.
-                    areaText.setTextSize(NORMAL_SIZE);
-                    areaTextDummy.setTextSize(NORMAL_SIZE);
-                    textItemBg.setAlpha(0f);
                 }
             }
         }
     }
 
-    /**
-     * Listener to change the text size depending on user scroll action
-     */
-    public class TextFocusPageListener implements OnPageChangeListener {
-        private static final float NORMAL_SIZE = 18;
-        private static final float CENTER_SIZE = 24;
-        private static final float SIZE_DIFF = 6;
+        /**
+         * Listener to change the text size depending on user scroll action
+         */
+        public class TextFocusPageListener implements OnPageChangeListener {
+            private static final float NORMAL_SIZE = 18;
+            private static final float CENTER_SIZE = 24;
+            private static final float SIZE_DIFF = 6;
 
-        private float previousOffset = 2;
+            private float previousOffset = 2;
 
-        @Override
-        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-            if (previousOffset == 2) {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                if (previousOffset == 2) {
                     previousOffset = positionOffset;
                 }
-            //SNAP EFFECT - not currently used
+                //SNAP EFFECT - not currently used
 //            if(positionOffset < previousOffset && positionOffset < 0.15) {
 //                TextFocusViewPager.this.setCurrentItem(position, true);
 //            } else if(positionOffset > previousOffset && positionOffset > 0.85) {
 //                TextFocusViewPager.this.setCurrentItem(position+1, true);
 //            }
-            previousOffset = positionOffset;
-        }
+                previousOffset = positionOffset;
+            }
 
-        //OLD stuff
+            //OLD stuff
 //                //If moving to the LEFT...
 //                if (previousOffset == 2) {
 //                    previousOffset = positionOffset;
@@ -217,21 +220,23 @@ public class TextFocusViewPager extends ViewPager {
 //                    break;
 //            }
 
-        @Override
-        public void onPageSelected(int position) {
-            currentPage = position;
+            @Override
+            public void onPageSelected(int position) {
+                currentPage = position;
 //            getAdapter().setFragmentTextSize(position, NORMAL_SIZE + (SIZE_DIFF));
-        }
+            }
 
-        @Override
-        public void onPageScrollStateChanged(int scrollState) {
-            // A small hack to remove the HW layer that the viewpager add to each page when scrolling.
-            if (scrollState != ViewPager.SCROLL_STATE_IDLE) {
-                final int childCount = TextFocusViewPager.this.getChildCount();
-                for (int i = 0; i < childCount; i++) {
-                    TextFocusViewPager.this.getChildAt(i).setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+            @Override
+            public void onPageScrollStateChanged(int scrollState) {
+                // A small hack to remove the HW layer that the viewpager add to each page when scrolling.
+                if (scrollState != ViewPager.SCROLL_STATE_IDLE) {
+                    final int childCount = TextFocusViewPager.this.getChildCount();
+                    for (int i = 0; i < childCount; i++) {
+                        TextFocusViewPager.this.getChildAt(i).setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+                    }
                 }
             }
         }
     }
-}
+
+

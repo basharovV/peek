@@ -13,14 +13,17 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.AppCompatSpinner;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -53,25 +56,32 @@ public class FeedFragment extends Fragment implements GoogleApiClient.OnConnecti
     public static final int FEED_TYPE_FRIENDS = 3;
     //------------------------------------------------
 
-    private RecyclerView recyclerView;
-    private CardAdapter cardAdapter;
-    private LinearLayoutManager layoutManager;
-    private View statusBarBackground;
-
-    private SwipeRefreshLayout refreshLayout;
-    private RefreshListener refreshListener;
 
     private Toolbar toolbar;
 
     public static final int POSITION_SORT_BAR = 0;
     public static final int POSITION_SEARCH_BAR = 1;
 
-    LinearLayout optionsBarHolder;
+    //Feed options bar (info, sorting options, search, overflow)
+    private LinearLayout optionsBarHolder;
+    private AppCompatSpinner sortSpinner;
+
     private FragmentManager fragmentManager;
-    private ViewPager optionsBar;
+
+//    private ViewPager optionsBar;
+
+
     private ImageButton search;
-    private AutoCompleteTextView autocompleteView;
-    private ProgressBar feedProgressBar;
+
+    //Feed content
+    private RecyclerView recyclerView;
+    private CardAdapter cardAdapter;
+    private LinearLayoutManager layoutManager;
+    private View statusBarBackground;
+    //Refresh
+    private SwipeRefreshLayout refreshLayout;
+    private RefreshListener refreshListener;
+
     private List<Place> placesList;
     private MediaDialog mediaDialog;
 
@@ -102,10 +112,19 @@ public class FeedFragment extends Fragment implements GoogleApiClient.OnConnecti
         windowManager.getDefaultDisplay().getSize(size);
         refreshLayout.setProgressViewOffset(false, size.y / 9, size.y / 5);
 
+        //Sorting spinner
+        sortSpinner = (AppCompatSpinner) rootView.findViewById(R.id.feedSortSpinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
+                R.array.feed_sort_options, android.R.layout.simple_spinner_item);
+        // Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner
+        sortSpinner.setAdapter(adapter);
+
 
         //Set up options bar
         optionsBarHolder = (LinearLayout) rootView.findViewById(R.id.optionsBarHolder);
-        optionsBar = (ViewPager) rootView.findViewById(R.id.scrollOptionsBar);
+//        optionsBar = (ViewPager) rootView.findViewById(R.id.scrollOptionsBar);
 
         fragmentManager = getChildFragmentManager();
 
@@ -126,8 +145,8 @@ public class FeedFragment extends Fragment implements GoogleApiClient.OnConnecti
     }
 
     public void enableFeed() {
-        optionsBar.setAdapter(new BarPagerAdapter(fragmentManager));
-        optionsBar.setCurrentItem(0);
+//        optionsBar.setAdapter(new BarPagerAdapter(fragmentManager));
+//        optionsBar.setCurrentItem(0);
 
         recyclerView.setAdapter(cardAdapter);
         updateFeed();
@@ -191,12 +210,20 @@ public class FeedFragment extends Fragment implements GoogleApiClient.OnConnecti
         @Override
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
             super.onScrolled(recyclerView, dx, dy);
-            if (dy > 2 && optionsBarHolder.getAlpha() == 1) {
-                hideOptionsBar();
+            Log.d("FeedFragment", "Options height: " + optionsBarHolder.getMeasuredHeight());
+            int verticalOffset = recyclerView.computeVerticalScrollOffset();
+
+            Log.d("FeedFragment", "dy: " + verticalOffset + "| Options Y: " + optionsBarHolder.getTranslationY());
+            if (verticalOffset < optionsBarHolder.getMeasuredHeight()
+                    || verticalOffset < optionsBarHolder.getHeight()) {
+                optionsBarHolder.setTranslationY(-verticalOffset);
             }
-            else if (dy < -2 && optionsBarHolder.getAlpha() == 0) {
-                showOptionsBar();
-            }
+//            if (dy > 2 && optionsBarHolder.getAlpha() == 1) {
+//                hideOptionsBar();
+//            }
+//            else if (dy < -2 && optionsBarHolder.getAlpha() == 0) {
+//                showOptionsBar();
+//            }
         }
     }
     private class RefreshListener implements SwipeRefreshLayout.OnRefreshListener {
@@ -231,15 +258,15 @@ public class FeedFragment extends Fragment implements GoogleApiClient.OnConnecti
     }
 
     public void showOptionsBar() {
-        YoYo.with(Techniques.FadeInDown)
-                .duration(300)
-                .playOn(optionsBarHolder);
+//        YoYo.with(Techniques.FadeInDown)
+//                .duration(300)
+//                .playOn(optionsBarHolder);
     }
 
     public void hideOptionsBar() {
-        YoYo.with(Techniques.FadeOutUp)
-                .duration(300)
-                .playOn(optionsBarHolder);
+//        YoYo.with(Techniques.FadeOutUp)
+//                .duration(300)
+//                .playOn(optionsBarHolder);
     }
     public void refreshLayout() {
         refreshListener.onRefresh();

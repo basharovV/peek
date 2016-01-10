@@ -110,7 +110,6 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
         setContentView(R.layout.activity_pager);
 
         startBasic();
-        showDialog();
 
         if (Build.VERSION.SDK_INT >= 23) {
             final ArrayList<String> missingPermissions = PermissionActions.getMissingPermissions(this);
@@ -162,6 +161,7 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
     }
 
     private void startLocationWithPermission() {
+        showDialog();
         //Start listening for location
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         try {
@@ -201,7 +201,7 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
                 hideDialogHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        startDialog.hide();
+                        startDialog.dismiss();
                         startDialog = null;
                     }
                 }, 1000);
@@ -245,8 +245,8 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
     private void notifyPermissionListeners() {
         try {
             ((MapFragment) registeredFragments.get(0)).onPermissionsGranted();
-            ((FeedFragment) registeredFragments.get(1)).onPermissionsGranted();
-            ((CameraFragment) registeredFragments.get(2)).onPermissionsGranted();
+            ((CameraFragment) registeredFragments.get(1)).onPermissionsGranted();
+            ((FeedFragment) registeredFragments.get(2)).onPermissionsGranted();
         }
         catch (NullPointerException e) {
             Log.d("PeekViewPager", "Null fragment");
@@ -308,9 +308,9 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
         areaSelectorPager.setAdapter(areaSelectorAdapter);
 
 
-
-        overflowButton = (ImageView) findViewById(R.id.overflowButton);
-        overflowButton.setOnClickListener(new OverflowClickListener());
+//
+//        overflowButton = (ImageView) findViewById(R.id.overflowButton);
+//        overflowButton.setOnClickListener(new OverflowClickListener());
 //
 //        createEventButton = (ImageButton) findViewById(R.id.createEventButton);
 //        createEventButton.setOnClickListener(new createEventListener());

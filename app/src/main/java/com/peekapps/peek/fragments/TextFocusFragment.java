@@ -23,7 +23,8 @@ import org.w3c.dom.Text;
  */
 public class TextFocusFragment extends Fragment {
 
-    private TextView item;
+    private TextView itemGrey;
+    private TextView itemOrange;
     private ImageView itemBg;
     private TextView dummyItem;
     private ImageView rightConnector, leftConnector;
@@ -34,9 +35,14 @@ public class TextFocusFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_text_focus, container, false);
 
-        item = (TextView) rootView.findViewById(R.id.textFocusItem);
+        itemOrange = (TextView) rootView.findViewById(R.id.textFocusItemOrange);
+        itemGrey = (TextView) rootView.findViewById(R.id.textFocusItemGrey);
         dummyItem = (TextView) rootView.findViewById(R.id.textFocusItemDummy);
-        item.setText(areaText);
+
+        //Two views for crossfading colours
+        itemOrange.setText(areaText);
+        itemGrey.setText(areaText);
+        //Set the size of parent view
         dummyItem.setText(areaText);
         itemBg = (ImageView) rootView.findViewById(R.id.textFocusBackground);
 //        rightConnector = (ImageView) rootView.findViewById(R.id.locToolbarConnectorR);
@@ -63,8 +69,9 @@ public class TextFocusFragment extends Fragment {
 
     public void setText(String text) {
         areaText = text;
-        if (item != null && dummyItem != null) {
-            item.setText(text);
+        if (itemOrange != null && dummyItem != null) {
+            itemOrange.setText(text);
+            itemGrey.setText(text);
             dummyItem.setText(text);
         }
     }
@@ -74,8 +81,8 @@ public class TextFocusFragment extends Fragment {
     }
 
     public void setTextSize(float size) {
-
-        item.setTextSize(size);
+        itemOrange.setTextSize(size);
+        itemGrey.setTextSize(size);
         dummyItem.setTextSize(size);
     }
 

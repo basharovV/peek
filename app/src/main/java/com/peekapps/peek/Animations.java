@@ -1,10 +1,14 @@
 package com.peekapps.peek;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.RotateAnimation;
 
 /**
  * Created by Slav on 07/10/2015.
@@ -29,21 +33,89 @@ public class Animations {
     protected Animations() {
     }
 
-    public void fade(View view, int animation) {
-        Animation fadeAnimation = new AlphaAnimation(0, 1);
+    public static void crossfade(final View view1, final View view2) {
+        view2.setAlpha(1f);
+        view2.setVisibility(View.VISIBLE);
+        view2.animate()
+                .alpha(0f)
+                .setInterpolator(new AccelerateInterpolator())
+                .setDuration(400)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        view1.setAlpha(0f);
+                        view1.setVisibility(View.VISIBLE);
+                        view1.animate()
+                                .alpha(1f)
+                                .setInterpolator(new AccelerateInterpolator())
+                                .setDuration(400);
+                    }
+                });
+    }
+
+    public static void fadeOut(final View view) {
+        view.setAlpha(1f);
+        view.setVisibility(View.VISIBLE);
+        view.animate()
+                .alpha(0f)
+                .setInterpolator(new AccelerateInterpolator())
+                .setDuration(400)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        view.setVisibility(View.GONE);
+                        view.setAlpha(0f);
+                    }
+                });
+
+    }
+
+    public static void fadeIn(final View view) {
+        view.setAlpha(0f);
+        view.setVisibility(View.VISIBLE);
+        view.animate()
+                .alpha(1f)
+                .setInterpolator(new AccelerateInterpolator())
+                .setDuration(400)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        view.setAlpha(1f);
+                    }
+                });
+    }
+
+    public static void fade(final View view, final int anim, int offset) {
+        Animation fadeAnimation = new AlphaAnimation(0f, 1f);
         //TO BE DONE IN XML, programmatically for now
-        switch(animation) {
+        switch(anim) {
             case ANIMATION_FADE_IN:
-                fadeAnimation = new AlphaAnimation(0, 1);
-                fadeAnimation.setStartOffset(200);
+                view.setAlpha(0f);
+                view.setVisibility(View.VISIBLE);
+                view.animate()
+                        .alpha(1f)
+                        .setInterpolator(new AccelerateInterpolator())
+                        .setStartDelay(offset)
+                        .setDuration(400);
+
                 break;
             case ANIMATION_FADE_OUT:
-                fadeAnimation = new AlphaAnimation(1, 0);
+                view.animate()
+                        .alpha(0f)
+                        .setInterpolator(new AccelerateInterpolator())
+                        .setStartDelay(offset)
+                        .setDuration(400)
+                        .setListener(new AnimatorListenerAdapter() {
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+                                view.setVisibility(View.GONE);
+                            }
+                        });
                 break;
         }
-        fadeAnimation.setInterpolator(new AccelerateInterpolator());
-        fadeAnimation.setDuration(400);
-        view.setAnimation(fadeAnimation);
-        fadeAnimation.start();
+    }
+
+    public void rotate180(View view) {
+        view.animate().rotationBy(180);
     }
 }

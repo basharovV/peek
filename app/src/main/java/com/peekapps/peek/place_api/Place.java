@@ -7,7 +7,6 @@ import java.io.Serializable;
  */
 public class Place implements Serializable {
 
-
     private String ID;
     private String name;
     private String type;
@@ -16,8 +15,6 @@ public class Place implements Serializable {
     private double latitude;
     private double longitude;
     private int timeUpdated;
-
-
 
     private int numberOfPhotos;
     private int minutesAgoUpdated;

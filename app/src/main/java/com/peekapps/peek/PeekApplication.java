@@ -1,10 +1,9 @@
 package com.peekapps.peek;
 
-import android.app.Application;
 import android.support.multidex.MultiDexApplication;
-import android.test.ApplicationTestCase;
+import android.util.Log;
 
-import com.squareup.leakcanary.LeakCanary;
+import com.amazonaws.mobile.AWSMobileClient;
 import com.crashlytics.android.Crashlytics;
 import io.fabric.sdk.android.Fabric;
 
@@ -13,9 +12,18 @@ import io.fabric.sdk.android.Fabric;
  */
 public class PeekApplication extends MultiDexApplication {
 
+    private static String TAG = "PeekApplication";
+
     @Override public void onCreate() {
         super.onCreate();
         Fabric.with(this, new Crashlytics());
-//        LeakCanary.install(this);
+//        LeakCanary.install(this);initializeApplication();
+        Log.d(TAG, "Application.onCreate - Application initialized OK");
+    }
+
+    private void initializeApplication() {
+        AWSMobileClient.initializeMobileClientIfNecessary(getApplicationContext());
+
+        // ...Put any application-specific initialization logic here...
     }
 }

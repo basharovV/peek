@@ -100,8 +100,8 @@ public class SearchBarFragment extends Fragment {
 
         @Override
         protected Place doInBackground(Void... params) {
-            return PlaceActions.getInstance().getPlace(
-                    adapter.getItem(position).getPlaceId(), getActivity());
+            return PlaceActions.getInstance(getContext()).getPlace(getActivity(),
+                    adapter.getItem(position).getPlaceId(), true);
         }
 
         @Override

@@ -42,6 +42,7 @@
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:id="@+id/textFocusBackground"
+                    android:elevation="1dp"
                     android:src="@drawable/bg_toolbar_selected_rect"
                     android:scaleType="fitXY"/>
                 <TextView
@@ -87,7 +88,7 @@
             android:layout_height="match_parent"
             android:id="@+id/textFocusItemGrey"
             android:text="United States"
-            android:textColor="@color/peek_grey"
+            android:textColor="@color/peek_toolbar_inactive"
             android:alpha="0"
             style="@style/AreaSelectorToolbarCenterText"/>
 

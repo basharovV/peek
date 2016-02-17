@@ -1,32 +1,21 @@
 
 package com.peekapps.peek.fragments;
 
-import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.BitmapShader;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
-import android.graphics.Shader;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -35,12 +24,10 @@ import android.view.ViewGroup;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.GlideBuilder;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
 import com.google.android.gms.maps.OnMapReadyCallback;
 //import com.mapbox.mapboxsdk.annotations.Marker;
 //import com.mapbox.mapboxsdk.annotations.MarkerOptions;
@@ -53,19 +40,16 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
-import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.TileOverlayOptions;
 import com.mapbox.mapboxsdk.annotations.SpriteFactory;
 import com.peekapps.peek.activities.PeekViewPager;
 import com.peekapps.peek.adapters.PhotoPagerAdapter;
 import com.peekapps.peek.database.PlaceDbHelper;
 import com.peekapps.peek.fragments_utils.OnPermissionsListener;
-import com.peekapps.peek.map.MapboxTileProvider;
 import com.peekapps.peek.place_api.Place;
 import com.peekapps.peek.place_api.PlaceActions;
 import com.peekapps.peek.place_api.PlacesListener;
@@ -77,8 +61,6 @@ import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-
-import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 public class MapFragment extends Fragment implements OnPermissionsListener, OnPhotoPagerReadyListener {
 
@@ -102,10 +84,12 @@ public class MapFragment extends Fragment implements OnPermissionsListener, OnPh
     private PhotoPagerAdapter photoPagerAdapter;
     private TextView panelHeaderName;
     private TextView panelHeaderVic;
+    private LinearLayout likeButton;
     private ImageView uploadCountIcon;
 
 
     private boolean markersDisplayed = false;
+    private Place currentPlace;
 
     private HashMap<Marker, Place> markerMap;
     private List<Place> placesList;
@@ -167,6 +151,7 @@ public class MapFragment extends Fragment implements OnPermissionsListener, OnPh
         //Header
         panelToolbar = (Toolbar) rootView.findViewById(R.id.mapPanelToolbar);
         uploadCountIcon = (ImageView) rootView.findViewById(R.id.mapPanelUploadCountIcon);
+        likeButton = (LinearLayout) rootView.findViewById(R.id.mapLikeButton);
         panelHeaderName = (TextView) rootView.findViewById(R.id.mapPanelPlaceName);
         panelHeaderVic = (TextView) rootView.findViewById(R.id.mapPanelPlaceVic);
 
@@ -178,7 +163,7 @@ public class MapFragment extends Fragment implements OnPermissionsListener, OnPh
 
         if (Build.VERSION.SDK_INT >= 23) {
             if (((PeekViewPager) getActivity()).allPermissionsGranted()) {
-                enableLocation();
+//                enableLocation();
             }
         } else {
             enableLocation();
@@ -243,11 +228,18 @@ public class MapFragment extends Fragment implements OnPermissionsListener, OnPh
         photoPagerAdapter.setOnReadyListener(this);
         //Header elements
         uploadCountIcon.setColorFilter(ContextCompat.getColor(getContext(), R.color.peek_orange_logo));
-
+        likeButton.setOnClickListener(new LikeListener());
         //Init
         mapSlidingPanel.setPanelSlideListener(new MapPanelSlideListener());
         mapSlidingPanel.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
         mapSlidingPanel.setOverlayed(true);
+    }
+
+    public class LikeListener implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+
+        }
     }
 
     public class OnPlaceSelectedListener implements GoogleMap.OnMarkerClickListener {
@@ -256,6 +248,7 @@ public class MapFragment extends Fragment implements OnPermissionsListener, OnPh
             if (markerMap.containsKey(marker)) {
                 Place selectedPlace = markerMap.get(marker);
                 if (selectedPlace != null) {
+                    currentPlace = selectedPlace;
                     panelHeaderName.setText(selectedPlace.getName());
                     panelHeaderVic.setText(selectedPlace.getVicinity());
                 }
@@ -286,16 +279,19 @@ public class MapFragment extends Fragment implements OnPermissionsListener, OnPh
             Log.d("MapFragment", "Setting location error: no permission");
         }
 
-        currentLocation = PlaceActions.getInstance().getLocation(getActivity());
-        //--------GOOGLE MAP----------
-        CameraPosition camPosition = new CameraPosition.Builder().target(new LatLng(currentLocation.getLatitude(),
-                currentLocation.getLongitude()))
-                .zoom(5).build();
-        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(camPosition));
+        currentLocation = PlaceActions.getInstance(getActivity()).getLocation(getActivity());
+        if (currentLocation != null) {
+            //ANIMATE MAP
+            //--------GOOGLE MAP----------
+            CameraPosition camPosition = new CameraPosition.Builder().target(new LatLng(currentLocation.getLatitude(),
+                    currentLocation.getLongitude()))
+                    .zoom(5).build();
+            googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(camPosition));
 
-        //----------MapBox-----------
-//        mapView.setCenterCoordinate(new LatLng(currentLocation.getLatitude(),
-//        currentLocation.getLongitude()), true);
+            //----------MapBox-----------
+            //        mapView.setCenterCoordinate(new LatLng(currentLocation.getLatitude(),
+            //        currentLocation.getLongitude()), true);
+        }
     }
 
     public void updateLocation(Location location) {

@@ -20,6 +20,8 @@ import uk.co.senab.photoview.PhotoViewAttacher;
  */
 public class PhotoFragment extends Fragment {
 
+    private ImageView likeButton;
+
     //Test purposes
     private int[] imageResources = new int[] {
             R.drawable.rockerfeller1,

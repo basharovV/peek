@@ -5,13 +5,13 @@
     android:layout_width="match_parent"
     android:tag="feed_fragment"
     android:id="@+id/feedFragment"
-    android:background="@color/peek_toolbar_bg"
+    android:background="@color/peek_light_grey"
     >
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/peek_toolbar_bg"
+        android:background="@color/peek_light_grey"
         >
 
         <android.support.v4.widget.SwipeRefreshLayout
@@ -39,7 +39,9 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="50dp">
+                android:layout_height="50dp"
+                android:paddingLeft="7dp"
+                android:paddingRight="7dp">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -73,39 +75,43 @@
                     android:paddingRight="10dp"
                     android:layout_toRightOf="@+id/feedTypeDescLayout">
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <ImageView
+                        android:layout_width="28dp"
                         android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:text="Sort by:"
-                        android:textSize="18sp"
-                        style="@style/FeedOptionsBarDesc"/>
+                        android:src="@drawable/ic_sort"
+                        />
+                    <!--<TextView-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="match_parent"-->
+                        <!--android:gravity="center"-->
+                        <!--android:text="Sort by:"-->
+                        <!--android:textSize="18sp"-->
+                        <!--style="@style/FeedOptionsBarDesc"/>-->
                     <android.support.v7.widget.AppCompatSpinner
-                        android:layout_width="wrap_content"
+                        android:layout_width="140dp"
                         android:layout_height="match_parent"
                         android:id="@+id/feedSortSpinner"
                         android:spinnerMode="dropdown"
+                        android:minWidth="100dp"
+
 
                         ></android.support.v7.widget.AppCompatSpinner>
 
                 </LinearLayout>
                 <ImageView
-                    android:layout_width="wrap_content"
+                    android:layout_width="50dp"
                     android:layout_height="match_parent"
-                    android:padding="5dp"
+                    android:id="@+id/feedSearchButton"
                     android:layout_alignParentRight="true"
-                    android:src="@drawable/ic_search"/>
+                    android:src="@drawable/ic_search"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"/>
             </RelativeLayout>
             <!--<android.support.v4.view.ViewPager-->
                 <!--android:layout_width="wrap_content"-->
                 <!--android:layout_height="50dp"-->
                 <!--android:id="@+id/scrollOptionsBar"-->
                 <!--android:fitsSystemWindows="true"/>-->
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@drawable/toolbar_shadow"
-                android:fitsSystemWindows="true"/>
         </LinearLayout>
 
         <RelativeLayout

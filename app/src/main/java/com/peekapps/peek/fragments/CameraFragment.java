@@ -1,39 +1,31 @@
 package com.peekapps.peek.fragments;
 
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
+import android.graphics.YuvImage;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.hardware.Camera;
-import android.hardware.SensorManager;
-import android.media.Image;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.LayoutInflater;
-import android.view.OrientationEventListener;
 import android.view.Surface;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,32 +43,33 @@ import android.widget.Toast;
 
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
+import com.dd.morphingbutton.MorphingButton;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.PlaceLikelihood;
 import com.google.android.gms.location.places.PlaceLikelihoodBuffer;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.location.places.ui.PlacePicker;
 import com.peekapps.peek.Animations;
+import com.peekapps.peek.AudioUtils;
 import com.peekapps.peek.R;
-import com.peekapps.peek.activities.MediaPublisher;
 import com.peekapps.peek.activities.PeekViewPager;
-import com.peekapps.peek.cloud_api.UploadTask;
+import com.peekapps.peek.activities.SettingsActivity;
+import com.peekapps.peek.backend_api.PeekBackend;
 import com.peekapps.peek.fragments_utils.OnPermissionsListener;
-import com.peekapps.peek.place_api.LocationActions;
+import com.peekapps.peek.place_api.Place;
 import com.peekapps.peek.place_api.PlaceActions;
-import com.squareup.picasso.Picasso;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -121,6 +114,7 @@ public class CameraFragment extends Fragment implements OnPermissionsListener{
     private ImageButton captureButton;
     private ImageButton flashButton;
     private ImageButton switchCamButton;
+    private ImageButton settingsButton;
 
     //FLASH MODE
     private static final String FLASH_ON = Camera.Parameters.FLASH_MODE_ON;
@@ -148,7 +142,7 @@ public class CameraFragment extends Fragment implements OnPermissionsListener{
             camera.stopPreview();
 
             //Save the photo and start publisher mode
-            savePhoto(data);
+            savePhotoBytes(data);
             switchUI(PUBLISH_MODE);
 
             //Show a success toast message to the user
@@ -162,14 +156,17 @@ public class CameraFragment extends Fragment implements OnPermissionsListener{
 
     private FrameLayout publisherFrame;
 
+    private byte[] photoBytes;
     private File photoFile;
+//    private ParseFile parseFile;
+//    private PhotoObject parsePhoto;
 
     private ImageView photoView;
-    private ImageButton publishButton;
+    private MorphingButton publishButton;
     private TextView confirmButton;
     private ImageButton placePickerButton;
     private ImageButton closeButton;
-    LinearLayout popup;
+    private LinearLayout popup;
     private TextView placeName;
     private TextView changeLocationButton;
     private ProgressBar locationProgress;
@@ -202,7 +199,7 @@ public class CameraFragment extends Fragment implements OnPermissionsListener{
         switchCamButton = (ImageButton) rootView.findViewById(R.id.cameraSwitchButton);
         flashButton = (ImageButton) rootView.findViewById(R.id.cameraFlashButton);
         captureButton = (ImageButton) rootView.findViewById(R.id.pictureButton);
-
+        settingsButton = (ImageButton) rootView.findViewById(R.id.cameraSettingsButton);
         try {
             previewFrame = (FrameLayout) rootView.findViewById(R.id.camera_preview);
         } catch (NullPointerException e) {
@@ -218,7 +215,7 @@ public class CameraFragment extends Fragment implements OnPermissionsListener{
         //NOT USED
         //photoView = (ImageView) rootView.findViewById(R.id.publisherPhoto);
 
-        publishButton = (ImageButton) rootView.findViewById(R.id.publishButton);
+        publishButton = (MorphingButton) rootView.findViewById(R.id.publishButton);
         confirmButton = (TextView) rootView.findViewById(R.id.publisherConfirmButton);
         closeButton = (ImageButton) rootView.findViewById(R.id.close_publisher);
         popup = (LinearLayout) rootView.findViewById(R.id.publisherPopup);
@@ -283,11 +280,38 @@ public class CameraFragment extends Fragment implements OnPermissionsListener{
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        // get an image from the camera
-                        camera.takePicture(null, null, pictureCallback);
+                        AudioUtils.playSound(getContext(), R.raw.shutter);
+                        camera.setOneShotPreviewCallback(new Camera.PreviewCallback() {
+                            //Preview snapshot
+                            @Override
+                            public void onPreviewFrame(byte[] data, Camera camera) {
+                                //Stop the preview
+                                camera.stopPreview();
+                                //Save the photo and start publisher mode
+                                savePhotoBytes(data);
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        switchUI(PUBLISH_MODE);
+                                    }
+
+                                });
+//                        // get an image from the camera
+//                        camera.takePicture(null, null, pictureCallback);
+                            }
+                        });
                     }
                 }
         );
+
+        //Set up settings button
+        settingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent settingsIntent = new Intent(getActivity(), SettingsActivity.class);
+                startActivity(settingsIntent);
+            }
+        });
     }
 
     /**
@@ -338,12 +362,21 @@ public class CameraFragment extends Fragment implements OnPermissionsListener{
         closeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                switchUI(CAPTURE_MODE);
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        switchUI(CAPTURE_MODE);
+                        photoBytes = null;
+                    }
+
+                });
             }
         });
 
         //Set up publisher button
         publishButton.setOnClickListener(new OnPublishListener());
+
+        morph("circle");
 
         //Set up listener for exiting the publish popup
         publisherFrame.setOnClickListener(new OnClickOutsidePopupListener());
@@ -383,11 +416,7 @@ public class CameraFragment extends Fragment implements OnPermissionsListener{
 
     private void enableLocation() {
         //Set up GoogleApiClient
-        apiClient = new GoogleApiClient.Builder(getActivity())
-                .addApi(Places.PLACE_DETECTION_API)
-                .build();
-
-        apiClient.connect();
+        apiClient = ((PeekViewPager) getActivity()).getApiClient();
     }
 
     /**
@@ -415,7 +444,10 @@ public class CameraFragment extends Fragment implements OnPermissionsListener{
 
     private void releaseCamera() {
         if (camera != null) {
-            preview = null;
+            if (preview != null) {
+                previewFrame.removeView(preview);
+                preview = null;
+            }
             camera.release();        // release the camera for other applications
             camera = null;
         }
@@ -441,19 +473,16 @@ public class CameraFragment extends Fragment implements OnPermissionsListener{
     }
 
     private void switchCamera() {
-        if (preview.isEnabled()) {
-            stop();
-            camera.release();
+        disableCamera();
 
-            if (cameraID == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-                cameraID = Camera.CameraInfo.CAMERA_FACING_BACK;
-            } else {
-                cameraID = Camera.CameraInfo.CAMERA_FACING_FRONT;
-            }
-            camera = Camera.open(cameraID);
-            setCameraDisplayOrientation(cameraID, camera);
-            start();
+        if (cameraID == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+            cameraID = Camera.CameraInfo.CAMERA_FACING_BACK;
+        } else {
+            cameraID = Camera.CameraInfo.CAMERA_FACING_FRONT;
         }
+
+        enableCamera();
+//        start();
     }
 
     private void setFlashMode(String flashMode) {
@@ -494,42 +523,49 @@ public class CameraFragment extends Fragment implements OnPermissionsListener{
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
             camera = getCameraInstance();
-            Camera.Parameters params = camera.getParameters();
-            params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
-            camera.setParameters(params);
+            if (cameraID == Camera.CameraInfo.CAMERA_FACING_BACK) {
+                Camera.Parameters params = camera.getParameters();
+                params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+                camera.setParameters(params);
+            }
 
             // supported preview sizes
             supportedPreviewSizes = camera.getParameters().getSupportedPreviewSizes();
             for(Camera.Size str: supportedPreviewSizes)
                 Log.e(TAG, str.width + "/" + str.height);
+            if (supportedPreviewSizes != null ) {
+                previewSize = getOptimalPreviewSize(supportedPreviewSizes, width, height);
+            }
 
-//            if (holder.getSurface() == null) {
-//                return;
-//            }
+            if (surface == null) {
+                return;
+            }
+
             // stop preview before making changes
             try {
-//                camera.stopPreview();
-//            } catch (Exception e){
-                // ignore: tried to stop a non-existent preview
-//            }
+                camera.stopPreview();
+            } catch (Exception e){
+//                 ignore: tried to stop a non-existent preview
+            }
+
             // set preview size and make any resize, rotate or reformatting changes here
             // start preview with new settings
-//            try {
-//                if(previewSize.height >= previewSize.width)
-//                    ratio = (float) previewSize.height / (float) previewSize.width;
-//                else
-//                    ratio = (float) previewSize.width / (float) previewSize.height;
-//
+            try {
+                if(previewSize.height >= previewSize.width)
+                    ratio = (float) previewSize.height / (float) previewSize.width;
+                else
+                    ratio = (float) previewSize.width / (float) previewSize.height;
+
 //                //Set preview size
-//                Camera.Parameters parameters = camera.getParameters();
-//                parameters.setPreviewSize(previewSize.width, previewSize.height);
+                Camera.Parameters parameters = camera.getParameters();
+                parameters.setPreviewSize(previewSize.width, previewSize.height);
 //
 //                //Set the picture size
-//                Camera.Size pictureSize = getOptimalPictureSize();
-//                parameters.setPictureSize(pictureSize.width, pictureSize.height);
+                Camera.Size pictureSize = getOptimalPictureSize();
+                parameters.setPictureSize(pictureSize.width, pictureSize.height);
 //
 ////                //Set overall parameters
-//                camera.setParameters(parameters);
+                camera.setParameters(parameters);
                 setCameraDisplayOrientation(cameraID, camera);
                 camera.setPreviewTexture(surface);
                 camera.startPreview();
@@ -781,19 +817,28 @@ public class CameraFragment extends Fragment implements OnPermissionsListener{
         return null;
     }
 
-    private void savePhoto(byte[] data) {
-        //Generate bitmap
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inSampleSize = 2;
-        Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length, options);
+    private void savePhotoBytes(byte[] data) {
+        Bitmap photo = yuvToBitmap(data);
         Matrix matrix = new Matrix();
-        matrix.postRotate(90);
-        Bitmap toPublish = Bitmap.createBitmap(bmp, 0, 0,
-                bmp.getWidth(), bmp.getHeight(), matrix, true);
-        bmp.recycle();
+        matrix.postRotate(270);
+        Bitmap rotatedPhoto = Bitmap.createBitmap(photo, 0, 0,
+                photo.getWidth(), photo.getHeight(), matrix, true);
+        ByteBuffer buffer = ByteBuffer.allocate(rotatedPhoto.getByteCount());
+        rotatedPhoto.copyPixelsToBuffer(buffer);
+        photoBytes = buffer.array();
+
+        //Generate bitmap
+//        BitmapFactory.Options options = new BitmapFactory.Options();
+//        options.inSampleSize = 2;
+//        Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length, options);
+//        Matrix matrix = new Matrix();
+//        matrix.postRotate(90);
+//        Bitmap toPublish = Bitmap.createBitmap(bmp, 0, 0,
+//                bmp.getWidth(), bmp.getHeight(), matrix, true);
+//        bmp.recycle();
 
         try {
-            File photoFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
+            photoFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
             if (photoFile != null) {
                 if (photoFile.exists())
                     photoFile.delete();
@@ -801,18 +846,29 @@ public class CameraFragment extends Fragment implements OnPermissionsListener{
                     photoFile.createNewFile();
                 }
 
-                //Save the photo file
-                FileOutputStream outputStream = new FileOutputStream(photoFile);
-                toPublish.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
-                outputStream.flush();
-                outputStream.close();
-            }
+//          Save the photo file
+//          ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            FileOutputStream outputStream = new FileOutputStream(photoFile);
+            rotatedPhoto.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+//          photoBytes = outputStream.toByteArray();
 
+            }
         } catch (IOException e) {
             Log.d("PhotoReq", "IOException");
         } catch (NullPointerException e) {
             Log.e(TAG, "NPE");
         }
+    }
+
+    private Bitmap yuvToBitmap(byte[] data) {
+        Camera.Parameters params = camera.getParameters();
+        Camera.Size previewSize = params.getPreviewSize();
+        YuvImage yuvImage = new YuvImage(data, params.getPreviewFormat(),
+            previewSize.width, previewSize.height, null);
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        yuvImage.compressToJpeg(new Rect(0, 0, previewSize.width, previewSize.height), 100, outputStream);
+        byte[] photoBytes = outputStream.toByteArray();
+        return BitmapFactory.decodeByteArray(photoBytes, 0, photoBytes.length);
     }
 
     public static Bitmap rotate(Bitmap bitmap, int degree) {
@@ -834,52 +890,95 @@ public class CameraFragment extends Fragment implements OnPermissionsListener{
     private void switchUI(int mode) {
         switch (mode) {
             case CAPTURE_MODE:
-//                cameraUI.setAlpha(0);
-                cameraUI.setVisibility(View.VISIBLE);
-                Animations.getInstance().fade(publishUI, Animations.ANIMATION_FADE_OUT);
-                publishUI.setVisibility(View.GONE);
-                Animations.getInstance().fade(cameraUI, Animations.ANIMATION_FADE_IN);
+                Animations.fadeOut(publishUI);
+                Animations.fadeIn(cameraUI);
                 start();
                 break;
             case PUBLISH_MODE:
-//                publishUI.setAlpha(0);
-                publishUI.setVisibility(View.VISIBLE);
-                Animations.getInstance().fade(cameraUI, Animations.ANIMATION_FADE_OUT);
-                cameraUI.setVisibility(View.GONE);
-                Animations.getInstance().fade(publishUI, Animations.ANIMATION_FADE_IN);
+                publishUI.setAlpha(0);
+                Animations.fadeOut(cameraUI);
+                Animations.fadeIn(publishUI);
                 stop();
                 break;
+        }
+    }
+
+    private void showPublishPopup() {
+        YoYo.with(Techniques.FadeInUp)
+                .duration(200)
+                .playOn(popup);
+        popupIsShown = true;
+//        Animations.getInstance().rotate180(publishButton);
+    }
+
+    private void hidePublishPopup() {
+        YoYo.with(Techniques.FadeOutDown)
+                .duration(200)
+                .playOn(popup);
+        popupIsShown = false;
+//        Animations.getInstance().rotate180(publishButton);
+    }
+
+    public void morph(String type) {
+        if (type.equals("rect")) {
+            MorphingButton.Params rect = MorphingButton.Params.create()
+                    .duration(500)
+                    .cornerRadius(10) // 56 dp
+                    .width(350) // 56 dp
+                    .height(200) // 56 dp
+                    .color(getResources().getColor(R.color.peek_white)) // normal state color
+                    .colorPressed(getResources().getColor(R.color.peek_orange_statusbar_dark)) // pressed state
+                    .text("SHARE");
+
+            publishButton.morph(rect);
+        }
+        else if (type.equals("circle")) {
+            MorphingButton.Params circle = MorphingButton.Params.create()
+                    .duration(500)
+                    .cornerRadius(200) // 56 dp
+                    .width(200) // 56 dp
+                    .height(200) // 56 dp
+                    .color(getResources().getColor(R.color.peek_white_trans)) // normal state color
+                    .colorPressed(R.color.peek_orange_statusbar_dark); // pressed state color
+            publishButton.morph(circle);
         }
     }
 
     private class OnPublishListener implements View.OnClickListener {
         @Override
         public void onClick(View view) {
+            morph("rect");
             //VIEW POPUP ANIMATION
             if (!popupIsShown) {
-                YoYo.with(Techniques.FadeInUp)
-                        .duration(250)
-                        .playOn(popup);
-                popupIsShown = true;
+                showPublishPopup();
+            }
+            else {
+                hidePublishPopup();
             }
 
             // ----------------FETCH MOST LIKELY LOCATION FROM GOOGLE PLACES API -----------------
             //Temp - mock location to Times Square
-            PlaceActions.getInstance().setMockLocation(getActivity());
-            PendingResult<PlaceLikelihoodBuffer> result = Places.PlaceDetectionApi.getCurrentPlace(
-                    apiClient, null);
-            result.setResultCallback(new ResultCallback<PlaceLikelihoodBuffer>() {
-                @Override
-                public void onResult(PlaceLikelihoodBuffer likelyPlaces) {
-                    Place mostLikelyPlace = PlaceActions.getInstance().
-                            getMostLikelyPlace(likelyPlaces);
-                    if (mostLikelyPlace != null) {
-                        updatePlaceName(mostLikelyPlace.getName().toString());
-                        selectedPlace = mostLikelyPlace;
+//            PlaceActions.getInstance().setMockLocation(getActivity());
+            try {
+                PendingResult<PlaceLikelihoodBuffer> result = Places.PlaceDetectionApi.getCurrentPlace(
+                        apiClient, null);
+                result.setResultCallback(new ResultCallback<PlaceLikelihoodBuffer>() {
+                    @Override
+                    public void onResult(PlaceLikelihoodBuffer likelyPlaces) {
+                        com.google.android.gms.location.places.Place mostLikelyPlace = PlaceActions.getInstance(getContext()).
+                                getMostLikelyPlace(likelyPlaces);
+                        if (mostLikelyPlace != null) {
+                            updatePlaceName(mostLikelyPlace.getName().toString());
+                            updatePlace(mostLikelyPlace);
+                        }
+                        likelyPlaces.release();
                     }
-                    likelyPlaces.release();
-                }
-            });
+                });
+            }
+            catch (SecurityException e) {
+                Log.e(TAG, "No location permission");
+            }
+
         }
     }
 
@@ -887,10 +986,7 @@ public class CameraFragment extends Fragment implements OnPermissionsListener{
         @Override
         public void onClick(View view) {
             if (popupIsShown) {
-                YoYo.with(Techniques.FadeOutDown)
-                        .duration(250)
-                        .playOn(popup);
-                popupIsShown = false;
+                hidePublishPopup();
             }
         }
     }
@@ -906,11 +1002,10 @@ public class CameraFragment extends Fragment implements OnPermissionsListener{
         @Override
         public void onClick(View v) {
             publish();
-            Toast.makeText(getActivity(),
-                    "Photo uploaded successfully",
-                    Toast.LENGTH_LONG).
-                    show();
-            switchUI(CAPTURE_MODE);
+//            Toast.makeText(getActivity(),
+//                    "Photo uploaded successfully",
+//                    Toast.LENGTH_LONG).
+//                    show();
         }
     }
     private static class MyDragShadowBuilder extends View.DragShadowBuilder {
@@ -1015,18 +1110,19 @@ public class CameraFragment extends Fragment implements OnPermissionsListener{
             return true;
         }
     }
-    private void savePhoto(Bitmap bmp) {
-        try {
-            File photoFile = new File(Environment.getExternalStorageDirectory() + File.separator +
-                    Environment.DIRECTORY_PICTURES);
-            FileOutputStream outputStream = new FileOutputStream(photoFile);
-            bmp.compress(Bitmap.CompressFormat.JPEG, 50, outputStream);
-            outputStream.flush();
-            outputStream.close();
-        } catch (IOException e) {
-            Log.d("PhotoReq", "IOException");
-        }
-    }
+
+//    private void savePhoto(Bitmap bmp) {
+//        try {
+//            File photoFile = new File(Environment.getExternalStorageDirectory() + File.separator +
+//                    Environment.DIRECTORY_PICTURES);
+//            FileOutputStream outputStream = new FileOutputStream(photoFile);
+//            bmp.compress(Bitmap.CompressFormat.JPEG, 50, outputStream);
+//            outputStream.flush();
+//            outputStream.close();
+//        } catch (IOException e) {
+//            Log.d("PhotoReq", "IOException");
+//        }
+//    }
 
     //    private Bitmap drawText(Bitmap bmp) {
 //        Bitmap.Config bmpConfig = bmp.getConfig();
@@ -1068,11 +1164,29 @@ public class CameraFragment extends Fragment implements OnPermissionsListener{
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == PLACE_PICKER_REQUEST) {
             if (resultCode == Activity.RESULT_OK) {
-                Place pickerResult = PlacePicker.getPlace(data, getActivity());
+                com.google.android.gms.location.places.Place pickerResult = PlacePicker.getPlace(data, getActivity());
                 Toast.makeText(getActivity(), "Place: " + pickerResult.getName(), Toast.LENGTH_LONG).show();
-                selectedPlace = pickerResult;
-                updatePlaceName(selectedPlace.getName().toString());
+                updatePlaceName(pickerResult.getName().toString());
+                updatePlace(pickerResult);
             }
+        }
+    }
+
+    private void updatePlace(com.google.android.gms.location.places.Place googlePlace) {
+        Object[] toPass = new Object[1];
+        toPass[0] = googlePlace;
+        new UpdatePlaceTask().execute(toPass);
+    }
+
+    private class UpdatePlaceTask extends AsyncTask<Object, Void, Void> {
+        @Override
+        protected Void doInBackground(Object... params) {
+            updatePlaceImpl((com.google.android.gms.location.places.Place) params[0]);
+            return null;
+        }
+
+        private void updatePlaceImpl(com.google.android.gms.location.places.Place googlePlace) {
+            selectedPlace = PlaceActions.getInstance(getContext()).getPlace(getActivity(), googlePlace.getId(), false);
         }
     }
 
@@ -1105,34 +1219,127 @@ public class CameraFragment extends Fragment implements OnPermissionsListener{
             File publishDirectory = new File(Environment.getExternalStoragePublicDirectory(
                     Environment.DIRECTORY_PICTURES).getAbsolutePath()
                     + "/PeekMedia/" +
-                    selectedPlace.getId() +
+                    selectedPlace.getID() +
                     "/");
-//            //new - upload to Google Cloud Storage
-            Object toPass[] = new Object[3];
-            toPass[0] = photoFile;
-            toPass[1] = selectedPlace;
-            toPass[2] = getActivity();
-            UploadTask uploadTask = new UploadTask();
-            uploadTask.execute(toPass);
 
-            /**
-             * Old publisher - save to device
-             */
-//            if (!publishDirectory.exists()) {
-//                publishDirectory.mkdirs();
-//            }
-//            String filename = incrementPhotoCounter(publishDirectory) + ".jpg";
-//            File publishFile = new File(publishDirectory.getAbsolutePath() + File.separator + filename);
-//            copy(photoFile, publishFile);
+            //To byte output stream (for Parse)
+//            FileInputStream byteStream = new FileInputStream(photoFile);
 
-            switchUI(CAPTURE_MODE);
+
+            // =========== UPLOAD TO PARSE ===================
+
+            // Check if place already exists
+//            ParseQuery<ParseObject> placeQuery = ParseQuery.getQuery("Place");
+//            placeQuery.whereEqualTo("placeId", selectedPlace.getID());
+//            placeQuery.findInBackground(new FindCallback<ParseObject>() {
+//                @Override
+//                public void done(List<ParseObject> objects, ParseException e) {
+//                    if (e == null) {
+//                        Log.d(TAG, "Retrieved " + objects.size() + " place objects");
+//                        // Selected place not yet in cloud
+//                        if (objects.isEmpty()) {
+//                            saveSelectedPlace();
+//                        }
+//                        uploadPhoto();
+//                    }
+//                }
+//            });
+
+
+            // =========== UPLOAD TO GCS =====================
+
+//            Object toPass[] = new Object[3];
+//            toPass[0] = photoFile;
+//            toPass[1] = selectedPlace;
+//            toPass[2] = getActivity();
+//            UploadTask uploadTask = new UploadTask();
+//            uploadTask.execute(toPass);
+
+            // =========== SAVE TO DEVICE ======================
+
+            if (!publishDirectory.exists()) {
+                publishDirectory.mkdirs();
+            }
+            String filename = incrementPhotoCounter(publishDirectory) + ".jpg";
+            File publishFile = new File(publishDirectory.getAbsolutePath() + File.separator + filename);
+            copy(photoFile, publishFile);
+
+            // ========== UPLOAD TO AWS S3 ===================
+            uploadPhoto();
         } catch (NullPointerException e) {
             Log.e(TAG, "NPE");
         }
-//        catch (IOException e) {
-//            Log.e(TAG, "IOException");
-//        }
+        catch (IOException e) {
+            Log.e(TAG, "IOException");
+        }
 
+    }
+
+    public void uploadPhoto() {
+        //UPLOAD TO AWS
+//        PeekBackend.getCurrentBackendAdapter(getContext())
+//                .uploadFile(photoFile);
+
+        // CREATE A PHOTO OBJECT
+//        parsePhoto = new PhotoObject();
+//        parsePhoto.setPlaceId(selectedPlace.getID());
+
+        // SAVE THE PHOTO FILE TO THE CLOUD
+//        try {
+//            byte[] photoBytes = Files.toByteArray(photoFile);
+//        parseFile = new ParseFile(selectedPlace.getID() + ".jpg", photoBytes);
+//        parseFile.saveInBackground(
+//            new SaveCallback() {
+//               @Override
+//                public void done(ParseException e) {
+//                    if (e == null) { //Success
+//                        Toast.makeText(getActivity(), "File uploaded to Parse", Toast.LENGTH_LONG).show();
+//                        getPhotoObject().setPhotoFile(parseFile); //Set photo reference
+//                        savePhotoObject();
+//                    } else {
+//                        e.printStackTrace();
+//                        Toast.makeText(getActivity(), "Error uploading photo", Toast.LENGTH_LONG).show();
+//                    }
+//                }
+//            },
+//            new ProgressCallback() {
+//                @Override
+//                public void done(Integer percentDone) {
+//                    Log.d(TAG, "Percent done upload: " + percentDone);
+//                }
+//            });
+//        }
+//        catch (IOException ie) {
+//            Log.e(TAG, "Error reading file");
+//        }
+    }
+
+//    public PhotoObject getPhotoObject() {
+//        return parsePhoto;
+//    }
+
+    public void savePhotoObject() {
+//        getPhotoObject().saveInBackground(new SaveCallback() {
+//            @Override
+//            public void done(ParseException e) {
+//                Toast.makeText(getActivity(),
+//                        e == null ? "Photo object saved" : "Error saving photo", Toast.LENGTH_SHORT)
+//                .show();
+//            }
+//        });
+    }
+    public void saveSelectedPlace() {
+//        PlaceObject parsePlace = new PlaceObject();
+//        parsePlace.setId(selectedPlace.getID());
+//        parsePlace.setName(selectedPlace.getName());
+//        parsePlace.setGeoPoint(selectedPlace.getLatitude(), selectedPlace.getLongitude());
+//        parsePlace.setType(selectedPlace.getType());
+//        parsePlace.saveInBackground(new SaveCallback() {
+//            @Override
+//            public void done(ParseException e) {
+//
+//            }
+//        });
     }
 
     private int incrementPhotoCounter(File src) {

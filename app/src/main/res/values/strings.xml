@@ -1,21 +1,41 @@
 <resources>
+
+    <!-- GENERAL -->
     <string name="app_name">Peek</string>
     <string name="facebook_app_id">1403100456683343</string>
-    <!-- Wait dialog -->
+    <string name="content_file_provider_authority">com.peekapps.peek.fileprovider</string>
+    <string name="mapbox_token">pk.eyJ1IjoidmJhc2giLCJhIjoiY2lpNXlvamU5MDA1dnY1bHh4OXZwOWM1ZCJ9.renUilD6tlXalAVSJOm8ug</string>
+    <!-- Suffix after '-' must be the app package name as specified in the build.gradle file. This
+         is used by the com.amazonaws.mobile.downloader.query.DownloadQueueProvider class. -->
+    <string name="download_queue_provider_authority">com.amazonaws.mobile.downloader-com.peekapps.peek</string>
+
+    <!--            APP STRINGS             -->
+
+    <!-- * App init text -->
+    <!-- **     Wait dialog -->
+
+    <string name="top_info_wait">Waiting for location</string>
+    <string name="top_info_done">Location ready</string>
     <string name="load_dialog_title">One moment</string>
     <string name="load_dialog_content">Fetching location data...</string>
     <string name="load_dialog_done">Done!</string>
     <string name="load_dialog_done_content">Wow!</string>
 
-    <string name="mapbox_token">pk.eyJ1IjoidmJhc2giLCJhIjoiY2lpNXlvamU5MDA1dnY1bHh4OXZwOWM1ZCJ9.renUilD6tlXalAVSJOm8ug</string>
-    <!-- PERMISSION SNACKBAR -->
+    <!-- **     Permission snackbar -->
     <string name="pager_perm_snackbar">
         Your permission is required to activate Peek\'s features.
     </string>
     <string name="pager_perm_action">GRANT</string>
 
-    <string name="action_settings">Settings</string>
-    <string name="title_activity_splash">SplashActivity</string>
+    <!--        MAP FRAGMENT        -->
+
+
+    <!--        CAMERA FRAGMENT     -->
+    <string name="camera_publish_upload">Uploading to</string>
+    <string name="camera_publish_change_loc">Change location</string>
+    <string name="camera_publish_confirm">Confirm</string>
+
+    <!-- FEED FRAGMENT -->
 
     <string-array name="feed_sort_options">
         <item>Popularity</item>
@@ -25,15 +45,9 @@
 
     <string name="feed_text">Live feed of media\n\n\n\nLive feed of media</string>
 
-    <!-- Create event -->
 
-    <string name="create_event">Create an event</string>
-    <string name="event_name">Event name:</string>
-    <string name="event_location">Event location:</string>
-
-    <!--Bottom sheet items -->
-    <string name="profile_item">My profile</string>
-
+    <!-- SETTINGS -->
+    <string name="action_settings">Settings</string>
     <string name="settings_switch_on">Light</string>
     <string name="settings_switch_off">Dark</string>
 </resources>

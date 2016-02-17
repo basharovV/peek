@@ -1,13 +1,10 @@
 package com.peekapps.peek.activities;
 
-import android.Manifest;
 import android.app.ActionBar;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
@@ -17,14 +14,14 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Handler;
+import android.os.Looper;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.support.v7.app.AppCompatActivity;
@@ -34,20 +31,27 @@ import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.Toast;
+import android.widget.TextView;
+
 import com.facebook.appevents.AppEventsLogger;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationAvailability;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.peekapps.peek.DisplayMarkersTask;
+import com.peekapps.peek.Animations;
 import com.peekapps.peek.PermissionActions;
 import com.peekapps.peek.adapters.TextFocusPagerAdapter;
-import com.peekapps.peek.fragments.TextFocusFragment;
-import com.peekapps.peek.fragments_utils.OnPermissionsListener;
+import com.peekapps.peek.place_api.Place;
 import com.peekapps.peek.place_api.PlaceActions;
 import com.peekapps.peek.place_api.PlacesFetchedEvent;
 import com.peekapps.peek.place_api.PlacesListener;
@@ -60,20 +64,27 @@ import com.peekapps.peek.views.OnAreaSelectorReadyListener;
 import com.peekapps.peek.views.TextFocusViewPager;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Slav on 25/05/2015.
  */
 
 public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallback, PlacesListener,
-        LocationListener, OnAreaSelectorReadyListener {
+        LocationListener, OnAreaSelectorReadyListener, GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
 
     private View decorView;
+
+    private boolean requestedUpdates = false;
+    private static final int TOPINFO_LOC_IN_PROGRESS = R.string.top_info_wait;
+    private static final int TOPINFO_LOC_DONE = R.string.top_info_done;
+
+    // Top info - waitin for location
+    private int currentTopInfo = TOPINFO_LOC_IN_PROGRESS;
+    private FrameLayout topInfoBar;
+    private View topInfoBarProgress;
+    private View topInfoBarDone;
+    private TextView topInfoBarText;
 
     //Startup, waiting for location dialog
     private ProgressDialog startDialog;
@@ -98,6 +109,7 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
     private ImageView overflowButton;
 
     private LocationManager locationManager;
+    private GoogleApiClient googleApiClient;
 
     //Use superclass constructor
     public PeekViewPager() {
@@ -161,26 +173,65 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
     }
 
     private void startLocationWithPermission() {
-        showDialog();
+        showTopInfo(TOPINFO_LOC_IN_PROGRESS);
+//        showDialog();
         //Start listening for location
-        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        try {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-            PlaceActions.getInstance().setMockLocation(this);
-        }
-        catch (SecurityException e) {
-            Log.d("PeekViewPager" , "security exception");
 
-            e.printStackTrace();
-        }
+        PlaceActions.getInstance(this).clearMockLocation(this);
+        Log.d("PeekViewPager", "Clearing mock location..");
+        requestedUpdates = true;
+//        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+//        try {
+//            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+//            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
+            // MOCK New York location
+//            PlaceActions.getInstance().setMockLocation(this);
+//        }
+//        catch (SecurityException e) {
+//            Log.d("PeekViewPager" , "security exception");
+//
+//            e.printStackTrace();
+//        }
          //Demo only - set location to Times Square
+
+        if(googleApiClient == null) {
+            googleApiClient = new GoogleApiClient.Builder(this)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(LocationServices.API)
+                    .addApi(Places.PLACE_DETECTION_API)
+                    .build();
+            googleApiClient.connect();
+        }
+    }
+
+    public GoogleApiClient getApiClient() {
+        return googleApiClient;
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        if (requestedUpdates) {
+            PlaceActions.getInstance(this).requestLocationUpdates(googleApiClient, this);
+            requestedUpdates = false;
+        }
     }
 
     private void showDialog() {
+        startDialog = new ProgressDialog(PeekViewPager.this, ProgressDialog.STYLE_SPINNER);
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                startDialog = new ProgressDialog(PeekViewPager.this, ProgressDialog.STYLE_SPINNER);
                 startDialog.setCancelable(false);
                 startDialog.setMessage("Waiting for location...");
                 startDialog.setTitle("One moment");
@@ -193,18 +244,20 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                startDialog.setTitle("Done!");
-                startDialog.setMessage("Location ready");
-                setProgressDrawableDone(R.drawable.ic_done);
-                //Wait 1 sec before hiding dialog
-                Handler hideDialogHandler = new Handler();
-                hideDialogHandler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        startDialog.dismiss();
-                        startDialog = null;
-                    }
-                }, 1000);
+                if (startDialog != null) {
+                    startDialog.setTitle("Done!");
+                    startDialog.setMessage("Location ready");
+                    setProgressDrawableDone(R.drawable.ic_done);
+                    //Wait 1 sec before hiding dialog
+                    Handler hideDialogHandler = new Handler();
+                    hideDialogHandler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            startDialog.dismiss();
+                            startDialog = null;
+                        }
+                    }, 1000);
+                }
             }
         });
     }
@@ -242,6 +295,7 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
         }
     }
 
+
     private void notifyPermissionListeners() {
         try {
             ((MapFragment) registeredFragments.get(0)).onPermissionsGranted();
@@ -268,10 +322,65 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
     private void setUpUI() {
         //Hide the status bar
         if (getSupportActionBar() != null) getSupportActionBar().hide();
+//        startDialog = new ProgressDialog(PeekViewPager.this, ProgressDialog.STYLE_SPINNER);
         decorView = getWindow().getDecorView();
         decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
+        setupTopInfo();
         setUpPager();
         setupToolbar();
+    }
+
+    private void setupTopInfo() {
+        topInfoBar = (FrameLayout) findViewById(R.id.pagerTopInfoBar);
+        topInfoBarProgress = findViewById(R.id.pagerTopInfoDarkBG);
+        topInfoBarDone = findViewById(R.id.pagerTopInfoGreenBG);
+        topInfoBarDone.setVisibility(View.GONE);
+        topInfoBarText = (TextView) findViewById(R.id.pagerTopInfoBarText);
+        topInfoBarText.setText(getString(TOPINFO_LOC_IN_PROGRESS));
+    }
+
+    private void showTopInfo(final int msg) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                topInfoBar.setVisibility(View.VISIBLE);
+                if (topInfoBar.getAlpha() != 1) {
+                    Animations.getInstance().fade(topInfoBar, Animations.ANIMATION_FADE_IN, 0);
+                }
+                switch (msg) {
+                    case TOPINFO_LOC_IN_PROGRESS:
+                        if (currentTopInfo != TOPINFO_LOC_IN_PROGRESS) {
+                            topInfoBarText.setText(getResources().getString(TOPINFO_LOC_IN_PROGRESS));
+                            currentTopInfo = TOPINFO_LOC_IN_PROGRESS;
+                        }
+                        break;
+                    case TOPINFO_LOC_DONE:
+                        if (currentTopInfo != TOPINFO_LOC_DONE) {
+                            Animations.getInstance().fade(topInfoBarDone, Animations.ANIMATION_FADE_IN, 0);
+                            topInfoBarText.setText(getResources().getString(TOPINFO_LOC_DONE));
+                            currentTopInfo = TOPINFO_LOC_DONE;
+                            dismissTopInfo();
+                        }
+                        break;
+
+                }
+            }
+        });
+    }
+
+    private void dismissTopInfo() {
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Animations.getInstance().fade(topInfoBar, Animations.ANIMATION_FADE_OUT, 0);
+                    }
+                });
+
+            }
+        }, 3000);
     }
 
     private void setupToolbar() {
@@ -341,7 +450,9 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
 
     @Override
     public void onPlacesFetched(PlacesFetchedEvent e) {
-        hideDialog();
+        showTopInfo(TOPINFO_LOC_DONE);
+//        dismissTopInfo();
+//        hideDialog();
         if (getMapFragment() == null) {
             registeredFragments.put(0, new MapFragment());
         } else {
@@ -354,6 +465,12 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
                     }
                 });
             }
+        }
+        if (getFeedFragment() == null) {
+            registeredFragments.put(2, new FeedFragment());
+        }
+        else {
+            getFeedFragment().updateFeed();
         }
     }
 
@@ -391,17 +508,28 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
 
     }
 
+
     @Override
     public void onLocationChanged(Location location) {
+        if (getMapFragment() == null) {
+            registeredFragments.put(0, new MapFragment());
+        }
+        ((MapFragment) registeredFragments.get(0)).enableLocation();
+
+        PlaceActions.getInstance(this).setCurrentLocation(location);
+
+        //Get Google nearby places
         PlacesTask placesTask = new PlacesTask();
         placesTask.attachListener(this);
-        placesTask.execute();
+        Object toPass[] = new Object[1];
+        toPass[0] = location;
+        placesTask.execute(toPass);
         stopLocationListening();
     }
 
     private void stopLocationListening() {
         try {
-            locationManager.removeUpdates(this);
+//            locationManager.removeUpdates(this);
         }
         catch (SecurityException e) {
             Log.d("PeekViewPager" , "security exception");
@@ -622,7 +750,7 @@ public class PeekViewPager extends AppCompatActivity implements OnMapReadyCallba
     @Override
     protected void onPause() {
         super.onPause();
-        AppEventsLogger.deactivateApp(this);
+//        AppEventsLogger.deactivateApp(this);
         startDialog = null;
     }
 

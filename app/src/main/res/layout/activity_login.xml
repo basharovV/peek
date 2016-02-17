@@ -32,7 +32,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="150dp"
                             android:id="@+id/loginLogo"
-                            android:src="@drawable/p_logo"
+                            android:src="@drawable/peek_logo_tall_256"
                             android:layout_gravity="center_vertical"
                             android:cropToPadding="false"
                             android:adjustViewBounds="true"

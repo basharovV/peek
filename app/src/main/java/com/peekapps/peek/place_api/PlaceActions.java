@@ -12,8 +12,15 @@ import android.os.SystemClock;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.PlaceLikelihood;
 import com.google.android.gms.location.places.PlaceLikelihoodBuffer;
+import com.google.android.gms.location.places.Places;
+import com.peekapps.peek.PermissionActions;
 import com.peekapps.peek.database.PlaceDbHelper;
 
 import java.io.BufferedReader;
@@ -45,27 +52,47 @@ public class PlaceActions {
     public static final int NEARBY_PLACES = 0;
     public static final int SINGLE_PLACE = 1;
 
-    private int RADIUS = 10000;
-    double latitude = 40.7577; //NYC coordinates
-    double longitude = -73.9857;
     private Location currentLocation;
 
     private static PlaceActions instance = null;
+    private Context context;
 
-    protected PlaceActions() {
-//        currentLocation = new Location("fakeNYC");
-//        currentLocation.setLatitude(latitude);
-//        currentLocation.setLongitude(longitude);
+    protected PlaceActions(Context context) {
+        this.context = context;
     }
 
-    public static PlaceActions getInstance() {
+    public static PlaceActions getInstance(Context context) {
         if (instance == null) {
-            return new PlaceActions();
+            return new PlaceActions(context);
         }
         return instance;
     }
 
-    public void setMockLocation(Context context) {
+    public void requestLocationUpdates(GoogleApiClient googleApiClient,
+                                       LocationListener locationListener) {
+        LocationRequest locationRequest = new LocationRequest();
+        locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+        if (Build.VERSION.SDK_INT >= 23
+            &&PermissionActions.getMissingPermissions(context).isEmpty()) {
+            try {
+                LocationServices.FusedLocationApi.requestLocationUpdates(
+                        googleApiClient, locationRequest, locationListener, null);
+            }
+            catch (SecurityException e) {
+                Log.e("PlaceActions", "Permission not granted - location");
+            }
+        }
+        else {
+            try {
+                LocationServices.FusedLocationApi.requestLocationUpdates(
+                        googleApiClient, locationRequest, locationListener, null);
+            }
+            catch (SecurityException e) {
+                Log.e("PlaceActions", "Permission not granted - location");
+            }
+        }
+    }
+    public void clearMockLocation(Context context) {
         if ( Build.VERSION.SDK_INT >= 23 &&
                 ContextCompat.checkSelfPermission(context,
                         android.Manifest.permission.
@@ -77,26 +104,53 @@ public class PlaceActions {
         }
         LocationManager locationManager = (LocationManager) context.
                 getSystemService(Context.LOCATION_SERVICE);
-        String gpsProvider = LocationManager.GPS_PROVIDER;
-        locationManager.addTestProvider(gpsProvider, false, false, false, false, false, true, true, 0, 5);
-        locationManager.setTestProviderEnabled(gpsProvider, true);
-
-        //Set mock location to Times Square, New York
-        Location mockLocation = new Location(gpsProvider);
-        mockLocation.setLatitude(latitude);
-        mockLocation.setLongitude(longitude);
-        mockLocation.setTime(System.currentTimeMillis());
-        mockLocation.setAltitude(0);
         try {
-            Method locationJellyBeanFixMethod = Location.class.getMethod("makeComplete");
-            if (locationJellyBeanFixMethod != null) {
-                locationJellyBeanFixMethod.invoke(mockLocation);
-            }
+            locationManager.sendExtraCommand(LocationManager.GPS_PROVIDER, "delete_aiding_data", null);
         }
-        catch (Exception e) {}
-        locationManager.setTestProviderLocation(gpsProvider, mockLocation);
-        currentLocation = mockLocation;
+        catch (IllegalArgumentException e) {
+            Log.e("PlaceActions", "Can't delete GPS data");
+        }
+        try {
+            locationManager.clearTestProviderLocation(LocationManager.GPS_PROVIDER);
+            locationManager.removeTestProvider(LocationManager.GPS_PROVIDER);
+        }
+        catch (IllegalArgumentException e) {
+            Log.e("PlaceActions", "No such  provider");
+        }
+
     }
+//    public void setMockLocation(Context context) {
+//        if ( Build.VERSION.SDK_INT >= 23 &&
+//                ContextCompat.checkSelfPermission(context,
+//                        android.Manifest.permission.
+//                                ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+//                ContextCompat.checkSelfPermission(context,
+//                        android.Manifest.permission.
+//                                ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ) {
+//            return;
+//        }
+//        LocationManager locationManager = (LocationManager) context.
+//                getSystemService(Context.LOCATION_SERVICE);
+//        String gpsProvider = LocationManager.GPS_PROVIDER;
+//        locationManager.addTestProvider(gpsProvider, false, false, false, false, false, true, true, 0, 5);
+//        locationManager.setTestProviderEnabled(gpsProvider, true);
+//
+//        //Set mock location to Times Square, New York
+//        Location mockLocation = new Location(gpsProvider);
+//        mockLocation.setLatitude(latitude);
+//        mockLocation.setLongitude(longitude);
+//        mockLocation.setTime(System.currentTimeMillis());
+//        mockLocation.setAltitude(0);
+//        try {
+//            Method locationJellyBeanFixMethod = Location.class.getMethod("makeComplete");
+//            if (locationJellyBeanFixMethod != null) {
+//                locationJellyBeanFixMethod.invoke(mockLocation);
+//            }
+//        }
+//        catch (Exception e) {}
+//        locationManager.setTestProviderLocation(gpsProvider, mockLocation);
+//        currentLocation = mockLocation;
+//    }
 
     /**
      * Get the distance from the user's location to a particular place
@@ -105,7 +159,7 @@ public class PlaceActions {
      * @return The distance calculated in meters
      */
     public int distanceToPlace(Context context, Place pl) {
-        Location myLocation = PlaceActions.getInstance().getLocation(context);
+        Location myLocation = getLocation(context);
         Location placeLocation = new Location("place");
         placeLocation.setLatitude(pl.getLatitude());
         placeLocation.setLongitude(pl.getLongitude());
@@ -130,11 +184,11 @@ public class PlaceActions {
         return currentLocation;
     }
 
-    public Place getPlace(String placeID, Context context) {
+    public Place getPlace(Context context, String placeID, boolean savePhoto) {
         PlacesRequestTask reqTask = new PlacesRequestTask();
         String url = generateUrl(placeID);
         Place pl = reqTask.fetchSinglePlace(url);
-        if (pl != null) {
+        if (pl != null && savePhoto) {
             if (pl.hasPhoto()) {
                 GooglePhotoFetchTask photoFetchTask = new GooglePhotoFetchTask();
                 Object[] toPass = new Object[3];
@@ -148,10 +202,14 @@ public class PlaceActions {
 
     public void addDemoPlaces(Context context) {
         List<Place> demoPlaces = new ArrayList<>();
-        demoPlaces.add(getPlace("ChIJmQJIxlVYwokRLgeuocVOGVU", context));
-        demoPlaces.add(getPlace("ChIJPTacEpBQwokRKwIlDXelxkA", context));
-        demoPlaces.add(getPlace("ChIJR_bK295bwokR8gM6QgEdmkY", context));
-        updateDatabase(demoPlaces, context);
+        demoPlaces.add(getPlace(context, "ChIJmQJIxlVYwokRLgeuocVOGVU", true));
+        demoPlaces.add(getPlace(context, "ChIJPTacEpBQwokRKwIlDXelxkA", true));
+        demoPlaces.add(getPlace(context, "ChIJR_bK295bwokR8gM6QgEdmkY", true));
+        updateDatabase(context, demoPlaces);
+    }
+
+    public void setCurrentLocation(Location location) {
+        currentLocation = location;
     }
 
     public Location getLocation(Context context) {
@@ -167,6 +225,9 @@ public class PlaceActions {
         LocationManager locationManager = (LocationManager) context.
                 getSystemService(Context.LOCATION_SERVICE);
         currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        if (currentLocation == null) {
+            currentLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        }
         return currentLocation;
     }
 
@@ -179,9 +240,9 @@ public class PlaceActions {
             return null;
         }
         //Fpr Demo video purposes
-        placesList.add(getPlace("ChIJmQJIxlVYwokRLgeuocVOGVU", context));
-        placesList.add(getPlace("ChIJPTacEpBQwokRKwIlDXelxkA", context));
-        placesList.add(getPlace("ChIJR_bK295bwokR8gM6QgEdmkY", context));
+        placesList.add(getPlace(context, "ChIJmQJIxlVYwokRLgeuocVOGVU", true));
+        placesList.add(getPlace(context, "ChIJPTacEpBQwokRKwIlDXelxkA", true));
+        placesList.add(getPlace(context, "ChIJR_bK295bwokR8gM6QgEdmkY", true));
 
         GooglePhotoFetchTask photoTask = new GooglePhotoFetchTask();
         Object[] toPass = new Object[3];
@@ -205,7 +266,7 @@ public class PlaceActions {
             pl.setNumberOfPhotos(randomPopularity);
         }
 
-        updateDatabase(placesList, context);
+        updateDatabase(context, placesList);
 
         return placesList;
         }
@@ -253,7 +314,7 @@ public class PlaceActions {
         return placesUrl.toString();
     }
 
-    private void updateDatabase(List<Place> placesList, Context context) {
+    public static void updateDatabase(Context context, List<Place> placesList) {
         PlaceDbHelper dbHelper = new PlaceDbHelper(context);
         for (Place place : placesList) {
             dbHelper.addPlace(place);

@@ -2,6 +2,7 @@ package com.peekapps.peek.activities;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -10,8 +11,10 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -185,8 +188,7 @@ public class MediaPublisher extends Activity{
                         .playOn(popup);
                 popupIsShown = true;
             }
-            //Temp - mock location to Times Square
-            PlaceActions.getInstance().setMockLocation(getApplicationContext());
+
             PendingResult<PlaceLikelihoodBuffer> result = Places.PlaceDetectionApi.getCurrentPlace(
                     apiClient, null);
             result.setResultCallback(new ResultCallback<PlaceLikelihoodBuffer>() {

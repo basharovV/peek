@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import com.peekapps.peek.place_api.Place;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -69,6 +70,13 @@ public class PlaceDbHelper extends SQLiteOpenHelper {
     @Override
     public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         onUpgrade(db, oldVersion, newVersion);
+    }
+
+    public void setAllPlaces(Collection<Place> placesList) {
+
+        for (Place pl : placesList) {
+            addPlace(pl);
+        }
     }
 
     public void addPlace(Place pl) {

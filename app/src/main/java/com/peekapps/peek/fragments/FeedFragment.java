@@ -5,33 +5,27 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Point;
-import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.AppCompatSpinner;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.daimajia.androidanimations.library.Techniques;
-import com.daimajia.androidanimations.library.YoYo;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.peekapps.peek.activities.PeekViewPager;
@@ -41,7 +35,6 @@ import com.peekapps.peek.fragments_utils.OnPermissionsListener;
 import com.peekapps.peek.place_api.Place;
 import com.peekapps.peek.R;
 import com.peekapps.peek.place_api.PlaceListSorter;
-import com.peekapps.peek.views.MediaDialog;
 
 import java.util.List;
 
@@ -49,41 +42,38 @@ public class FeedFragment extends Fragment implements GoogleApiClient.OnConnecti
     , OnPermissionsListener, OnChangeSortListener {
 
     // Places attributes static values for reference
-    // eg. when choosing sorting criteria
-    public static final int FEED_TYPE_POPULARITY = 0;
-    public static final int FEED_TYPE_LAST_UPDATE = 1;
-    public static final int FEED_TYPE_DISTANCE = 2;
-    public static final int FEED_TYPE_FRIENDS = 3;
-    //------------------------------------------------
-
-
-    private Toolbar toolbar;
+    // when choosing sorting criteria
+    public static final int SORT_TYPE_POPULARITY = 0;
+    public static final int SORT_TYPE_LAST_UPDATE = 1;
+    public static final int SORT_TYPE_DISTANCE = 2;
+    public static final int SORT_TYPE_FRIENDS = 3;
+    public int currentSortType = 0; //DEFAULT
 
     public static final int POSITION_SORT_BAR = 0;
     public static final int POSITION_SEARCH_BAR = 1;
 
-    //Feed options bar (info, sorting options, search, overflow)
+
+    // OPTIONS BAR
+    // - Components
     private LinearLayout optionsBarHolder;
     private AppCompatSpinner sortSpinner;
+    private ImageView searchButton;
+    // - Utils
+    private AdapterView.OnItemSelectedListener sortTypeSelectedListener;
 
-    private FragmentManager fragmentManager;
-
-//    private ViewPager optionsBar;
-
-
-    private ImageButton search;
-
-    //Feed content
+    // FEED
+    // - Components
+    private SwipeRefreshLayout refreshLayout;
     private RecyclerView recyclerView;
+    private FragmentManager fragmentManager;
+    // - Utils
+    private RefreshListener refreshListener;
     private CardAdapter cardAdapter;
     private LinearLayoutManager layoutManager;
     private View statusBarBackground;
-    //Refresh
-    private SwipeRefreshLayout refreshLayout;
-    private RefreshListener refreshListener;
 
+    //List of places shown in feed
     private List<Place> placesList;
-    private MediaDialog mediaDialog;
 
     GoogleApiClient apiClient;
 
@@ -96,44 +86,20 @@ public class FeedFragment extends Fragment implements GoogleApiClient.OnConnecti
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         layoutManager = new LinearLayoutManager(getActivity());
-        cardAdapter = new CardAdapter(getActivity(), mediaDialog);
+        cardAdapter = new CardAdapter(getActivity());
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_feed, container, false);
-        refreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipeRefreshLayout);
-        refreshLayout.setColorSchemeColors(Color.parseColor("#FFAE00"), Color.parseColor("#02BFA9"));
-        refreshListener = new RefreshListener();
-        refreshLayout.setOnRefreshListener(refreshListener);
-
-        WindowManager windowManager = (WindowManager) getActivity().getSystemService(Context.WINDOW_SERVICE);
-        Point size = new Point();
-        windowManager.getDefaultDisplay().getSize(size);
-        refreshLayout.setProgressViewOffset(false, size.y / 9, size.y / 5);
-
-        //Sorting spinner
-        sortSpinner = (AppCompatSpinner) rootView.findViewById(R.id.feedSortSpinner);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
-                R.array.feed_sort_options, android.R.layout.simple_spinner_item);
-        // Specify the layout to use when the list of choices appears
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        // Apply the adapter to the spinner
-        sortSpinner.setAdapter(adapter);
 
 
-        //Set up options bar
         optionsBarHolder = (LinearLayout) rootView.findViewById(R.id.optionsBarHolder);
-//        optionsBar = (ViewPager) rootView.findViewById(R.id.scrollOptionsBar);
-
-        fragmentManager = getChildFragmentManager();
-
-        //Set up the recycler view
-
+        sortSpinner = (AppCompatSpinner) rootView.findViewById(R.id.feedSortSpinner);
+        refreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipeRefreshLayout);
         recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler_view);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setOnScrollListener(new ScrollListener());
-        //Set adapter when list of places is fetched from the Places API.
+
+        setupUI();
 
         if (Build.VERSION.SDK_INT >= 23) {
             if (((PeekViewPager) getActivity()).allPermissionsGranted()) {
@@ -142,6 +108,38 @@ public class FeedFragment extends Fragment implements GoogleApiClient.OnConnecti
         }
         else enableFeed();
         return rootView;
+    }
+
+    private void setupUI() {
+        //Recycler view
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setOnScrollListener(new ScrollListener());
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        //Refresh functionality
+        refreshLayout.setColorSchemeColors(Color.parseColor("#FFAE00"), Color.parseColor("#02BFA9"));
+        refreshListener = new RefreshListener();
+        refreshLayout.setOnRefreshListener(refreshListener);
+
+        WindowManager windowManager = (WindowManager) getActivity().getSystemService(Context.WINDOW_SERVICE);
+        Point size = new Point();
+        windowManager.getDefaultDisplay().getSize(size);
+        refreshLayout.setProgressViewOffset(false, size.y / 10, size.y / 5);
+
+        //Sorting spinner
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
+                R.array.feed_sort_options, android.R.layout.simple_spinner_item);
+        // Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        // Setup spinner functionality
+        sortSpinner.setAdapter(adapter);
+        sortTypeSelectedListener = new OnSortTypeSelectedListener();
+        sortSpinner.setOnItemSelectedListener(sortTypeSelectedListener);
+
+        //Set up options bar
+//        optionsBar = (ViewPager) rootView.findViewById(R.id.scrollOptionsBar);
+
+        fragmentManager = getChildFragmentManager();
     }
 
     public void enableFeed() {
@@ -236,16 +234,54 @@ public class FeedFragment extends Fragment implements GoogleApiClient.OnConnecti
 
     }
     public void updateFeed() {
+//        if (PlaceActions.getInstance().getCurrentLocation(getActivity()) != null) {
         if (cardAdapter != null) {
             if (placesList == null) {
                 placesList = generatePlaces();
                 cardAdapter.setPlaceList(placesList);
             } else {
-                if (isDifferentList(generatePlaces())) {
+                List<Place> updatedPlaces = generatePlaces();
+                if (updatedPlaces != null && isDifferentList(updatedPlaces)) {
                     cardAdapter.setPlaceList(generatePlaces());
                 }
             }
             refreshLayout.setRefreshing(false);
+        }
+    }
+
+//    public void updatePlaces() {
+//        ParseQuery<PlaceObject> placesQuery = ParseQuery.getQuery("Place");
+//        ParseGeoPoint userGeoPoint = new ParseGeoPoint();
+//        Location userLocation =  PlaceActions.getInstance().getCurrentLocation(getActivity());
+//        userLocation.setLatitude(userLocation.getLatitude());
+//        userLocation.setLongitude(userLocation.getLongitude());
+//        placesQuery.whereNear("placeGeoPoint", userGeoPoint);
+//        placesQuery.setLimit(10);
+//        placesQuery.findInBackground(new FindCallback<PlaceObject>() {
+//            @Override
+//            public void done(List<PlaceObject> plObjects, ParseException e) {
+//                if (e == null) { //Success
+//                    placesList = ParseUtils.toPeekPlaceArray(getActivity(), plObjects);
+//                    cardAdapter.setPlaceList(generatePlaces());
+//                    refreshLayout.setRefreshing(false);
+//                }
+//            }
+//        });
+//    }
+
+    //------------- SORTING --------------------
+
+    private class OnSortTypeSelectedListener implements AdapterView.OnItemSelectedListener {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            if (position != currentSortType) {
+                onRequestFeedSort(position);
+            }
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+
         }
     }
 
@@ -280,6 +316,7 @@ public class FeedFragment extends Fragment implements GoogleApiClient.OnConnecti
         }
         return true;
     }
+
     public List<Place> generatePlaces() {
         List<Place> places;
 //        for (HashMap<String, String> place : placesList) {
@@ -288,6 +325,7 @@ public class FeedFragment extends Fragment implements GoogleApiClient.OnConnecti
 //                    place.get("types"), place.get("icon"));
 //            places.add(pl);
 //        }
+
         PlaceDbHelper dbHelper = new PlaceDbHelper(getActivity());
         places = dbHelper.getAllPlaces();
         return places;

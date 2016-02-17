@@ -24,7 +24,7 @@ public class SortBarFragment extends Fragment {
 
     private static final int NUMBER_OF_BUTTONS = 4;
 
-    int mode = FeedFragment.FEED_TYPE_POPULARITY; //Default mode
+    int mode = FeedFragment.SORT_TYPE_POPULARITY; //Default mode
 
     private SortButtonView trendingButton;
     private SortButtonView clockButton;
@@ -48,10 +48,10 @@ public class SortBarFragment extends Fragment {
 
         //Add buttons to array
         sortButtons = new SparseArray<>(NUMBER_OF_BUTTONS);
-        sortButtons.put(FeedFragment.FEED_TYPE_POPULARITY, trendingButton);
-        sortButtons.put(FeedFragment.FEED_TYPE_LAST_UPDATE, clockButton);
-        sortButtons.put(FeedFragment.FEED_TYPE_DISTANCE, pinButton);
-        sortButtons.put(FeedFragment.FEED_TYPE_FRIENDS, friendsButton);
+        sortButtons.put(FeedFragment.SORT_TYPE_POPULARITY, trendingButton);
+        sortButtons.put(FeedFragment.SORT_TYPE_LAST_UPDATE, clockButton);
+        sortButtons.put(FeedFragment.SORT_TYPE_DISTANCE, pinButton);
+        sortButtons.put(FeedFragment.SORT_TYPE_FRIENDS, friendsButton);
 
         sortButtonClickListener = new SortButtonClickListener();
 

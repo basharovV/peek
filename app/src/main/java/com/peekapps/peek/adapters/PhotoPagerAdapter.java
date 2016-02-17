@@ -60,6 +60,7 @@ public class PhotoPagerAdapter extends FragmentStatePagerAdapter {
 
     public void setPlace(Place pl) {
         selectedPlace = pl;
+
     }
 
     private int getPhoto(int index) {

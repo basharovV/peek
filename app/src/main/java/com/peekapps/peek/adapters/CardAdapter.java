@@ -6,12 +6,8 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
-import android.location.Location;
-import android.location.LocationManager;
 import android.support.annotation.UiThread;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
@@ -31,14 +27,12 @@ import com.peekapps.peek.activities.PlaceProfile;
 import com.peekapps.peek.place_api.Place;
 import com.peekapps.peek.place_api.PlaceActions;
 import com.peekapps.peek.views.*;
-import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 /**
  * Created by Slav on 26/05/2015.
@@ -49,23 +43,52 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Context context;
     private MediaDialog mDialog;
 
-    public CardAdapter(Context context, MediaDialog dialog) {
+    public CardAdapter(Context context) {
         this.context = context;
         //Display loading card
         placeList = new ArrayList<>();
         placeList.add(new Place("LOADING...", "...", "...", "...", null));
-        mDialog = dialog;
     }
 
     public CardAdapter(ArrayList<Place> venueList) {
         this.placeList = venueList;
     }
 
-    @UiThread
     public void setPlaceList(List<Place> placeList) {
-        this.placeList.clear();
-        this.placeList.addAll(placeList);
-        notifyDataSetChanged();
+        for (Place newPl: placeList) {
+            boolean exists = false;
+            for (Place currentPl: this.placeList) {
+                if (newPl != null && currentPl != null) {
+                    if (newPl.getID() != null && currentPl.getID() != null) {
+                        if (newPl.getID().equals(currentPl.getID())) {
+                            exists = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            if (!exists) {
+                addItem(newPl);
+            }
+        }
+        ((Activity) context).runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                notifyDataSetChanged();
+            }
+        });
+    }
+
+    public void addItem(Place item) {
+        placeList.add(item);
+        notifyItemInserted(placeList.size());
+    }
+
+    public void removeItem(int position) {
+        if (placeList.get(position) != null){
+            placeList.remove(position);
+        }
+        notifyItemRemoved(position);
     }
 
 
@@ -124,12 +147,13 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             ((ViewHolder) holder).headerOnTouchListener.setCurrentPosition(position);
 
             //Set the formatted 'distance to the place'
-            String formattedDistance = PlaceActions.getInstance().
+            String formattedDistance = PlaceActions.getInstance(context).
                     formatDistance(placeList.get(position).getDistance());
             ((ViewHolder) holder).distance.setText(formattedDistance);
 
             //Set and format the type of place
-            String type = placeList.get(position).getType();
+            String type = placeList.get(position).getType() != null ? placeList.get(position).getType()
+                    : "no type";
             String formattedType = type.replaceAll("_", " ")
                     .substring(0, 1).toUpperCase() + type.substring(1);
             ((ViewHolder) holder).type.setText(formattedType);
@@ -256,8 +280,9 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 case MotionEvent.ACTION_DOWN:
                     v.setBackgroundResource(R.drawable.bg_card_header_rounded_pressed);
                     break;
-                case MotionEvent.ACTION_CANCEL:
-                    v.setBackgroundResource(R.drawable.bg_card_header_rounded);            }
+                case MotionEvent.ACTION_UP | MotionEvent.ACTION_CANCEL:
+                    v.setBackgroundResource(R.drawable.bg_card_header_rounded);
+            }
             return false;
         }
 

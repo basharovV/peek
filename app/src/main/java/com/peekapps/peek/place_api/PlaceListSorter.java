@@ -22,7 +22,7 @@ public class PlaceListSorter {
 
             //Initialise indexes
             switch (sortBy) {
-                case FeedFragment.FEED_TYPE_POPULARITY:
+                case FeedFragment.SORT_TYPE_POPULARITY:
                     Collections.sort(placesList, new Comparator<Place>() {
                         @Override
                         public int compare(Place lhs, Place rhs) {
@@ -31,7 +31,7 @@ public class PlaceListSorter {
                         }
                     });
                     break;
-                case FeedFragment.FEED_TYPE_LAST_UPDATE:
+                case FeedFragment.SORT_TYPE_LAST_UPDATE:
                     Collections.sort(placesList, new Comparator<Place>() {
                         @Override
                         public int compare(Place lhs, Place rhs) {
@@ -40,7 +40,7 @@ public class PlaceListSorter {
                         }
                     });
                     break;
-                case FeedFragment.FEED_TYPE_DISTANCE:
+                case FeedFragment.SORT_TYPE_DISTANCE:
                     Collections.sort(placesList, new Comparator<Place>() {
                         @Override
                         public int compare(Place lhs, Place rhs) {

@@ -15,6 +15,7 @@
         <item name="android:windowSharedElementsUseOverlay">false</item>
     </style>
 
+
     <style name="RobotoTextViewStyle" parent="android:Widget.TextView">
         <item name="android:fontFamily">sans-serif-light</item>
     </style>
@@ -42,7 +43,7 @@
 
     <style name="AppTheme.LocationToolbar" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="android:iconifiedByDefault">true</item>
-        <item name="android:background">@color/peek_loc_toolbar_bg_trans</item>
+        <item name="android:background">@color/peek_lighter_grey</item>
         <item name="android:minHeight">60dp</item>
         <item name="android:maxHeight">60dp</item>
         <item name="android:height">60dp</item>
@@ -58,6 +59,18 @@
     </style>
 
 
+
+    <style name="AppTheme.Splash" parent="AppTheme">
+        <item name="android:windowBackground">@drawable/splash</item>
+    </style>
+    <!-- Location info status bar -->
+
+    <style name="TopInfoBarText">
+        <item name="android:textColor">@color/peek_white</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:text">Location ready</item>
+        <item name="android:gravity">center</item>
+    </style>
     <!-- Material dialog theme -->
     <style name="PeekAlertDialog">
         <item name="colorAccent">@color/peek_white</item>
@@ -156,39 +169,73 @@
         <item name="popupTheme">@style/Theme.AppCompat.Light</item>
     </style>
 
+    <!-- Camera styles -->
+
+    <!-- * publisher -->
+
+    <style name="CameraPublisherText">
+        <item name="android:textSize">16sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:maxWidth">250dp</item>
+        <item name="android:requiresFadingEdge">vertical</item>
+        <item name="android:fadingEdge">vertical</item>
+        <item name="android:fadingEdgeLength">100dp</item>
+    </style>
+    <style name="CameraPublisherUploadText">
+        <item name="android:textColor">@color/peek_orange_primary</item>
+    </style>
+    <style name="CameraPublisherPlaceText" parent="CameraPublisherText">
+        <item name="android:textColor">@color/peek_grey</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
 
     <!-- Event feed style -->
 
     <style name="FeedOptionsBarDesc">
-        <item name="android:textColor">@color/peek_white</item>
+        <item name="android:textColor">@color/peek_grey</item>
         <item name="android:textSize">14sp</item>
         <item name="android:fontFamily">sans-serif-condensed</item>
         <item name="android:textStyle">normal</item>
 
     </style>
-    <style name="PlaceTitle">
-        <item name="android:textColor">@color/colorSecondaryLight</item>
-        <item name="android:textSize">14sp</item>
-        <item name="android:textStyle">bold</item>
+
+    <style name="FeedCardText">
+        <item name="android:textColor">@color/peek_white</item>
+        <item name="android:fontFamily">sans-serif-condensed</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:layout_marginLeft">10dp</item>
+        <item name="android:paddingTop">5dp</item>
     </style>
 
-    <style name="PlaceType">
-        <item name="android:textColor">@color/colorSecondaryLight</item>
-        <item name="android:textSize">14sp</item>
-        <item name="android:shadowColor">#696969</item>
+    <style name="FeedPlaceTitle" parent="FeedCardText">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">normal</item>
     </style>
-    <style name="PlaceVicinity">
-        <item name="android:textColor">@color/gray</item>
+
+    <style name="FeedPlaceVicinity" parent="FeedCardText">
+        <item name="android:textColor">@color/peek_light_grey</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:shadowColor">#696969</item>
+        <item name="android:paddingTop">3dp</item>
+    </style>
+
+    <style name="FeedPlaceType" parent="FeedCardText">
+        <item name="android:textColor">@color/peek_orange_primary</item>
         <item name="android:textSize">12sp</item>
         <item name="android:shadowColor">#696969</item>
+        <item name="android:paddingTop">3dp</item>
     </style>
+
+
 
     <style name="PlaceCardTopInfo">
         <item name="android:textColor">@android:color/white</item>
         <item name="android:textSize">11sp</item>
     </style>
-    <style name="PlaceCardType">
-        <item name="android:textColor">@color/gray</item>
+    <style name="PlaceCardType" parent="FeedCardText">
+        <item name="android:textColor">@color/peek_orange_primary</item>
         <item name="android:textSize">12sp</item>
     </style>
 

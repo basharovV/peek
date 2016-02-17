@@ -24,6 +24,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
+
                 <!-- IMAGE CAPTURE BUTTON -->
                     <ImageButton
                         android:src="@drawable/ic_capture_button"
@@ -40,6 +41,7 @@
                         android:onClick=""
                         android:layout_marginBottom="6dp"
                         android:contentDescription="captureButton" />
+
 
                     <!-- FLASH BUTTON -->
                     <ImageButton
@@ -68,13 +70,23 @@
                         />
 
                     <ImageButton
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:id="@+id/cameraSettingsButton"
                         android:padding="12dp"
                         android:src="@drawable/ic_view_headline"
                         android:scaleType="fitCenter"
                         android:background="@android:color/transparent"
                         android:alpha="0.7"/>
+
+                    <ImageView
+                        android:layout_width="30dp"
+                        android:layout_height="50dp"
+                        android:src="@drawable/ic_peek_logo_256"
+                        android:layout_centerHorizontal="true"
+                        />
+
+
             </RelativeLayout>
         </FrameLayout>
 
@@ -132,6 +144,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:padding="10dp"
                     android:orientation="vertical"
                     android:layout_gravity="bottom">
                     <View
@@ -142,18 +155,14 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:background="@color/colorSecondaryDark"
+                        android:background="@drawable/camera_publish_popup_loc"
                         android:padding="8dp">
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:padding="5dp"
-                            android:textSize="16sp"
-                            android:gravity="center"
-                            android:textColor="@color/colorPrimary"
-                            style="@style/ThemeOverlay.AppCompat.Dark"
-
-                            android:text="Uploading to "/>
+                            style="@style/CameraPublisherUploadText"
+                            android:text="@string/camera_publish_upload"/>
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -169,19 +178,9 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:id="@+id/publisherPlaceName"
+                            style="@style/CameraPublisherPlaceText"
                             android:layout_margin="5dp"
                             android:padding="3dp"
-                            android:textSize="16sp"
-                            android:gravity="center"
-                            android:singleLine="true"
-                            android:maxWidth="250dp"
-                            android:requiresFadingEdge="vertical"
-                            android:fadingEdge="vertical"
-                            android:fadingEdgeLength="100dp"
-                            style="@style/ThemeOverlay.AppCompat.Dark"
-                            android:textColor="@color/materialWhite200"
-                            android:textStyle="bold"
-                            android:text="Placeholder place, placeholder address "
                             android:visibility="gone"/>
                         </LinearLayout>
                         </LinearLayout>
@@ -201,7 +200,7 @@
                         android:textSize="18sp"
                         android:gravity="center"
                         android:textColor="@color/mdtp_white"
-                        android:background="@color/colorSecondaryLight"
+                        android:background="@color/peek_grey"
                         android:text="Change location"
                         />
                     <TextView
@@ -214,22 +213,34 @@
                         android:textSize="18sp"
                         android:gravity="center"
                         android:textColor="@android:color/white"
-                        android:background="#43A047"
-                        android:text="Confirm"
+                        android:background="@drawable/camera_publish_popup_conf"
+                        android:text="@string/camera_publish_confirm"
                         />
                 </LinearLayout>
             </LinearLayout>
 
         <!-- Publish button -->
-        <ImageButton
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+        <!--<ImageButton-->
+            <!--android:layout_width="80dp"-->
+            <!--android:layout_height="80dp"-->
+            <!--android:id="@+id/publishButton"-->
+            <!--android:layout_margin="5dp"-->
+            <!--android:src="@drawable/ic_upload_arrow"-->
+            <!--android:background="@android:color/transparent"-->
+            <!--android:scaleType="fitXY"-->
+            <!--android:layout_gravity="bottom|center_horizontal"/>-->
+
+        <com.dd.morphingbutton.MorphingButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:layout_gravity="bottom|center"
             android:id="@+id/publishButton"
-            android:layout_margin="5dp"
-            android:src="@drawable/ic_upload_arrow"
             android:background="@android:color/transparent"
             android:scaleType="fitXY"
-            android:layout_gravity="bottom|center_horizontal"/>
+            android:onClick=""
+            android:layout_marginBottom="6dp"
+            android:contentDescription="captureButton" />
         </FrameLayout>
     </FrameLayout>
 </FrameLayout>

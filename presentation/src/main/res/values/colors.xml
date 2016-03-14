@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="mdtp_accent_color">@color/colorPrimary</color>
+    <color name="mdtp_accent_color_dark">#ae4e00</color>
+    <!-- old orange#ff7200-->
+    <color name="pale_white">#FAFAFA</color>
+    <color name="peek_orange">#CC4910</color>
+    <color name="peek_orangeOLD">#D64E13</color>
+
+
+    <color name="peek_orange_primary">#D84315</color>
+    <color name="peek_orange_primary_trans">#F2D84315</color>
+    <color name="peek_orange_statusbar_dark">#c43d13</color>
+    <color name="peek_orange_secondary">#F7931E</color>
+    <color name="peek_orange_secondary_trans">#F2F7931E</color>
+    <color name="peek_orange_secondary_trans2">#f2f57f17</color>
+    <color name="peek_yellow_primary">#f7b61e</color>
+    <color name="peek_yellow_primary2">#f2f7a71e</color>
+    <color name="peek_white">#ffffff</color>
+    <color name="peek_white_trans">#f2FFFFFF</color>
+    <color name="peek_inactive">#c9c9c9</color>
+    <color name="peek_orange_logo">#FF5722</color>
+    <color name="peek_toolbar_dark_trans">#bb212121</color>
+    <color name="peek_toolbar_active">#2c2c2c</color>
+
+    <color name="peek_toolbar_centered_bg">#eceff1</color>
+    <color name="peek_toolbar_bg">#282424</color>
+    <color name="peek_loc_toolbar_bg_trans">#FFFFFF</color>
+    <color name="peek_toolbar_alt">#232323</color>
+    <color name="peek_dark">#212121</color>
+    <color name="peek_dark_filter">#a9212121</color>
+    <color name="peek_dark_photo_filter">#49000000</color>
+    <color name="peek_dark_trans">#F2212121</color>
+    <color name="peek_dark_grey">#424242</color>
+    <color name="peek_grey">#5c5c5c</color>
+    <color name="peek_toolbar_inactive">#9a9a9a</color>
+    <color name="peek_light_grey">#e0e0e0</color>
+    <color name="peek_lighter_grey">#f2f2f2</color>
+    <color name="peek_green">#43A047</color>
+
+    <!--<color name="colorPrimary">#CC4910</color>-->
+    <color name="colorPrimary">#D84315</color>
+    <color name="colorPrimaryTrans">#AAD84315</color>
+    <color name="colorPrimaryDarkest">#8F350D</color>
+    <color name="colorPrimaryDark">#B5410E</color>
+    <color name="colorPrimaryLight">#FF8F7D</color>
+    <color name="logoColor">#FF5722</color>
+    <color name="logoColorTrans">#AAFF5722</color>
+
+    <color name="loginBackground">#d7201a</color>
+
+    <color name="toolbarWhiteTrans">#CCFFFFFF</color>
+
+    <color name="colorSecondary">#325059</color>
+    <color name="colorSecondaryDark">#092E39</color>
+    <color name="colorSecondaryDarkTrans">#CC092E39</color>
+    <color name="colorSecondaryMedium">#0C4454</color>
+    <color name="colorSecondaryMediumTrans">#CC0C4454</color>
+    <color name="colorSecondaryLight">#317B90</color>
+    <color name="colorSecondaryLightTrans">#CC317B90</color>
+
+    <color name="toolbarBlue">#DD317B90</color>
+    <color name="colorLight">#F4F4F4</color>
+    <color name="colorTertiaryLight">#D3DCC6</color>
+    <color name="colorTertiary">#D84315</color>
+
+    <color name="materialWhite200">#EEEEEE</color>
+    <color name="materialBlueGrey800">#37474F</color>
+    <color name="colorMaterialLightGrey">#EEEEEE</color>
+    <!--options:
+    Teal green: #26A69A
+    -->
+
+    <color name="bright_lime">#F2FF00</color>
+    <color name="dark_aqua">#006478</color>
+    <color name="darker_aqua">#013149</color>
+    <color name="blue_purple">#443BF5</color>
+    <color name="gray">#C6C6C6</color>
+    <color name="placeRatingForeground">#ffd800</color>
+    <color name="placeRatingBackground">#fff9db</color>
+</resources>

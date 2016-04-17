@@ -43,7 +43,7 @@
 
     <style name="AppTheme.LocationToolbar" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="android:iconifiedByDefault">true</item>
-        <item name="android:background">@color/peek_lighter_grey</item>
+        <item name="android:background">@android:color/transparent</item>
         <item name="android:minHeight">60dp</item>
         <item name="android:maxHeight">60dp</item>
         <item name="android:height">60dp</item>
@@ -94,13 +94,10 @@
 
     <style name="AreaSelectorToolbarCenterText" parent="AreaSelectorToolbarText">
         <item name="android:textSize">22sp</item>
-        <item name="android:textColor">@color/peek_orange_primary</item>
+        <item name="android:textColor">@color/peek_white</item>
         <item name="android:gravity">center</item>
         <item name="android:layout_gravity">center</item>
-        <item name="android:requiresFadingEdge">horizontal</item>
-        <item name="android:fadingEdgeLength">10dp</item>
         <item name="android:maxLength">15</item>
-        <item name="android:maxLines">1</item>
     </style>
 
     <!-- Overflow drop down style -->

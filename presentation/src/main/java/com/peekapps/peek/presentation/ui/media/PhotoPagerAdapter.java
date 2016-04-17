@@ -26,16 +26,16 @@ import javax.inject.Named;
 public class PhotoPagerAdapter extends FragmentStatePagerAdapter {
     //Test purposes
     private int[] imageResources = new int[] {
-            R.drawable.rockerfeller1,
-            R.drawable.rockerfeller2,
-            R.drawable.rockerfeller3,
-            R.drawable.rockerfeller4 };
+            R.drawable.universityofedinburgh_1,
+            R.drawable.universityofedinburgh_2,
+            R.drawable.universityofedinburgh_3
+    };
 
     //The place selected (from map or feed)
     private PlaceModel selectedPlace;
 
     // Total number of photos for this place
-    private static final int PHOTO_COUNT = 4;
+    private static final int PHOTO_COUNT = 3;
 
     // Current photo being shown in pager
     private int currentIndex = 0;

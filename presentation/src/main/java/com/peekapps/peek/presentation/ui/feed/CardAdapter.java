@@ -39,6 +39,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -52,6 +53,16 @@ import butterknife.ButterKnife;
 public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private ArrayList<University> universityList;
+
+    private HashMap<String, String> urlMap = new HashMap<String, String>() {{
+        put("aberystwythuniversity", "http://i.telegraph.co.uk/multimedia/archive/02534/aberyswyth_rex_2534500b.jpg");
+        put("astonuniversity", "http://www.thecompleteuniversityguide.co.uk/imagecache/file/fit/700x700/media/96312/aston4.jpg");
+        put("angliaruskinuniversity", "http://www.rdi.co.uk/wp-content/uploads/2013/09/anglia_ruskin_building.jpg");
+        put("birkbeckuniversityoflondon", "https://static-secure.guim.co.uk/sys-images/Education/Pix/pictures/2008/07/22/BirkbeckUniversity4.jpg");
+        put("bournemouthuniversity", "http://www.bfxfestival.com/wp-content/uploads/2013/08/Bournemouth-Uni_small.jpg");
+        put("bruneluniversity", "http://pglm.org.uk/wp-content/uploads/2013/09/brunel.png");
+    }};
+
     private Context context;
     private MediaDialog mDialog;
 
@@ -117,8 +128,21 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         int adjusted_pos = position - 1;
         if (position > 0) {
             ((ViewHolder) holder).title.setText(universityList.get(adjusted_pos).getName());
-//            ((ViewHolder) holder).location.setText(universityList.get(position).getVicinity());
+            ((ViewHolder) holder).city.setText(universityList.get(adjusted_pos).getCity());
 //            ((ViewHolder) holder).rank.setText(String.valueOf(position));
+            String uniId = universityList.get(adjusted_pos).getId();
+            if (urlMap.containsKey(uniId)) {
+                Picasso.with(context)
+                        .load(urlMap.get(uniId))
+                        .placeholder(R.drawable.placeholder_image)
+                        .into(((ViewHolder) holder).image);
+            }
+            else {
+                Picasso.with(context)
+                        .load(R.drawable.placeholder_image)
+                        .into(((ViewHolder) holder).image);
+            }
+
             ((ViewHolder) holder).image.setOnClickListener(
                     new View.OnClickListener() {
                         @Override
@@ -177,19 +201,6 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         public EmptyHolder(final View emptyView, Context context) {
             super(emptyView);
-
-            topView = emptyView.findViewById(R.id.feedStatusBarBg);
-
-            //Set up height of status bar background (empty recycler view)
-            int statusBarHeight = 0;
-            int resourceId = context.getResources().
-                    getIdentifier("status_bar_height", "dimen", "android");
-            if (resourceId > 0) {
-                statusBarHeight = context.getResources().getDimensionPixelSize(resourceId);
-            }
-            ViewGroup.LayoutParams layoutParams = topView.getLayoutParams();
-            layoutParams.height = statusBarHeight;
-            topView.setLayoutParams(layoutParams);
         }
     }
 
@@ -197,6 +208,7 @@ public class CardAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         @Bind(R.id.feedCardHeader)      LinearLayout header;
         @Bind(R.id.feedCardTitle)       TextView title;
         @Bind(R.id.feedCardDistance)    TextView distance;
+        @Bind(R.id.feedCardVicinity)    TextView city;
         @Bind(R.id.feedCardTime)        TextView time;
         @Bind(R.id.feedCardType)        TextView type;
         @Bind(R.id.feedCardImage)       ImageView image;

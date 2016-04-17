@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.peekapps.peek.presentation.R;
 import com.squareup.picasso.Picasso;
 
@@ -43,9 +44,9 @@ public class PhotoFragment extends Fragment {
         photoView = (PhotoView) rootView.findViewById(R.id.photoPagerPhoto);
         Bundle args = getArguments();
         resource = args.getInt("res");
-        Picasso.with(getContext())
+        Glide.with(getContext())
                 .load(resource)
-                .fit()
+                .centerCrop()
                 .into(photoView);
 
         return rootView;

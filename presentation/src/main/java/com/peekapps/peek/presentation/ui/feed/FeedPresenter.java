@@ -17,6 +17,8 @@ import com.peekapps.peek.presentation.Presenter;
 import com.peekapps.peek.presentation.ui.UIEventBus;
 import com.peekapps.peek.presentation.ui.main.events.FeedSelectedEvent;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -37,20 +39,19 @@ public class FeedPresenter implements Presenter {
     public static final int POSITION_SEARCH_BAR = 1;
 
     private List<University> universityList;
-
-    UIEventBus<FeedSelectedEvent> uiEventBus;
+//
+//    UIEventBus<FeedSelectedEvent> uiEventBus;
 
     private Interactor getUniversitiesInteractor;
 
     @Inject
-    public FeedPresenter(@Named("universities") Interactor getUniversitiesInteractor,
-                          UIEventBus uiEventBus) {
+    public FeedPresenter(@Named("universities") Interactor getUniversitiesInteractor) {
         this.getUniversitiesInteractor = getUniversitiesInteractor;
-        this.uiEventBus = uiEventBus;
     }
 
     public void initialize() {
         loadUniversities();
+        showSelectorAreasInView();
     }
 
 
@@ -67,7 +68,15 @@ public class FeedPresenter implements Presenter {
 
     // ---------- Data related ---------
 
-    // View updates
+    // -----View updates
+
+    // Header
+    public void showSelectorAreasInView() {
+        List<String> selectorAreas = Arrays.asList(
+                "World", "United Kingdom", "Scotland", "Stirling", "My approximate location helloeoeoeoeoeoeoeoeooeoeoeoeoeoe"
+        );
+        feedView.setSelectorAreas(selectorAreas);
+    }
     public void showUniversitiesInView(List<University> universityList) {
         feedView.updateFeed(universityList);
     }
@@ -96,12 +105,7 @@ public class FeedPresenter implements Presenter {
 
         @Override
         public void onNext(final List<University> universities) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    showUniversitiesInView(universities);
-                }
-            }).start();
+            showUniversitiesInView(universities);
         }
     }
     @Override

@@ -3,6 +3,7 @@ package com.peekapps.peek.presentation.ui.main;
 import android.graphics.Camera;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v4.view.LayoutInflaterCompat;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -86,6 +87,7 @@ public class MainActivity extends BaseActivity implements MainView {
         mainPager.setAdapter(mainPagerAdapter);
         mainPager.addOnPageChangeListener(mainScrollListener);
         mainPager.setCurrentItem(MainPresenter.DEFAULT_FRAGMENT);
+        mainPager.setOffscreenPageLimit(2);
     }
 
     private void initialize() {

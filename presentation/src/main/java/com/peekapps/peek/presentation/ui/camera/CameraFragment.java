@@ -229,11 +229,12 @@ public class CameraFragment extends BaseFragment implements CameraView {
      * Setup the user interface elements for the publisher layout.
      */
     private void setUpPublishUI() {
+        hidePublishPopup();
         //Set up progress bar
-        Animation fadeAnimation = AnimationUtils.loadAnimation(getActivity(), R.anim.anim_fadepulse);
-        locationProgress.setVisibility(View.VISIBLE);
-        locationProgress.startAnimation(fadeAnimation);
-
+//        Animation fadeAnimation = AnimationUtils.loadAnimation(getActivity(), R.anim.anim_fadepulse);
+//        locationProgress.setVisibility(View.VISIBLE);
+//        locationProgress.startAnimation(fadeAnimation);
+        placeName.setText("University of Stirling");
         publishButton.setTextColor(getResources().getColor(R.color.peek_white));
         morphPublishButton(CameraPresenter.EDIT_MODE);
 

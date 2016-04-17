@@ -7,11 +7,18 @@
 
 package com.peekapps.peek.presentation.ui.feed;
 
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.util.SparseArray;
 import android.view.ViewGroup;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 
 /**
@@ -19,15 +26,13 @@ import android.view.ViewGroup;
  */
 public class TextFocusPagerAdapter extends FragmentStatePagerAdapter {
     private static final int NUMBER_OF_FRAGMENTS = 5;
-    private String[] areaNames;
+    private List<String> areaNames;
     private OnAreaSelectorReadyListener listener;
     SparseArray<TextFocusFragment> registeredFragments = new SparseArray<TextFocusFragment>();
 
-
-    public TextFocusPagerAdapter(FragmentManager fm) {
+    @Inject
+    public TextFocusPagerAdapter(@Named("childFragmentManager") FragmentManager fm) {
         super(fm);
-        areaNames = new String[] {
-            "World", "United States", "NY", "New York", "My area withlong text"};
     }
 
     @Override
@@ -37,7 +42,14 @@ public class TextFocusPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        return new TextFocusFragment();
+        Fragment textFocusFragment = new TextFocusFragment();
+        Bundle args = new Bundle();
+        if (areaNames.get(position) != null) {
+            args.putString("areaName", areaNames.get(position));
+        }
+        else args.putString("areaName", "");
+        textFocusFragment.setArguments(args);
+        return textFocusFragment;
     }
 
     @Override
@@ -67,8 +79,19 @@ public class TextFocusPagerAdapter extends FragmentStatePagerAdapter {
                 allFragmentsReady = false;
             }
         }
-        if (allFragmentsReady) notifyListener();
+        if (allFragmentsReady) {
+
+        }
         return fragment;
+    }
+
+    public void setAreasFunnel(List<String> areas) {
+        clearAreas();
+        this.areaNames = areas;
+    }
+
+    public void clearAreas() {
+        this.registeredFragments.clear();
     }
 
     @Override
@@ -80,29 +103,6 @@ public class TextFocusPagerAdapter extends FragmentStatePagerAdapter {
     public Fragment getRegisteredFragment(int position) {
         return registeredFragments.get(position);
     }
-
-    public void setOnReadyListener(OnAreaSelectorReadyListener listener) {
-        this.listener = listener;
-    }
-
-    private void notifyListener() {
-        listener.onSelectorReady();
-    }
-
-    public void setText(int position, String text) {
-        areaNames[position] = text;
-    }
-//
-//    public void setupConnectors() {
-//        TextFocusFragment textFragment = ((TextFocusFragment) getRegisteredFragment(0));
-//        if (textFragment != null) {
-//            textFragment.setLeftConnectorVisible(false);
-//        }
-//        textFragment = ((TextFocusFragment) getRegisteredFragment(getCount() - 1));
-//        if (textFragment != null) {
-//            textFragment.setRightConnectorVisible(false);
-//        }
-//    }
 
     public void setFragmentText(int position, String text) {
         TextFocusFragment textFragment = ((TextFocusFragment) getRegisteredFragment(position));

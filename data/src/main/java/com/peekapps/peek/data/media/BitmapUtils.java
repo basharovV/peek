@@ -20,7 +20,7 @@ import android.graphics.Rect;
  */
 public class BitmapUtils {
 
-    public static Bitmap generateCircleMarkerBitmap(Bitmap squareBitmap) {
+    public static Bitmap generateCircleMarkerBitmap(Bitmap squareBitmap, boolean withShadow) {
         int size = 92;
         int shadow_offset = 3;
         int diameter = (int) Math.sqrt(Math.pow(size, 2) + Math.pow(size, 2));
@@ -36,7 +36,9 @@ public class BitmapUtils {
 //        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC));
         paint.setColor(Color.WHITE);
         paint.setStyle(Paint.Style.FILL);
-        paint.setShadowLayer(5.0f, (float) shadow_offset, (float) shadow_offset, Color.GRAY);
+        if (withShadow) {
+            paint.setShadowLayer(5.0f, (float) shadow_offset, (float) shadow_offset, Color.GRAY);
+        }
         float radius = diameter / 2;
         markerCanvas.drawCircle(diameter / 2, diameter / 2,
                 radius, paint);

@@ -11,6 +11,8 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 import rx.subjects.Subject;
 
@@ -40,6 +42,8 @@ public class UIEventBus<T> {
     }
 
     public <E extends T> Observable<E> observeEvents(Class<E> eventClass) {
-        return subject.ofType(eventClass);//pass only events of specified type, filter all other
+        return subject.ofType(eventClass)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread()); // pass only events of specified type, filter all other
     }
 }

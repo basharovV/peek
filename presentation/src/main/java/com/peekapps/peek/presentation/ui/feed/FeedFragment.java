@@ -19,6 +19,7 @@ import android.support.annotation.UiThread;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.LayoutInflaterCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.AppCompatSpinner;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -54,23 +55,38 @@ import butterknife.ButterKnife;
 
 public class FeedFragment extends BaseFragment implements FeedView{
 
-
-    // - Components
+    //------ Views
     @Bind(R.id.feedOptionsBarHolder)    LinearLayout optionsBarHolder;
     @Bind(R.id.feedSortSpinner)         AppCompatSpinner sortSpinner;
     @Bind(R.id.feedSearchButton)        ImageView searchButton;
-    // - Utils
-    private AdapterView.OnItemSelectedListener sortTypeSelectedListener;
 
-    // FEED
-    // - Components
-    @Bind(R.id.feedRefreshLayout)   SwipeRefreshLayout refreshLayout;
-    @Bind(R.id.feedRecyclerView)    RecyclerView recyclerView;
+    // Header
+    @Bind(R.id.feedLocationSelectorLayout) LinearLayout locationSelectorLayout;
+    @Bind(R.id.feedLocationSelector)    TextFocusViewPager locationSelectorPager;
 
-    private RefreshListener refreshListener;
+    // Options bar
+
+
+    // Main content
+    @Bind(R.id.feedRefreshLayout)       SwipeRefreshLayout refreshLayout;
+    @Bind(R.id.feedRecyclerView)        RecyclerView recyclerView;
+
+    // Footer
+    @Bind(R.id.feedFavouritesButton)    ImageView favouritesButton;
+    @Bind(R.id.feedWorldButton)         ImageView worldButton;
+    @Bind(R.id.feedMyUniButton)         ImageView myUniButton;
+
+    // ------Components
+
+    // Header
+    @Inject
+    TextFocusPagerAdapter locationSelectorAdapter;
+
     @Inject
     CardAdapter cardAdapter;
     private LinearLayoutManager layoutManager;
+    private RefreshListener refreshListener;
+    private AdapterView.OnItemSelectedListener sortTypeSelectedListener;
 
     @Inject
     FeedPresenter feedPresenter;
@@ -100,6 +116,11 @@ public class FeedFragment extends BaseFragment implements FeedView{
     }
 
     private void initializeFragment() {
+        // Header
+//        locationSelectorLayout.setTranslationY(getStatusBarHeight());
+        locationSelectorPager.setAdapter(locationSelectorAdapter);
+        // Options bar
+//        optionsBarHolder.setTranslationY(getStatusBarHeight());
         //Recycler view
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setOnScrollListener(new ScrollListener());
@@ -121,10 +142,15 @@ public class FeedFragment extends BaseFragment implements FeedView{
         // Specify the layout to use when the list of choices appears
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-        // Setup spinner functionality
+        // Setup spinner
         sortSpinner.setAdapter(adapter);
         sortTypeSelectedListener = new OnSortTypeSelectedListener();
         sortSpinner.setOnItemSelectedListener(sortTypeSelectedListener);
+
+        // Setup footer icons
+        favouritesButton.setColorFilter(getResources().getColor(R.color.peek_grey));
+        myUniButton.setColorFilter(getResources().getColor(R.color.peek_grey));
+        worldButton.setColorFilter(getResources().getColor(R.color.peek_orange_primary));
     }
 
     private void initializeComponents() {
@@ -163,18 +189,35 @@ public class FeedFragment extends BaseFragment implements FeedView{
 
     }
 
+    // --------------- Data related stuff --------------------
+
+
+    @Override
+    public void setSelectorAreas(List<String> areas) {
+        locationSelectorAdapter.setAreasFunnel(areas);
+        notifySelectorChanged();
+    }
+
+    private void notifySelectorChanged() {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                locationSelectorAdapter.notifyDataSetChanged();
+            }
+        });
+    }
 
     public void updateFeed(List<University> universities) {
         if (cardAdapter != null) {
             if (universities != null) {
                 cardAdapter.setUniversityList(universities);
-                notifyDatasetChanged();
+                notifyCardsChanged();
             }
             if (refreshLayout.isRefreshing())   refreshLayout.setRefreshing(false);
         }
     }
 
-    private void notifyDatasetChanged() {
+    private void notifyCardsChanged() {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -211,6 +254,20 @@ public class FeedFragment extends BaseFragment implements FeedView{
     @Override
     public void onResume() {
         super.onResume();
+    }
+
+    // Other UI stuff
+
+
+    private int getStatusBarHeight() {
+        //Set up height of status bar background (empty recycler view)
+        int statusBarHeight = 0;
+        int resourceId = getResources().
+                getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            return getResources().getDimensionPixelSize(resourceId);
+        }
+        return statusBarHeight;
     }
 }
 

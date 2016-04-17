@@ -7,6 +7,7 @@
 
 package com.peekapps.peek.presentation.ui.map;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
@@ -22,7 +23,7 @@ import com.peekapps.peek.presentation.model.PlaceModel;
  */
 public class MapUtils {
 
-    public static MarkerOptions getMarkerOptions(University pl) {
+    public static MarkerOptions getMarkerOptions(Context context, University pl) {
         MarkerOptions markerOptions = new MarkerOptions();
         double latitude = pl.getLatitude();
         double longitude = pl.getLongitude();
@@ -31,9 +32,15 @@ public class MapUtils {
         LatLng latLng = new LatLng(latitude, longitude);
         markerOptions.position(latLng);
         markerOptions.title(placeName);
-//        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(BitmapUtils.generateCircleMarkerBitmap(
-//                BitmapFactory.decodeResource())));
 
+        int imageId = context.getResources().getIdentifier(pl.getId(), "drawable", context.getPackageName());
+        if (imageId != 0) {
+            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(BitmapUtils.generateCircleMarkerBitmap(
+                    BitmapFactory.decodeResource(context.getResources(), imageId), true)));
+        }
+        else {
+            markerOptions.visible(false);
+        }
         return markerOptions;
     }
 }

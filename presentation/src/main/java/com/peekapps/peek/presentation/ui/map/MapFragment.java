@@ -46,6 +46,8 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.joooonho.SelectableRoundedImageView;
+import com.peekapps.peek.data.media.BitmapUtils;
 import com.peekapps.peek.domain.University;
 import com.peekapps.peek.presentation.R;
 import com.peekapps.peek.presentation.common.di.components.DaggerFragmentComponent;
@@ -91,6 +93,8 @@ public class MapFragment extends BaseFragment implements MapPlacesView{
     @Bind(R.id.mapPhotoPager)           PhotoPager photoPager;
     @Bind(R.id.mapPanelPlaceName)       TextView panelHeaderName;
     @Bind(R.id.mapPanelPlaceVic)        TextView panelHeaderVic;
+    @Bind(R.id.mapPanelPlaceIcon)
+    SelectableRoundedImageView panelHeaderIcon;
     @Bind(R.id.mapLikeButton)           LinearLayout likeButton;
     @Bind(R.id.mapPanelUploadCountIcon) ImageView uploadCountIcon;
     @Bind(R.id.mapView)                 MapView mapView;
@@ -184,7 +188,7 @@ public class MapFragment extends BaseFragment implements MapPlacesView{
     private void initializePlacePanel() {
         //Init
         mapSlidingPanel.setPanelSlideListener(new MapPanelSlideListener());
-        mapSlidingPanel.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+        mapSlidingPanel.setPanelState(SlidingUpPanelLayout.PanelState.HIDDEN);
         mapSlidingPanel.setOverlayed(true);
 
         //Main photo pager
@@ -229,11 +233,16 @@ public class MapFragment extends BaseFragment implements MapPlacesView{
 //            googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(camPosition));
     }
 
-    // ---------- Data ------------
+    // ------------------------- Data -------------------------
 
     public void renderPlaceDetails(University placeModel) {
         panelHeaderName.setText(placeModel.getName());
-//        panelHeaderVic.setText(placeModel.getVicinity());
+        panelHeaderVic.setText(placeModel.getCity());
+
+        // Temporary hack
+        int imageId = getResources().getIdentifier(placeModel.getId(), "drawable", getContext().getPackageName());
+        panelHeaderIcon.setImageBitmap(BitmapUtils.generateCircleMarkerBitmap(
+                BitmapFactory.decodeResource(getResources(), imageId), false));
         // likes
         // number of photos
     }
@@ -243,7 +252,7 @@ public class MapFragment extends BaseFragment implements MapPlacesView{
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                MarkerOptions markerOptions = MapUtils.getMarkerOptions(place);
+                MarkerOptions markerOptions = MapUtils.getMarkerOptions(getContext(), place);
                 Marker marker = googleMap.addMarker(markerOptions);
                 dropPinAnimation(marker);
                 mapPresenter.addMarker(marker, place);
@@ -264,7 +273,7 @@ public class MapFragment extends BaseFragment implements MapPlacesView{
         googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(camPosition));
 
     }
-
+    // -------------------------------------------------
     @Override
     public void showToastMessage(String message) {
         super.showToastMessage(message);
@@ -280,7 +289,7 @@ public class MapFragment extends BaseFragment implements MapPlacesView{
 
         public PutMarkerRunnable(University place) {
             this.place = place;
-            this.markerOptions = MapUtils.getMarkerOptions(place);
+            this.markerOptions = MapUtils.getMarkerOptions(getContext(), place);
         }
 
         @Override
@@ -356,6 +365,13 @@ public class MapFragment extends BaseFragment implements MapPlacesView{
 
         }
     }
+    //rename to media panel
+    @Override
+    public void collapsePlacePanel() {
+        if (mapSlidingPanel.getPanelState() != SlidingUpPanelLayout.PanelState.COLLAPSED) {
+            mapSlidingPanel.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+        }
+    }
 
     @Override
     public void onStart() {
@@ -384,6 +400,7 @@ public class MapFragment extends BaseFragment implements MapPlacesView{
     @Override
     public void onDestroy() {
         super.onDestroy();
+        mapPresenter.destroy();
 //        mapView.onDestroy();
     }
 }

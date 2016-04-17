@@ -43,7 +43,7 @@
                     android:layout_gravity="center"
                     android:id="@+id/textFocusBackground"
                     android:elevation="1dp"
-                    android:src="@drawable/bg_toolbar_selected_rect"
+                    android:src="@drawable/feed_bg_loc_toolbar_frag"
                     android:scaleType="fitXY"/>
                 <TextView
                     android:layout_width="wrap_content"
@@ -82,14 +82,25 @@
             android:layout_height="match_parent"
             android:id="@+id/textFocusItemOrange"
             android:text="United States"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:maxLines="1"
+            android:freezesText="true"
+            android:selectAllOnFocus="true"
             style="@style/AreaSelectorToolbarCenterText"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/textFocusItemGrey"
             android:text="United States"
-            android:textColor="@color/peek_toolbar_inactive"
+            android:textColor="@color/peek_orange_dark"
             android:alpha="0"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:singleLine="true"
             style="@style/AreaSelectorToolbarCenterText"/>
 
     </FrameLayout>

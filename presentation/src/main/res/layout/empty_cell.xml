@@ -3,10 +3,4 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="135dp"
     android:background="@android:color/transparent">
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="25dp"
-        android:id="@+id/feedStatusBarBg"
-        android:background="@color/peek_orange_statusbar_dark"/>
-
 </LinearLayout>

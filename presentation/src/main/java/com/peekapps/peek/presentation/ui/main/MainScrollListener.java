@@ -39,8 +39,10 @@ public class MainScrollListener implements ViewPager.OnPageChangeListener {
 
     //Handle status bar here (when page is selected, scroll not finished)
     public void onPageSelected(int position) {
+        final int selectedPosition = position;
         currentPage = position;
-        uiEventBus.postEvent(new MainPagerEvent(position, MainPagerEvent.PAGE_SELECTED));
+        uiEventBus.postEvent(new MainPagerEvent(selectedPosition, MainPagerEvent.PAGE_SELECTED));
+
     }
 
 

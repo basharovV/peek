@@ -21,4 +21,5 @@ public interface MapPlacesView extends BaseView {
     void animateTo(double latitude, double longitude);
     void renderPlaceDetails(University placeModel);
     void showToastMessage(String message);
+    void collapsePlacePanel();
 }

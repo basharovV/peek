@@ -10,6 +10,7 @@
 
     <color name="peek_orange_primary">#D84315</color>
     <color name="peek_orange_primary_trans">#F2D84315</color>
+    <color name="peek_orange_dark">#bf360c</color>
     <color name="peek_orange_statusbar_dark">#c43d13</color>
     <color name="peek_orange_secondary">#F7931E</color>
     <color name="peek_orange_secondary_trans">#F2F7931E</color>

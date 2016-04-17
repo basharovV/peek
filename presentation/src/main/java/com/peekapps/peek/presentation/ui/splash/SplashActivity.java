@@ -86,14 +86,8 @@ public class SplashActivity extends Activity{
         setTheme(R.style.AppTheme_Splash);
         super.onCreate(savedInstanceState);
 
-        new Handler(Looper.getMainLooper()).postDelayed(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        goToLogin();
-                    }
-                }, 1500
-        );
+        // do stuff
+        goToLogin();
 
 //        FacebookSdk.sdkInitialize(getApplicationContext());
 //

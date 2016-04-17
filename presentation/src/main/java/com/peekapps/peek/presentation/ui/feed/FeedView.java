@@ -18,4 +18,5 @@ import java.util.List;
 public interface FeedView extends BaseView {
 
     public void updateFeed(List<University> universityList);
+    public void setSelectorAreas(List<String> areas);
 }

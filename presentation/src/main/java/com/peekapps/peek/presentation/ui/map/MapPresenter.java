@@ -53,6 +53,7 @@ public class MapPresenter implements Presenter {
     private Location currentLocation;
 
     private Interactor getUniversitiesInteractor;
+    private OnUniversitiesReadySubscriber onUnisReadySubscriber;
 
     @Inject
     public MapPresenter(@Named("universities") Interactor getUniversitiesInteractor) {
@@ -66,6 +67,7 @@ public class MapPresenter implements Presenter {
 
     public void initialize() {
 //        showLoading();
+        onUnisReadySubscriber = new OnUniversitiesReadySubscriber();
         loadPlaces();
     }
 
@@ -96,7 +98,7 @@ public class MapPresenter implements Presenter {
     }
 
     public void collapsePlacePanel() {
-
+        mapView.collapsePlacePanel();
     }
 
     public void hidePlacePanel() {
@@ -133,7 +135,7 @@ public class MapPresenter implements Presenter {
     }
 
     private void loadPlaces() {
-        getUniversitiesInteractor.execute(new OnUniversitiesReadySubscriber());
+        getUniversitiesInteractor.execute(onUnisReadySubscriber);
     }
 
     private class OnUniversitiesReadySubscriber extends DefaultSubscriber<List<University>> {
@@ -149,12 +151,14 @@ public class MapPresenter implements Presenter {
 
         @Override
         public void onNext(final List<University> universities) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    displayMarkers(universities);
-                }
-            }).start();
+            if (mapView != null) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        displayMarkers(universities);
+                    }
+                }).start();
+            }
         }
     }
 
@@ -178,6 +182,9 @@ public class MapPresenter implements Presenter {
 
     @Override
     public void destroy() {
-
+        mapView = null;
+        getUniversitiesInteractor = null;
+        onUnisReadySubscriber = null;
+        markerMap = null;
     }
 }

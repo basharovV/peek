@@ -10,6 +10,7 @@ package com.peekapps.peek.presentation.ui.feed;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,11 +41,22 @@ public class TextFocusFragment extends Fragment {
         itemGrey = (TextView) rootView.findViewById(R.id.textFocusItemGrey);
         dummyItem = (TextView) rootView.findViewById(R.id.textFocusItemDummy);
 
+        Bundle args = getArguments();
+        areaText = args.getString("areaName");
+
         //Two views for crossfading colours
         itemOrange.setText(areaText);
         itemGrey.setText(areaText);
-        //Set the size of parent view
-        dummyItem.setText(areaText);
+
+        //check if length is blabla
+        itemGrey.setSelected(true);
+//        itemGrey.setEllipsize(TextUtils.TruncateAt.MARQUEE);
+//        itemGrey.setSingleLine(true);
+        itemOrange.setSelected(true);
+//
+//        itemOrange.setEllipsize(TextUtils.TruncateAt.MARQUEE);
+//        itemOrange.setSingleLine(true);
+
         itemBg = (ImageView) rootView.findViewById(R.id.textFocusBackground);
 //        rightConnector = (ImageView) rootView.findViewById(R.id.locToolbarConnectorR);
 //        leftConnector = (ImageView) rootView.findViewById(R.id.locToolbarConnectorL);

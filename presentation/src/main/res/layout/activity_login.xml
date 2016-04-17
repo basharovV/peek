@@ -131,13 +131,13 @@
             </RelativeLayout>
         </LinearLayout>
     </LinearLayout>
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:layout_gravity="center"
-        android:hint="Enter your university"
-        android:textColorHint="@color/peek_grey"
-        android:backgroundTint="@color/peek_orange"/>
+    <!--<EditText-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_margin="16dp"-->
+        <!--android:layout_gravity="center"-->
+        <!--android:hint="Enter your university"-->
+        <!--android:textColorHint="@color/peek_grey"-->
+        <!--android:backgroundTint="@color/peek_orange"/>-->
 </FrameLayout>
 

@@ -30,13 +30,16 @@ public class TextFocusViewPager extends ViewPager {
     private int currentPage = 0;
 
     private TextFocusPagerAdapter pagerAdapter;
+    private Context context;
 
     public TextFocusViewPager(Context context) {
         super(context);
+        this.context = context;
     }
 
     public TextFocusViewPager(Context context, AttributeSet attrs) {
         super(context, attrs);
+        this.context = context;
         this.setLayerType(LAYER_TYPE_SOFTWARE, null);
         this.setPageTransformer(false, new TextFocusPageTransformer());
         this.setPageMargin(getResources().getDimensionPixelOffset(R.dimen.area_selector_pager_margin));
@@ -44,6 +47,7 @@ public class TextFocusViewPager extends ViewPager {
         this.addOnPageChangeListener(new TextFocusPageListener());
 //        this.setPageMargin(getResources().getDimensionPixelOffset(R.dimen.area_selector_pager_margin));
     }
+
 
     @Override
     public void setAdapter(PagerAdapter adapter) {
@@ -72,19 +76,21 @@ public class TextFocusViewPager extends ViewPager {
             TextView textItemOrange;
             TextView textItemGrey;
             //Avoid hardware acceleration problems
+            // On second thought - this stuff is too taxing on hardware, results
+            // in choppy swiping
             TextView areaTextDummy;
             if (page.findViewById(R.id.textFocusItemOrange) != null) {
                 textItemOrange = (TextView) page.findViewById(R.id.textFocusItemOrange);
                 textItemGrey = (TextView) page.findViewById(R.id.textFocusItemGrey);
                 textItemBg = (ImageView) page.findViewById(R.id.textFocusBackground);
-                areaTextDummy = (TextView) page.findViewById(R.id.textFocusItemDummy);
+//                areaTextDummy = (TextView) page.findViewById(R.id.textFocusItemDummy);
 
                 //This is the left or right page not currently visible
                 if (position < -1 || position > 1) { // [-Infinity,-1)
                     //Text size
-                    areaTextDummy.setTextSize(NORMAL_SIZE);
-                    textItemOrange.setTextSize(NORMAL_SIZE);
-                    textItemGrey.setTextSize(NORMAL_SIZE);
+//                    areaTextDummy.setTextSize(NORMAL_SIZE);
+//                    textItemOrange.setTextSize(NORMAL_SIZE);
+//                    textItemGrey.setTextSize(NORMAL_SIZE);
                     //Text colour
                     textItemOrange.setAlpha(0);
                     textItemGrey.setAlpha(1);
@@ -94,9 +100,9 @@ public class TextFocusViewPager extends ViewPager {
                 } else { // [-1,1]
                     float abs_pos = Math.abs(position); //Get absolute position
                     //Text size
-                    areaTextDummy.setTextSize(CENTER_SIZE - (Math.abs(SIZE_DIFF * (position))));
-                    textItemOrange.setTextSize(CENTER_SIZE - (Math.abs(SIZE_DIFF * (position))));
-                    textItemGrey.setTextSize(CENTER_SIZE - (Math.abs(SIZE_DIFF * (position))));
+//                    areaTextDummy.setTextSize(CENTER_SIZE - (Math.abs(SIZE_DIFF * (position))));
+//                    textItemOrange.setTextSize(CENTER_SIZE - (Math.abs(SIZE_DIFF * (position))));
+//                    textItemGrey.setTextSize(CENTER_SIZE - (Math.abs(SIZE_DIFF * (position))));
 
                     //Background transparency
                     if (abs_pos < 0.5) {
@@ -228,12 +234,12 @@ public class TextFocusViewPager extends ViewPager {
             @Override
             public void onPageScrollStateChanged(int scrollState) {
                 // A small hack to remove the HW layer that the viewpager add to each page when scrolling.
-                if (scrollState != ViewPager.SCROLL_STATE_IDLE) {
-                    final int childCount = TextFocusViewPager.this.getChildCount();
-                    for (int i = 0; i < childCount; i++) {
-                        TextFocusViewPager.this.getChildAt(i).setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-                    }
-                }
+//                if (scrollState != ViewPager.SCROLL_STATE_IDLE) {
+//                    final int childCount = TextFocusViewPager.this.getChildCount();
+//                    for (int i = 0; i < childCount; i++) {
+//                        TextFocusViewPager.this.getChildAt(i).setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+//                    }
+//                }
             }
         }
     }

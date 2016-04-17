@@ -1,23 +1,64 @@
 <!-- fragment_screen_slide_page.xml -->
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
+    xmlns:card_view="http://schemas.android.com/tools"
     android:tag="feed_fragment"
     android:id="@+id/feedFragment"
     android:background="@color/peek_white"
-    >
+    android:fitsSystemWindows="true">
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/peek_white"
-        >
+        <android.support.design.widget.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:id="@+id/feedLocationSelectorLayout"
+                android:background="@drawable/feed_bg_loc_selector"
+                android:elevation="4dp"
+                android:clipChildren="true"
+                app:layout_scrollFlags="scroll|enterAlways"
+                >
+                <android.support.v7.widget.Toolbar
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    style="@style/AppTheme.LocationToolbar"
+                    android:id="@+id/peek_toolbar"
+                    android:contentInsetStart="0dp"
+                    app:contentInsetStart="0dp">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"
+                        android:layout_gravity="center"
+                        >
+
+                        <com.peekapps.peek.presentation.ui.feed.TextFocusViewPager
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@android:color/transparent"
+                            android:layout_gravity="center_horizontal"
+                            android:clipToPadding="false"
+                            android:clipChildren="false"
+                            android:id="@+id/feedLocationSelector"/>
+
+                    </LinearLayout>
+                </android.support.v7.widget.Toolbar>
+            </LinearLayout>
+
+        </android.support.design.widget.AppBarLayout>
+
+
 
         <android.support.v4.widget.SwipeRefreshLayout
             android:id="@+id/feedRefreshLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/feedRecyclerView"
@@ -34,8 +75,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/feedOptionsBarHolder"
             android:orientation="vertical"
-            android:layout_marginTop="60dp"
-            android:fitsSystemWindows="true">
+            android:layout_marginTop="60dp">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -75,9 +115,14 @@
                     android:paddingRight="10dp"
                     android:layout_toRightOf="@+id/feedTypeDescLayout">
 
-                    <ImageView
-                        android:layout_width="28dp"
-                        android:layout_height="match_parent"
+                    <net.steamcrafted.materialiconlib.MaterialIconView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:id="@+id/feedSortIcon"
+                        app:materialIcon="sort_descending"
+                        app:materialIconColor="@color/peek_grey"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp"
                         android:src="@drawable/ic_sort"
                         />
                     <!--<TextView-->
@@ -95,9 +140,11 @@
                         android:minWidth="100dp"/>
 
                 </LinearLayout>
-                <ImageView
-                    android:layout_width="50dp"
-                    android:layout_height="match_parent"
+                <net.steamcrafted.materialiconlib.MaterialIconView
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    app:materialIcon="magnify"
+                    app:materialIconColor="@color/peek_grey"
                     android:id="@+id/feedSearchButton"
                     android:layout_alignParentRight="true"
                     android:src="@drawable/ic_search"
@@ -113,47 +160,41 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="50dp">
-
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_gravity="bottom"
+            android:elevation="1dp"
             android:background="@color/peek_white_trans">
 
-            <ImageView
-                android:layout_width="35dp"
-                android:layout_height="match_parent"
+            <net.steamcrafted.materialiconlib.MaterialIconView
+                android:layout_width="36dp"
+                android:layout_height="36dp"
                 android:id="@+id/feedWorldButton"
-                android:src="@drawable/ic_world"
-                android:scaleType="fitCenter"
+                app:materialIcon="earth"
+                app:materialIconSize="36dp"
                 android:layout_centerInParent="true"/>
 
-            <ImageView
-                android:layout_width="35dp"
-                android:layout_height="match_parent"
-                android:src="@drawable/ic_grade"
-                android:scaleType="fitCenter"
+            <net.steamcrafted.materialiconlib.MaterialIconView
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:id="@+id/feedFavouritesButton"
+                app:materialIcon="heart_outline"
+                app:materialIconSize="36dp"
+                android:layout_centerVertical="true"
                 android:layout_toLeftOf="@+id/feedWorldButton"
                 android:layout_marginRight="100dp"
                 />
 
-            <ImageView
-                android:layout_width="35dp"
-                android:layout_height="match_parent"
-                android:src="@drawable/ic_group"
-                android:scaleType="fitCenter"
+            <net.steamcrafted.materialiconlib.MaterialIconView
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:id="@+id/feedMyUniButton"
+                app:materialIcon="school"
+                app:materialIconSize="36dp"
+                android:layout_centerVertical="true"
                 android:layout_toRightOf="@+id/feedWorldButton"
                 android:layout_marginLeft="100dp" />
 
 
 
         </RelativeLayout>
-
-</FrameLayout>
-
-
-</FrameLayout>
+</android.support.design.widget.CoordinatorLayout>

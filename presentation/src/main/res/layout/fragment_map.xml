@@ -104,6 +104,7 @@
                 <com.joooonho.SelectableRoundedImageView
                     android:layout_width="50dp"
                     android:layout_height="50dp"
+                    android:id="@+id/mapPanelPlaceIcon"
                     android:layout_gravity="center_vertical"
                     android:src="@drawable/profile1"
                     android:scaleType="centerCrop"

@@ -11,6 +11,7 @@ import android.widget.Toast;
 import com.peekapps.peek.presentation.R;
 import com.peekapps.peek.presentation.ui.login.LoginActivity;
 import com.peekapps.peek.presentation.ui.main.MainActivity;
+import com.peekapps.peek.presentation.ui.onboarding.WelcomeActivity;
 
 
 /**
@@ -87,7 +88,8 @@ public class SplashActivity extends Activity{
         super.onCreate(savedInstanceState);
 
         // do stuff
-        goToLogin();
+        goToWelcome();
+//        goToLogin();
 
 //        FacebookSdk.sdkInitialize(getApplicationContext());
 //
@@ -115,6 +117,12 @@ public class SplashActivity extends Activity{
 //                updateWithToken(newToken);
 //            }
 //        };
+    }
+
+    private void goToWelcome() {
+        Intent loginIntent = new Intent(SplashActivity.this, WelcomeActivity.class);
+        startActivity(loginIntent);
+        finish();
     }
 
     private void goToLogin() {

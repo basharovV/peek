@@ -24,6 +24,7 @@ import com.peekapps.peek.presentation.common.di.modules.ActivityModule;
 import com.peekapps.peek.presentation.ui.BaseActivity;
 import com.peekapps.peek.presentation.ui.login.LoginActivity;
 import com.peekapps.peek.presentation.ui.main.MainActivity;
+import com.peekapps.peek.presentation.ui.onboarding.TutorialActivity;
 
 import dagger.Component;
 
@@ -39,5 +40,6 @@ import dagger.Component;
 public interface ActivityComponent {
   void inject(LoginActivity activity);
   void inject(MainActivity activity);
+  void inject(TutorialActivity activity);
   //Exposed to sub-graphs.
 }

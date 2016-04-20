@@ -36,8 +36,8 @@ public class LocationSelectorBehavior extends CoordinatorLayout.Behavior<LinearL
         if (feedScrollY < 0) {
 
         }
-        int barTranslationY =
-        float percentComplete = -translationY / dependency.getHeight();
+        int barTranslationY = 0;
+        float percentComplete = -barTranslationY / dependency.getHeight();
         float scaleFactor = 1 - percentComplete;
 
         child.setScaleX(scaleFactor);
@@ -46,7 +46,7 @@ public class LocationSelectorBehavior extends CoordinatorLayout.Behavior<LinearL
     }
 
     private float getToolbarTranslationY() {
-
+        return 0f;
     }
 
     private int getStatusBarHeight() {

@@ -5,6 +5,7 @@
     <!-- old orange#ff7200-->
     <color name="pale_white">#FAFAFA</color>
     <color name="peek_orange">#CC4910</color>
+    <color name="peek_orange_light">#ef9a9a</color>
     <color name="peek_orangeOLD">#D64E13</color>
 
 

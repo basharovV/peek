@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2016.  Peek Apps, Inc - All Rights Reserved
+  ~  * Unauthorized copying of this file, via any medium is strictly prohibited
+  ~  * Proprietary and confidential
+  ~  * Written by Vyacheslav Basharov <basharov@peekapp.com>, February 2016
+  -->
+
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:height="72dp" android:width="24dp" android:bottom="0dp"
+        android:top="15dp" android:left="0dp" android:right="0dp">
+
+        <rotate android:fromDegrees="135" android:toDegrees="135"
+            android:pivotX="50%"
+            android:pivotY="50%">
+            <shape android:shape="line">
+                <solid android:color="@color/peek_orange"/>
+                <size android:height="36dp" android:width="16dp"/>
+                <stroke android:width="2dp" android:color="@color/peek_orange"/>
+            </shape>
+        </rotate>
+
+    </item>
+    <item android:height="72dp" android:width="24dp" android:bottom="0dp"
+        android:top="0dp" android:left="0dp" android:right="0dp">
+
+        <rotate android:fromDegrees="45" android:toDegrees="45"
+            android:pivotX="50%"
+            android:pivotY="50%">
+            <shape android:shape="line">
+                <solid android:color="@color/peek_orange"/>
+                <size android:height="36dp" android:width="16dp"/>
+                <stroke android:width="2dp" android:color="@color/peek_orange"/>
+            </shape>
+        </rotate>
+
+    </item>
+    <item android:height="72dp" android:width="24dp" android:bottom="0dp"
+        android:top="15dp" android:left="12dp" android:right="0dp">
+
+        <rotate android:fromDegrees="135" android:toDegrees="135"
+            android:pivotX="50%"
+            android:pivotY="50%">
+            <shape android:shape="line">
+                <solid android:color="@color/peek_orange"/>
+                <size android:height="36dp" android:width="16dp"/>
+                <stroke android:width="2dp" android:color="@color/peek_orange"/>
+            </shape>
+        </rotate>
+
+    </item>
+    <item android:height="72dp" android:width="24dp" android:bottom="0dp"
+        android:top="0dp" android:left="12dp" android:right="0dp">
+
+        <rotate android:fromDegrees="45" android:toDegrees="45"
+            android:pivotX="50%"
+            android:pivotY="50%">
+            <shape android:shape="line">
+                <solid android:color="@color/peek_orange"/>
+                <size android:height="36dp" android:width="16dp"/>
+                <stroke android:width="2dp" android:color="@color/peek_orange"/>
+            </shape>
+        </rotate>
+
+    </item>
+</layer-list>

@@ -22,6 +22,8 @@ import com.peekapps.peek.presentation.common.di.components.ApplicationComponent;
 import com.peekapps.peek.presentation.common.di.components.DaggerApplicationComponent;
 import com.peekapps.peek.presentation.common.di.modules.ApplicationModule;
 
+import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
+
 
 /**
  * Android Main Application
@@ -35,6 +37,10 @@ public class PeekApplication extends Application {
     super.onCreate();
     this.initializeInjector();
     this.initializeLeakDetection();
+    CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
+            .setDefaultFontPath("fonts/Nunito-Regular.ttf")
+            .setFontAttrId(R.attr.fontPath)
+            .build());
   }
 
   private void initializeInjector() {

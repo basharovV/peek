@@ -13,6 +13,7 @@
         <item name="android:alertDialogTheme">@style/PeekAlertDialog</item>
         <item name="android:windowContentTransitions">true</item>
         <item name="android:windowSharedElementsUseOverlay">false</item>
+        <item name="fontPath">fonts/Nunito-Regular.ttf</item>
     </style>
 
 
@@ -63,14 +64,32 @@
     <style name="AppTheme.Splash" parent="AppTheme">
         <item name="android:windowBackground">@drawable/splash</item>
     </style>
-    <!-- Location info status bar -->
 
+    <!-- Welcome activity -->
+    <style name="WelcomeText">
+        <item name="android:textSize">22sp</item>
+        <item name="android:textColor">@color/peek_dark</item>
+        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:padding">16dp</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <!-- Tutorial activity -->
+    <style name="TutorialText">
+        <item name="android:textSize">22sp</item>
+        <item name="android:textColor">@color/peek_dark</item>
+        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:padding">16dp</item>
+        <item name="android:gravity">center</item>
+    </style>
+    <!-- Location info status bar -->
     <style name="TopInfoBarText">
         <item name="android:textColor">@color/peek_white</item>
         <item name="android:textSize">16sp</item>
         <item name="android:text">Location ready</item>
         <item name="android:gravity">center</item>
     </style>
+
     <!-- Material dialog theme -->
     <style name="PeekAlertDialog">
         <item name="colorAccent">@color/peek_white</item>

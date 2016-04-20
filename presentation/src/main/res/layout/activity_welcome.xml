@@ -1,0 +1,142 @@
+<!--
+  ~ Copyright (c) 2016.  Peek Apps, Inc - All Rights Reserved
+  ~  * Unauthorized copying of this file, via any medium is strictly prohibited
+  ~  * Proprietary and confidential
+  ~  * Written by Vyacheslav Basharov <basharov@peekapp.com>, February 2016
+  -->
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="com.peekapps.peek.presentation.ui.login.LoginActivity"
+    android:background="@color/peek_white">
+
+
+    <pl.droidsonroids.gif.GifImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/loginPhoto"
+        android:alpha="0.8"
+        android:src="@drawable/welcome_caps_gif"
+        android:scaleType="centerCrop"/>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0.5"
+        android:scaleType="centerCrop"
+        android:src="@drawable/welcome_bg_vignette"/>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <!-- Login progress -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.4"
+            android:id="@+id/loginHeader"
+            >
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/loginHeaderLogo"
+                    android:orientation="horizontal"
+                    android:layout_centerInParent="true">
+                        <ImageView
+                            android:layout_width="70dp"
+                            android:layout_height="150dp"
+                            android:id="@+id/welcomeLogo"
+                            android:src="@drawable/peek_logo_tall_256"
+                            android:layout_gravity="center_vertical"
+                            android:cropToPadding="false"
+                            android:adjustViewBounds="true"
+                            android:visibility="visible"
+                            android:focusable="false" />
+                        <ImageView
+                            android:layout_width="200dp"
+                            android:layout_height="match_parent"
+                            android:id="@+id/loginTextLogo"
+                            android:src="@drawable/welcome_peek_text_logo"
+                            android:visibility="visible"/>
+                </LinearLayout>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.6"
+            android:orientation="vertical"
+            >
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/welcome"
+                style="@style/WelcomeText"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/welcome_info"
+                android:textColor="@color/peek_grey"
+                android:layout_marginBottom="30dp"
+                android:textSize="20sp"
+                style="@style/WelcomeText"
+                />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginLeft="60dp"
+                android:layout_marginRight="60dp"
+                android:background="@color/peek_light_grey"
+                />
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/welcomeStartButton"
+                android:layout_marginTop="20dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/welcome_bg_start_button_ripple"
+                android:clickable="true">
+
+                <TextView
+                    tools:ignore="MissingPrefix"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/welcome_start_prompt"
+                    android:textColor="@color/peek_white"
+                    android:textSize="18sp"
+                    fontPath="fonts/Nunito-Bold.ttf"
+                    style="@style/WelcomeText"
+                    />
+            </FrameLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:id="@+id/welcomeGradCap"
+        android:src="@drawable/welcome_grad_cap"/>
+
+    <!--<EditText-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_margin="16dp"-->
+        <!--android:layout_gravity="center"-->
+        <!--android:hint="Enter your university"-->
+        <!--android:textColorHint="@color/peek_grey"-->
+        <!--android:backgroundTint="@color/peek_orange"/>-->
+</FrameLayout>
+

@@ -11,7 +11,16 @@
 
     <!--            APP STRINGS             -->
 
-    <!-- * App init text -->
+    <!-- * Welcome screen -->
+    <string name="welcome">Welcome to Peek!</string>
+    <string name="welcome_info">The app for students around the world.</string>
+    <string name="welcome_start_prompt">Tap to get started!</string>
+
+    <!-- Tutorial screen -->
+    <string name="tutorial_text1">Find out what is happening at your uni and explore others around the world</string>
+    <string name="tutorial_text2">Find out what is happening at your uni and explore others around the world</string>
+    <string name="tutorial_text3">Find out what is happening at your uni and explore others around the world</string>
+    <string name="tutorial_text4">Find out what is happening at your uni and explore others around the world</string>
     <!-- **     Wait dialog -->
 
     <string name="top_info_wait">Waiting for location</string>

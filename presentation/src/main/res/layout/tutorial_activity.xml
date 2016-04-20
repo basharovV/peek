@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2016.  Peek Apps, Inc - All Rights Reserved
+  ~  * Unauthorized copying of this file, via any medium is strictly prohibited
+  ~  * Proprietary and confidential
+  ~  * Written by Vyacheslav Basharov <basharov@peekapp.com>, February 2016
+  -->
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/peek_white">
+
+    <android.support.v4.view.ViewPager
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/tutorialPager">
+
+    </android.support.v4.view.ViewPager>
+
+    <me.relex.circleindicator.CircleIndicator
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:id="@+id/tutorialIndicator"
+        android:layout_gravity="bottom|center_horizontal"
+        app:ci_drawable="@drawable/tutorial_bg_indicator"
+        app:ci_drawable_unselected="@drawable/tutorial_bg_indicator_inactive"
+        />
+
+</FrameLayout>

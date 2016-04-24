@@ -13,6 +13,7 @@
         <item name="android:alertDialogTheme">@style/PeekAlertDialog</item>
         <item name="android:windowContentTransitions">true</item>
         <item name="android:windowSharedElementsUseOverlay">false</item>
+        <item name="android:windowDisablePreview">true</item>
         <item name="fontPath">fonts/Nunito-Regular.ttf</item>
     </style>
 
@@ -75,13 +76,21 @@
     </style>
 
     <!-- Tutorial activity -->
-    <style name="TutorialText">
+    <style name="TutorialInfoText">
         <item name="android:textSize">22sp</item>
         <item name="android:textColor">@color/peek_dark</item>
         <item name="android:fontFamily">sans-serif-light</item>
         <item name="android:padding">16dp</item>
         <item name="android:gravity">center</item>
     </style>
+    <style name="TutorialDoneText">
+        <item name="android:textSize">22sp</item>
+        <item name="android:textColor">@color/peek_orange</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:padding">22dp</item>
+        <item name="fontPath">fonts/Nunito-Bold.ttf</item>
+    </style>
+
     <!-- Location info status bar -->
     <style name="TopInfoBarText">
         <item name="android:textColor">@color/peek_white</item>

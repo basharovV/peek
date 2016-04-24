@@ -5,26 +5,46 @@
   ~  * Proprietary and confidential
   ~  * Written by Vyacheslav Basharov <basharov@peekapp.com>, February 2016
   -->
-
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/peek_white">
-
-    <ImageView
+    android:background="@color/peek_white"
+    >
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/tutorialFragmentImage"
-        android:scaleType="fitCenter"
-        android:adjustViewBounds="true"
-        android:layout_gravity="top"
-        android:src="@drawable/tutorial_fragment1"/>
+        android:layout_height="match_parent"
+        android:background="@color/peek_white">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="48dp"/>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/tutorialFragmentImage"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:src="@drawable/tutorial_fragment_1"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/tutorialFragmentText"
+            android:text="@string/tutorial_text_1"
+            style="@style/TutorialInfoText"/>
+
+    </LinearLayout>
 
     <TextView
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/tutorialFragmentText"
-        android:text="@string/tutorial_text1"
-        style="@style/TutorialText"/>
-
-</LinearLayout>
+        android:id="@+id/tutorialFragmentDoneButton"
+        android:visibility="gone"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:text="@string/tutorial_done"
+        style="@style/TutorialDoneText"
+        />
+</RelativeLayout>

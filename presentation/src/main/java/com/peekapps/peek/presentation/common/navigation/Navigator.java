@@ -70,4 +70,8 @@ public class Navigator {
 //    plProfileIntent.putExtra("university_object", getUniversity(getAdapterPosition()));
 //    context.startActivity(plProfileIntent, optionsCompat.toBundle());
   }
+
+  public void navigateToLogin(Context context) {
+
+  }
 }

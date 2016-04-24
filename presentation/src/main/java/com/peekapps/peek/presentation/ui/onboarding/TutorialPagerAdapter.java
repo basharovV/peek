@@ -14,31 +14,26 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.view.ViewGroup;
 
 import com.peekapps.peek.presentation.R;
-import com.peekapps.peek.presentation.ui.camera.CameraFragment;
-import com.peekapps.peek.presentation.ui.feed.FeedFragment;
-import com.peekapps.peek.presentation.ui.map.MapFragment;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
 public class TutorialPagerAdapter extends FragmentStatePagerAdapter {
 
-    private static final int COUNT = 4;
+    private static final int COUNT = 3;
     /**
      * Set the text entries and the images below. These are static resources.
      */
     private final int[] tutorialTextList = new int[] {
-            R.string.tutorial_text1,
-            R.string.tutorial_text2,
-            R.string.tutorial_text3,
-            R.string.tutorial_text4
+            R.string.tutorial_text_1,
+            R.string.tutorial_text_2,
+            R.string.tutorial_text_3
     };
 
     private final int[] tutorialImageList = new int[] {
-            R.drawable.tutorial_fragment1,
-            R.drawable.tutorial_fragment1,
-            R.drawable.tutorial_fragment1,
-            R.drawable.tutorial_fragment1,
+            R.drawable.tutorial_fragment_1,
+            R.drawable.tutorial_fragment_2,
+            R.drawable.tutorial_fragment_3,
     };
 
     @Inject
@@ -52,6 +47,7 @@ public class TutorialPagerAdapter extends FragmentStatePagerAdapter {
         Bundle args = new Bundle();
         args.putInt("text", tutorialTextList[position]);
         args.putInt("image", tutorialImageList[position]);
+        args.putBoolean("last", position == (COUNT - 1));
         fragment.setArguments(args);
 //        registeredFragments.put(position, fragment);
         return fragment;

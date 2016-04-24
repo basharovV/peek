@@ -8,8 +8,14 @@
 package com.peekapps.peek.presentation.ui.onboarding;
 
 import android.app.Activity;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.transition.Explode;
+import android.transition.Fade;
+import android.transition.Transition;
+import android.transition.TransitionInflater;
+import android.view.Window;
 
 import com.peekapps.peek.presentation.R;
 import com.peekapps.peek.presentation.common.di.components.ActivityComponent;
@@ -38,6 +44,7 @@ public class TutorialActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.tutorial_activity);
         ButterKnife.bind(this);
         initializeComponents();
@@ -56,6 +63,14 @@ public class TutorialActivity extends BaseActivity {
     private void initializeActivity() {
         tutorialPager.setAdapter(tutorialPagerAdapter);
         tutorialIndicator.setViewPager(tutorialPager);
+
+        if (Build.VERSION.SDK_INT > 20) {
+            Transition activityFade = TransitionInflater.from(this).inflateTransition(R.transition.activity_fade);
+            activityFade.excludeTarget(android.R.id.statusBarBackground, true);
+            activityFade.excludeTarget(android.R.id.navigationBarBackground, true);
+            getWindow().setAllowEnterTransitionOverlap(false);
+            getWindow().setEnterTransition(activityFade);
+        }
     }
 
     @Override

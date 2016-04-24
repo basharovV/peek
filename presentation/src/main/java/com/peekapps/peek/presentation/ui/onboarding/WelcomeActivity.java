@@ -8,17 +8,24 @@
 package com.peekapps.peek.presentation.ui.onboarding;
 
 import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Rect;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.transition.Explode;
+import android.transition.Fade;
+import android.transition.Transition;
+import android.transition.TransitionInflater;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.view.Window;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
@@ -30,6 +37,7 @@ import com.facebook.rebound.SpringListener;
 import com.facebook.rebound.SpringSystem;
 import com.facebook.rebound.SpringUtil;
 import com.peekapps.peek.presentation.R;
+import com.peekapps.peek.presentation.ui.BaseActivity;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -39,7 +47,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 /**
  * Created by Slav on 19/04/2016.
  */
-public class WelcomeActivity extends Activity {
+public class WelcomeActivity extends BaseActivity {
 
     // UI components
     @Bind(R.id.welcomeGradCap)          ImageView welcomeCap;
@@ -80,6 +88,7 @@ public class WelcomeActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_welcome);
         ButterKnife.bind(this);
         initializeActivity();
@@ -135,13 +144,34 @@ public class WelcomeActivity extends Activity {
             }
         });
 
+        //
+        if (Build.VERSION.SDK_INT < 21) {
+            setCompatUI();
+        }
+    }
+
+    private void setCompatUI() {
+        startButton.setBackgroundResource(R.drawable.welcome_bg_start_button_ripple);
     }
 
     @OnClick(R.id.welcomeStartButton)
     protected void goToTutorial() {
         Intent tutorialIntent = new Intent(this, TutorialActivity.class);
-        startActivity(tutorialIntent);
-        finish();
+        if (Build.VERSION.SDK_INT > 20) {
+            View sharedLogo = welcomeLogo;
+            String transitionName = getString(R.string.tutorial_logo_transition);
+            ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(WelcomeActivity.this,
+                    sharedLogo, transitionName);
+            startActivity(tutorialIntent, activityOptions.toBundle());
+        }
+        else startActivity(tutorialIntent);
+        Handler delayHandler = new Handler();
+        delayHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                finish();
+            }
+        }, 1000);
     }
 
 
@@ -367,5 +397,10 @@ public class WelcomeActivity extends Activity {
         capRotateSpring.removeListener(capRotateListener);
         capDropSpring.removeListener(capDropListener);
         logoBounceSpring.removeListener(logoBounceListener);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 }

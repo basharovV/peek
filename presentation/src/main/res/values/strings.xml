@@ -16,11 +16,15 @@
     <string name="welcome_info">The app for students around the world.</string>
     <string name="welcome_start_prompt">Tap to get started!</string>
 
+    <string name="tutorial_logo_transition">TutorialLogoTransition</string>
+
     <!-- Tutorial screen -->
-    <string name="tutorial_text1">Find out what is happening at your uni and explore others around the world</string>
-    <string name="tutorial_text2">Find out what is happening at your uni and explore others around the world</string>
-    <string name="tutorial_text3">Find out what is happening at your uni and explore others around the world</string>
-    <string name="tutorial_text4">Find out what is happening at your uni and explore others around the world</string>
+    <string name="tutorial_text_1">Find out what is happening at your Uni and explore others around the world</string>
+    <string name="tutorial_text_2">Snap a moment within the bounds of your Uni and share it with your peers</string>
+    <string name="tutorial_text_3">Accumulate points through likes and help make a name for your Uni.</string>
+    <string name="tutorial_text_4">Find out what is happening at your uni and explore others around the world</string>
+    <string name="tutorial_done">Done</string>
+
     <!-- **     Wait dialog -->
 
     <string name="top_info_wait">Waiting for location</string>

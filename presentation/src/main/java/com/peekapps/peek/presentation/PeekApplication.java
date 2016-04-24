@@ -16,6 +16,8 @@
 package com.peekapps.peek.presentation;
 
 import android.app.Application;
+import android.content.Context;
+import android.support.multidex.MultiDex;
 
 import com.peekapps.peek.presentation.BuildConfig;
 import com.peekapps.peek.presentation.common.di.components.ApplicationComponent;
@@ -31,6 +33,12 @@ import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 public class PeekApplication extends Application {
 
   private ApplicationComponent applicationComponent;
+
+  @Override
+  protected void attachBaseContext(Context base) {
+    super.attachBaseContext(base);
+    MultiDex.install(this);
+  }
 
   @Override
   public void onCreate() {

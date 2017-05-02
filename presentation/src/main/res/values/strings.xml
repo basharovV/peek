@@ -25,6 +25,17 @@
     <string name="tutorial_text_4">Find out what is happening at your uni and explore others around the world</string>
     <string name="tutorial_done">Done</string>
 
+    <!-- Login screen -->
+    <string name="login">Login</string>
+    <string name="login_guest">Login as guest</string>
+
+    <!-- Select your university screen -->
+    <string name="uni_select_prompt">Select your Uni</string>
+    <string name="uni_select_loading">Loading nearby universities...</string>
+    <string name="uni_select_loc_info">Based on your current location</string>
+    <string name="uni_select_done">Done</string>
+    <string name="uni_select_cant_find">Can\'t find your Uni?</string>
+
     <!-- **     Wait dialog -->
 
     <string name="top_info_wait">Waiting for location</string>
@@ -58,6 +69,11 @@
 
     <string name="feed_text">Live feed of media\n\n\n\nLive feed of media</string>
 
+
+    <!-- UNI PROFILE -->
+
+    <string name="uni_profile_name">University of Stirling</string>
+    <string name="uni_profile_location">Stirling</string>
 
     <!-- SETTINGS -->
     <string name="action_settings">Settings</string>

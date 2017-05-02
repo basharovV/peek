@@ -54,4 +54,5 @@ public class UserModule {
           PostExecutionThread postExecutionThread) {
     return new GetUserDetails(userId, userRepository, threadExecutor, postExecutionThread);
   }
+
 }

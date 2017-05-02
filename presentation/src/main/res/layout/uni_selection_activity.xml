@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2016.  Peek Apps, Inc - All Rights Reserved
+  ~  * Unauthorized copying of this file, via any medium is strictly prohibited
+  ~  * Proprietary and confidential
+  ~  * Written by Vyacheslav Basharov <basharov@peekapp.com>, February 2016
+  -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="-120dp"
+            android:src="@drawable/uni_select_bg_globe"
+            android:adjustViewBounds="true"
+            android:layout_gravity="bottom"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingTop="32dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="15dp">
+
+            <!--<ImageView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="48dp"-->
+                <!--android:src="@drawable/peek_tall_small"-->
+                <!--android:adjustViewBounds="true"-->
+                <!--android:transitionName="@string/tutorial_logo_transition"-->
+                <!--android:layout_gravity="center"/>-->
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="22dp"
+                android:text="@string/uni_select_prompt"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center"
+                style="@style/TextAppearance.LargeBold"
+                />
+
+            <ImageView
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:layout_marginTop="24dp"
+                android:id="@+id/uniSelectGradCap"
+                android:src="@drawable/welcome_grad_cap"
+                android:layout_gravity="center_horizontal"/>
+
+            <com.peekapps.peek.presentation.ui.views.CenterViewPager
+                android:layout_width="match_parent"
+                android:layout_height="82dp"
+                android:id="@+id/uniSelectPager"
+                android:layout_marginTop="-24dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/uniSelectCenterUniName"
+                android:padding="16dp"
+                android:text="@string/uni_select_loading"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center"
+                style="@style/TextAppearance.RegularBold"/>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="24dp"
+                >
+                <net.steamcrafted.materialiconlib.MaterialIconView
+                    android:layout_width="18dp"
+                    android:layout_height="match_parent"
+                    android:layout_toLeftOf="@+id/uniSelectLocationInfo"
+                    android:layout_centerVertical="true"
+                    app:materialIcon="map_marker"
+                    app:materialIconColor="@color/peek_light_grey"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:id="@+id/uniSelectLocationInfo"
+                    android:text="@string/uni_select_loc_info"
+                    android:textColor="@color/peek_light_grey"
+                    android:layout_centerInParent="true"
+                    android:gravity="center_vertical"
+                    style="@style/TextAppearance.Small"/>
+            </RelativeLayout>
+            <FrameLayout
+                android:layout_width="96dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/uniSelectDoneButton"
+                android:paddingRight="18dp"
+                android:paddingLeft="18dp"
+                android:paddingBottom="14dp"
+                android:paddingTop="14dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginBottom="32dp"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/welcome_bg_start_button_ripple"
+                android:elevation="3dp"
+                android:clickable="true">
+
+                <TextView
+                    tools:ignore="MissingPrefix"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:text="@string/uni_select_done"
+                    android:textColor="@color/peek_orange"
+                    android:textSize="18sp"
+                    style="@style/TextAppearance.RegularBold"
+                    />
+            </FrameLayout>
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:background="@drawable/top_shadow"
+            android:layout_gravity="bottom"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="50dp"
+            android:text="@string/uni_select_cant_find"
+            android:layout_gravity="bottom|center_horizontal"
+            android:gravity="center"
+            android:textColor="@color/peek_white"
+            style="@style/TextAppearance.SmallBold"/>
+    </FrameLayout>
+</LinearLayout>

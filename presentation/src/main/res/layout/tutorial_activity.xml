@@ -11,31 +11,37 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/peek_white"
-    android:fitsSystemWindows="true">
+    android:background="@android:color/transparent">
 
-    <android.support.v4.view.ViewPager
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/tutorialPager">
+        android:paddingTop="32dp">
 
-    </android.support.v4.view.ViewPager>
+        <android.support.v4.view.ViewPager
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/tutorialPager">
 
-    <me.relex.circleindicator.CircleIndicator
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:id="@+id/tutorialIndicator"
-        android:layout_gravity="bottom|center_horizontal"
-        app:ci_drawable="@drawable/tutorial_bg_indicator"
-        app:ci_drawable_unselected="@drawable/tutorial_bg_indicator_inactive"
-        />
+        </android.support.v4.view.ViewPager>
 
-    <ImageView
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:src="@drawable/tutorial_ic_logo"
-        android:transitionName="@string/tutorial_logo_transition"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="15dp"/>
+        <me.relex.circleindicator.CircleIndicator
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:id="@+id/tutorialIndicator"
+            android:layout_gravity="bottom|center_horizontal"
+            app:ci_drawable="@drawable/tutorial_bg_indicator"
+            app:ci_drawable_unselected="@drawable/tutorial_bg_indicator_inactive"
+            />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:src="@drawable/peek_tall_small"
+            android:adjustViewBounds="true"
+            android:transitionName="@string/tutorial_logo_transition"
+            android:layout_gravity="center_horizontal"/>
+    </FrameLayout>
+
 
 </FrameLayout>

@@ -23,6 +23,8 @@ import android.view.View;
 
 
 import com.peekapps.peek.presentation.ui.main.MainActivity;
+import com.peekapps.peek.presentation.ui.onboarding.UniSelectActivity;
+import com.peekapps.peek.presentation.ui.uniprofile.UniProfileActivity;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -50,7 +52,13 @@ public class Navigator {
     }
   }
 
-
+  public void navigateToUniSelection(Context context) {
+    if (context != null) {
+      Intent uniSelectionIntent = new Intent(context, UniSelectActivity.class).setFlags(
+              Intent.FLAG_ACTIVITY_CLEAR_TOP);
+      context.startActivity(uniSelectionIntent);
+    }
+  }
 
   /**
    * Goes to the user details screen.
@@ -65,10 +73,10 @@ public class Navigator {
   }
 
   public void navigateToUniProfile(Context context, int uniId) {
-//    Intent plProfileIntent = new Intent(context, UniversityProfile.class).
-//            setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//    plProfileIntent.putExtra("university_object", getUniversity(getAdapterPosition()));
-//    context.startActivity(plProfileIntent, optionsCompat.toBundle());
+    Intent uniProfileIntent = new Intent(context, UniProfileActivity.class).
+            setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+    uniProfileIntent.putExtra("uni_id", uniId);
+    context.startActivity(uniProfileIntent);
   }
 
   public void navigateToLogin(Context context) {

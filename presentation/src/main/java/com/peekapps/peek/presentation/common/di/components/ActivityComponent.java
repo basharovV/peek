@@ -25,6 +25,7 @@ import com.peekapps.peek.presentation.ui.BaseActivity;
 import com.peekapps.peek.presentation.ui.login.LoginActivity;
 import com.peekapps.peek.presentation.ui.main.MainActivity;
 import com.peekapps.peek.presentation.ui.onboarding.TutorialActivity;
+import com.peekapps.peek.presentation.ui.onboarding.UniSelectActivity;
 
 import dagger.Component;
 

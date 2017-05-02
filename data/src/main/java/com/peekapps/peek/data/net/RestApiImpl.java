@@ -21,12 +21,17 @@ import android.net.NetworkInfo;
 
 
 import com.fernandocejas.frodo.annotation.RxLogObservable;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.maps.android.SphericalUtil;
 import com.peekapps.peek.data.entity.LocationEntity;
 import com.peekapps.peek.data.entity.UniEntity;
 import com.peekapps.peek.data.entity.UserEntity;
 import com.peekapps.peek.data.entity.mapper.UniEntityJsonMapper;
 import com.peekapps.peek.data.entity.mapper.UserEntityJsonMapper;
 import com.peekapps.peek.data.exception.NetworkConnectionException;
+import com.peekapps.peek.data.location.LocationUtils;
+import com.peekapps.peek.domain.UserLocation;
 
 import java.net.MalformedURLException;
 import java.util.List;
@@ -120,9 +125,37 @@ public class RestApiImpl implements RestApi {
       public void call(Subscriber<? super List<UniEntity>> subscriber) {
         if (isThereInternetConnection()) {
           try {
-            String responseUnis = getUniversitiesFromApi();
+            String responseUnis = getAllUnisFromApi();
             if (responseUnis != null) {
               subscriber.onNext(uniEntityJsonMapper.transformUniEntityCollection(responseUnis));
+              subscriber.onCompleted();
+            } else {
+              subscriber.onError(new NetworkConnectionException());
+            }
+          } catch (Exception e) {
+            subscriber.onError(new NetworkConnectionException(e.getCause()));
+          }
+        } else {
+          subscriber.onError(new NetworkConnectionException());
+        }
+      }});
+  }
+
+  @Override
+  public Observable<UniEntity> suggestedUniEntityList(final UserLocation userLocation) {
+
+    return Observable.create(new Observable.OnSubscribe<UniEntity>() {
+      @Override
+      public void call(Subscriber<? super UniEntity> subscriber) {
+        if (isThereInternetConnection()) {
+          try {
+            String responseUnis = getSuggestedUnisFromApi(
+                    userLocation.getLatitude(),
+                    userLocation.getLongitude());
+            if (responseUnis != null) {
+              for (UniEntity uniEntity: uniEntityJsonMapper.transformUniEntityCollection(responseUnis)) {
+                subscriber.onNext(uniEntity);
+              }
               subscriber.onCompleted();
             } else {
               subscriber.onError(new NetworkConnectionException());
@@ -145,7 +178,18 @@ public class RestApiImpl implements RestApi {
     return ApiConnection.createGET(apiUrl).requestSyncCall();
   }
 
-  private String getUniversitiesFromApi() throws MalformedURLException {
+  private String getAllUnisFromApi() throws MalformedURLException {
+    return ApiConnection.createGET(RestApi.API_URL_GET_UNI_LIST).requestSyncCall();
+  }
+
+  /**
+   * Returns universities for the users bounding box - NOT IMPLEMENTED IN BACKEND
+   * @param latitude
+   * @param longitude
+   * @return
+   * @throws MalformedURLException
+     */
+  private String getSuggestedUnisFromApi(double latitude, double longitude) throws MalformedURLException {
     return ApiConnection.createGET(RestApi.API_URL_GET_UNI_LIST).requestSyncCall();
   }
 

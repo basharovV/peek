@@ -8,7 +8,17 @@
     <color name="peek_orange_light">#ef9a9a</color>
     <color name="peek_orangeOLD">#D64E13</color>
 
+    <!-- Login colours -->
+    <color name="fb_blue">#3b5998</color>
+    <color name="fb_blue_trans">#993b5998</color>
+    <color name="twitter_blue">#55acee</color>
+    <color name="twitter_blue_trans">#9955acee</color>
+    <color name="google_blue">#4885ed</color>
+    <color name="google_blue_trans">#994885ed</color>
+    <color name="guest_grey">#bdbdbd</color>
+    <color name="guest_grey_trans">#99bdbdbd</color>
 
+    <!-- App colours -->
     <color name="peek_orange_primary">#D84315</color>
     <color name="peek_orange_primary_trans">#F2D84315</color>
     <color name="peek_orange_dark">#bf360c</color>
@@ -21,7 +31,7 @@
     <color name="peek_white">#ffffff</color>
     <color name="peek_white_trans">#f2FFFFFF</color>
     <color name="peek_inactive">#c9c9c9</color>
-    <color name="peek_orange_logo">#FF5722</color>
+    <color name="peek_orange_logo">#ff5722</color>
     <color name="peek_toolbar_dark_trans">#bb212121</color>
     <color name="peek_toolbar_active">#2c2c2c</color>
 
@@ -35,16 +45,21 @@
     <color name="peek_dark_trans">#F2212121</color>
     <color name="peek_dark_grey">#424242</color>
     <color name="peek_grey">#5c5c5c</color>
-    <color name="peek_toolbar_inactive">#9a9a9a</color>
-    <color name="peek_light_grey">#e0e0e0</color>
+    <color name="peek_toolbar_inactive">#9e9e9e</color>
+    <color name="peek_light_grey">#bdbdbd</color>
     <color name="peek_lighter_grey">#f2f2f2</color>
     <color name="peek_green">#43A047</color>
 
-    <!--<color name="colorPrimary">#CC4910</color>-->
-    <color name="colorPrimary">#D84315</color>
+    <!-- **********   Material theme for Peek *************  -->
+    <!-- Peek orange -->
+    <color name="colorPrimary">@color/peek_orange_logo</color>
+
+    <color name="colorPrimaryDark">#f4511e</color>
+    <!-- Used in status bar, other -->
+    <color name="colorPrimaryDarks">#B5410E</color>
+
     <color name="colorPrimaryTrans">#AAD84315</color>
     <color name="colorPrimaryDarkest">#8F350D</color>
-    <color name="colorPrimaryDark">#B5410E</color>
     <color name="colorPrimaryLight">#FF8F7D</color>
     <color name="logoColor">#FF5722</color>
     <color name="logoColorTrans">#AAFF5722</color>

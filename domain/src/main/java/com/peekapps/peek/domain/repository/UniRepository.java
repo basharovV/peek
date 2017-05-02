@@ -7,7 +7,9 @@
 
 package com.peekapps.peek.domain.repository;
 
+import com.peekapps.peek.domain.LatLngBounds;
 import com.peekapps.peek.domain.University;
+import com.peekapps.peek.domain.UserLocation;
 
 import java.util.List;
 
@@ -19,4 +21,5 @@ import rx.Observable;
 public interface UniRepository {
 
     public Observable<List<University>> universities();
+    public Observable<List<University>> suggestedUniversities(UserLocation userLocation);
 }

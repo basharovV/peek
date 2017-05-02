@@ -7,6 +7,8 @@
 
 package com.peekapps.peek.presentation.ui.onboarding;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.Context;
@@ -24,6 +26,7 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.widget.FrameLayout;
@@ -50,6 +53,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 public class WelcomeActivity extends BaseActivity {
 
     // UI components
+    @Bind(R.id.welcomeFrame)            View welcomeFrame;
     @Bind(R.id.welcomeGradCap)          ImageView welcomeCap;
     @Bind(R.id.welcomeLogo)             ImageView welcomeLogo;
     @Bind(R.id.welcomeStartButton)      FrameLayout startButton;
@@ -70,6 +74,7 @@ public class WelcomeActivity extends BaseActivity {
 
 
     // To keep track of states for various animations
+    private int[] logoLocation;
     private boolean capAtReadyPos = false;
     private boolean logoAtBottom = false;
     private boolean welcomeDropCompleted = false;
@@ -94,11 +99,6 @@ public class WelcomeActivity extends BaseActivity {
         initializeActivity();
     }
 
-    @Override
-    protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
-    }
-
     /*
         Need to initialise cap position on this method call -
         when the view is placed in its parent, and the screen
@@ -107,8 +107,10 @@ public class WelcomeActivity extends BaseActivity {
     @Override
     public void onWindowFocusChanged (boolean hasFocus) {
         if (hasFocus && !capAtReadyPos)   {
+            calculatePositions();
             initCap();
         }
+
     }
 
     private void initializeActivity() {
@@ -155,32 +157,23 @@ public class WelcomeActivity extends BaseActivity {
     }
 
     @OnClick(R.id.welcomeStartButton)
-    protected void goToTutorial() {
-        Intent tutorialIntent = new Intent(this, TutorialActivity.class);
-        if (Build.VERSION.SDK_INT > 20) {
-            View sharedLogo = welcomeLogo;
-            String transitionName = getString(R.string.tutorial_logo_transition);
-            ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(WelcomeActivity.this,
-                    sharedLogo, transitionName);
-            startActivity(tutorialIntent, activityOptions.toBundle());
-        }
-        else startActivity(tutorialIntent);
-        Handler delayHandler = new Handler();
-        delayHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                finish();
-            }
-        }, 1000);
+    protected void onStartButtonClick() {
+        startTutorialTransition();
     }
 
+    private void calculatePositions() {
+        logoLocation = new int[2];
+        welcomeLogo.getLocationInWindow(logoLocation);
+    }
 
     private void initCap() {
         int[] logoLocation = new int[2];
         welcomeLogo.getLocationInWindow(logoLocation);
 
         // Need this value for resuming activity - NOT ANYMORE
-        capFinalTranslationX = logoLocation[1] + (welcomeLogo.getWidth() / 3);
+
+        // Final cap X translation (Y translation defined by Spring)
+        capFinalTranslationX = logoLocation[1] + (welcomeLogo.getWidth() / 8);
         welcomeCap.setTranslationX(capFinalTranslationX);
         welcomeCap.setTranslationY(-welcomeCap.getHeight());
         capAtReadyPos = true;
@@ -193,7 +186,7 @@ public class WelcomeActivity extends BaseActivity {
             public void run() {
                 capDropSpring.setEndValue(1);
             }
-        }, 2000);
+        }, 500);
     }
 
 
@@ -291,10 +284,9 @@ public class WelcomeActivity extends BaseActivity {
         boolean hit = false;
         @Override
         public void onSpringUpdate(Spring spring) {
-            int[] logoLocation = new int[2];
-            welcomeLogo.getLocationInWindow(logoLocation);
+
             if (!welcomeDropCompleted) {
-                float stoppingPoint = logoLocation[1] - (welcomeLogo.getHeight() / 6);
+                float stoppingPoint = logoLocation[1] - (welcomeLogo.getHeight() / 3);
                 float mappedValue = (float) SpringUtil.mapValueFromRangeToRange(spring.getCurrentValue(), 0, 1, -welcomeCap.getHeight(), stoppingPoint);
                 welcomeCap.setTranslationY(mappedValue);
             }
@@ -315,6 +307,8 @@ public class WelcomeActivity extends BaseActivity {
             super.onSpringAtRest(spring);
             if (!welcomeDropCompleted) {
                 capFinalTranslationY = welcomeCap.getTranslationY();
+                Log.d("Welcome", "TranslationXY" + String.valueOf(capFinalTranslationX) + ", " +
+                    String.valueOf(capFinalTranslationY));
                 welcomeDropCompleted = true;
             }
         }
@@ -325,8 +319,6 @@ public class WelcomeActivity extends BaseActivity {
 
         @Override
         public void onSpringUpdate(Spring spring) {
-            int[] logoLocation = new int[2];
-            welcomeLogo.getLocationInWindow(logoLocation);
             float stoppingPoint = capFinalTranslationY + (welcomeLogo.getHeight() / 7);
             float mappedValue = (float) SpringUtil.mapValueFromRangeToRange(spring.getCurrentValue(), 0, 1, capFinalTranslationY, stoppingPoint);
             if (welcomeDropCompleted) {
@@ -377,6 +369,63 @@ public class WelcomeActivity extends BaseActivity {
 
     }
 
+    private void startTutorialTransition() {
+        // get the center for the clipping circle
+        int cx = logoLocation[0] + welcomeLogo.getWidth() / 2;
+        int cy = logoLocation[1] + welcomeLogo.getHeight() / 2;
+
+        // get the initial radius for the clipping circle
+        int initialRadius = welcomeFrame.getWidth();
+
+        // create the animation (the final radius is zero)
+        if (Build.VERSION.SDK_INT > 20) {
+            Animator anim =
+                    ViewAnimationUtils.createCircularReveal(welcomeFrame, cx, cy, initialRadius, 0);
+            // make the view invisible when the animation is done
+            anim.addListener(new AnimatorListenerAdapter() {
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    super.onAnimationEnd(animation);
+                    welcomeFrame.setVisibility(View.INVISIBLE);
+                    goToTutorial();
+                }
+            });
+
+            // start the animation
+            anim.setDuration(1000);
+            anim.start();
+        }
+
+
+
+    }
+
+    private void goToTutorial() {
+        // Go to tutorial
+        Intent tutorialIntent = new Intent(WelcomeActivity.this, TutorialActivity.class);
+        if (Build.VERSION.SDK_INT > 20) {
+            View sharedLogo = welcomeLogo;
+            String transitionName = getString(R.string.tutorial_logo_transition);
+
+            // Put cap position, rotation - for animation on next screen
+            tutorialIntent.putExtra("capTranslationX", capFinalTranslationX);
+            tutorialIntent.putExtra("capTranslationY", capFinalTranslationY);
+            tutorialIntent.putExtra("capRotation", CAP_ROTATION);
+
+            ActivityOptions activityOptions = ActivityOptions.makeSceneTransitionAnimation(WelcomeActivity.this,
+                    sharedLogo, transitionName);
+            startActivity(tutorialIntent, activityOptions.toBundle());
+        }
+        else startActivity(tutorialIntent);
+        Handler delayHandler = new Handler();
+        delayHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                finish();
+            }
+        }, 2000);
+    }
 
     @Override
     protected void onResume() {

@@ -54,6 +54,7 @@ import com.peekapps.peek.presentation.common.di.components.DaggerFragmentCompone
 import com.peekapps.peek.presentation.common.di.components.FragmentComponent;
 import com.peekapps.peek.presentation.common.di.components.MapComponent;
 import com.peekapps.peek.presentation.common.di.modules.FragmentModule;
+import com.peekapps.peek.presentation.common.navigation.Navigator;
 import com.peekapps.peek.presentation.model.PlaceModel;
 import com.peekapps.peek.presentation.ui.BaseFragment;
 import com.peekapps.peek.presentation.ui.media.PhotoPager;
@@ -101,6 +102,9 @@ public class MapFragment extends BaseFragment implements MapPlacesView{
 
     @Inject
     PhotoPagerAdapter photoPagerAdapter;
+
+    @Inject
+    Navigator navigator;
 
     private GoogleMap googleMap;
     private boolean markersDisplayed;
@@ -206,6 +210,11 @@ public class MapFragment extends BaseFragment implements MapPlacesView{
     }
 
     // --------- User interaction ------------
+
+    @OnClick(R.id.mapPanelPlaceName)
+    public void goToUniProfile() {
+        navigator.navigateToUniProfile(getContext(), 0);
+    }
 
     public class OnPlaceSelectedListener implements GoogleMap.OnMarkerClickListener {
         @Override

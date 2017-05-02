@@ -11,6 +11,8 @@ package com.peekapps.peek.data.repository.datasource.universities;
 import com.peekapps.peek.data.entity.LocationEntity;
 import com.peekapps.peek.data.entity.UniEntity;
 import com.peekapps.peek.data.entity.UserEntity;
+import com.peekapps.peek.domain.LatLngBounds;
+import com.peekapps.peek.domain.UserLocation;
 
 import java.util.List;
 
@@ -24,6 +26,13 @@ public interface UniDataStore {
    * Get an {@link Observable} which will emit a List of {@link UserEntity}.
    */
   Observable<List<UniEntity>> uniEntityList();
+
+  /**
+   * Get an (@link Observable) for suggested Universities for the given location
+   *
+   * @param userLocation The coordinates to retrieve universities for
+   */
+  Observable<UniEntity> suggestedUniEntityList(UserLocation userLocation);
 
   /**
    * Get an {@link Observable} which will emit a {@link UserEntity} by its id.

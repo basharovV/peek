@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.peekapps.peek.presentation.R;
 import com.peekapps.peek.presentation.ui.BaseFragment;
 import com.peekapps.peek.presentation.ui.login.LoginActivity;
+import com.squareup.picasso.Picasso;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -45,7 +46,9 @@ public class TutorialFragment extends BaseFragment {
 
     private void initializeFragment() {
         Bundle args = getArguments();
-        tutorialImage.setImageResource(args.getInt("image"));
+        Picasso.with(getContext())
+                .load(args.getInt("image"))
+                .into(tutorialImage);
         tutorialText.setText(getResources().getString(args.getInt("text")));
         if (args.getBoolean("last")) {
             tutorialDoneButton.setVisibility(View.VISIBLE);

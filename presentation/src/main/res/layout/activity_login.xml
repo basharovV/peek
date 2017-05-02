@@ -4,33 +4,31 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.peekapps.peek.presentation.ui.login.LoginActivity"
-    android:background="@color/peek_dark">
-
-    <com.flaviofaria.kenburnsview.KenBurnsView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/loginPhoto"
-        android:scaleType="centerCrop"/>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-        <!-- Login progress -->
-        <RelativeLayout
+    android:background="@color/peek_white"
+    android:fitsSystemWindows="true">
+        <pl.droidsonroids.gif.GifImageView
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="0.3"
+            android:layout_height="match_parent"
+            android:src="@drawable/welcome_caps_gif"/>
+        <!-- Login progress -->
+        <android.support.percent.PercentRelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:id="@+id/loginHeader"
             >
+
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    app:layout_heightPercent="25%"
                     android:id="@+id/loginHeaderLogo"
+                    android:layout_marginTop="30dp"
                     android:orientation="horizontal"
-                    android:layout_centerInParent="true">
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true">
                         <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="150dp"
+                            android:layout_width="72dp"
+                            android:layout_height="match_parent"
                             android:id="@+id/loginLogo"
                             android:src="@drawable/peek_logo_tall_256"
                             android:layout_gravity="center_vertical"
@@ -42,39 +40,15 @@
                             android:layout_width="200dp"
                             android:layout_height="match_parent"
                             android:id="@+id/loginTextLogo"
-                            android:src="@drawable/peek_toolbar_logo"
+                            android:src="@drawable/welcome_peek_text_logo"
                             android:visibility="visible"/>
                 </LinearLayout>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/loginSlogan"
-                    android:layout_below="@+id/loginHeaderLogo"
-                    android:textColor="#fffb00"
-                    android:text="Students united"
-                    android:textSize="18sp"
-                    android:visibility="visible"
-                    android:fontFamily="sans-serif-light"
-                    android:layout_centerHorizontal="true"/>
-        </RelativeLayout>
+
+
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="0.5"
-            >
-            <cn.trinea.android.view.autoscrollviewpager.AutoScrollViewPager
-                android:id="@+id/loginInfoPager"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:overScrollMode="never"
-                />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="0.20"
+            android:layout_height="wrap_content"
             android:paddingBottom="15dp"
             android:layout_alignParentBottom="true"
             android:orientation="vertical">
@@ -88,49 +62,88 @@
                 android:layout_marginLeft="30dp"
                 android:layout_marginRight="30dp"/>
                 -->
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <!--<View-->
-                        <!--android:layout_width="wrap_content"-->
-                        <!--android:layout_height="0.5dp"-->
-                        <!--android:background="@color/peek_light_grey"-->
-                        <!--android:layout_marginRight="5dp"-->
-                        <!--android:layout_toLeftOf="@+id/loginFacebookText"-->
-                        <!--android:layout_centerVertical="true"/>-->
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/loginFacebookText"
-                        android:layout_centerInParent="true"
-                        android:text="Login with Facebook"
-                        android:textColor="@color/peek_white"
-                        android:textStyle="bold"
-                        android:textSize="16sp"/>
-                    <!--<View-->
-                        <!--android:layout_width="wrap_content"-->
-                        <!--android:layout_height="0.5dp"-->
-                        <!--android:background="@color/peek_light_grey"-->
-                        <!--android:layout_marginLeft="5dp"-->
-                        <!--android:layout_toRightOf="@+id/loginFacebookText"-->
-                        <!--android:layout_centerVertical="true"/>-->
-
-                </RelativeLayout>
-            <android.support.design.widget.FloatingActionButton
+            <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/fb_login_button"
-                android:layout_centerInParent="true"
+                android:layout_height="match_parent"
+                android:text="@string/login"
+                style="@style/LoginText"
+                android:layout_gravity="center_horizontal"/>
+            <RelativeLayout
+                android:layout_width="250dp"
+                android:layout_height="60dp"
+                android:layout_marginTop="10dp"
+                android:orientation="vertical"
+                android:id="@+id/loginFacebookButton"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/login_fb_button_bg_ripple"
+                android:clickable="true"
                 android:src="@drawable/fb_logo"
-                app:backgroundTint="@android:color/white"
-                />
+                >
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:src="@drawable/login_fb_logo_small"
+                    android:adjustViewBounds="true"
+                    android:layout_centerInParent="true"/>
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="250dp"
+                android:layout_height="60dp"
+                android:layout_marginTop="10dp"
+                android:orientation="vertical"
+                android:id="@+id/loginTwitterButton"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/login_twitter_button_bg_ripple"
+                android:clickable="true"
+                android:src="@drawable/fb_logo"
+                >
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:src="@drawable/login_twitter_logo_small"
+                    android:adjustViewBounds="true"
+                    android:layout_centerInParent="true"/>
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="250dp"
+                android:layout_height="60dp"
+                android:layout_marginTop="10dp"
+                android:orientation="vertical"
+                android:id="@+id/loginGoogleButton"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/login_google_button_bg_ripple"
+                android:clickable="true"
+                android:src="@drawable/fb_logo"
+                >
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:src="@drawable/login_google_logo_small"
+                    android:adjustViewBounds="true"
+                    android:layout_centerInParent="true"/>
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="250dp"
+                android:layout_height="60dp"
+                android:layout_marginTop="30dp"
+                android:orientation="vertical"
+                android:id="@+id/loginGuestButton"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/login_guest_button_bg_ripple"
+                android:clickable="true"
+                android:src="@drawable/fb_logo"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/login_guest"
+                    style="@style/LoginGuestText"
+                    android:layout_centerInParent="true"/>
             </RelativeLayout>
         </LinearLayout>
-    </LinearLayout>
+
+        </android.support.percent.PercentRelativeLayout>
+
     <!--<EditText-->
         <!--android:layout_width="match_parent"-->
         <!--android:layout_height="wrap_content"-->

@@ -11,6 +11,8 @@ package com.peekapps.peek.data.repository.datasource.universities;
 import com.peekapps.peek.data.entity.LocationEntity;
 import com.peekapps.peek.data.entity.UniEntity;
 import com.peekapps.peek.data.net.RestApi;
+import com.peekapps.peek.domain.LatLngBounds;
+import com.peekapps.peek.domain.UserLocation;
 
 import java.util.List;
 
@@ -39,7 +41,12 @@ public class CloudUniDataStore implements UniDataStore {
     return this.restApi.uniEntityList();
   }
 
-//  @Override
+  @Override
+  public Observable<UniEntity> suggestedUniEntityList(UserLocation userLocation) {
+    return this.restApi.suggestedUniEntityList(userLocation);
+  }
+
+  //  @Override
 //  public Observable<UniEntity> uniEntityDetails(final int uniId) {
 //    return this.restApi.uniEntityById(uniId).doOnNext(saveToCacheAction);
 //  }

@@ -1,6 +1,14 @@
 <resources>
 
     <!-- Base application theme. -->
+    <style name="Base.AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <!-- Used for Toolbar background color -->
+    <item name="colorPrimary">@color/colorPrimary</item>
+    <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+    <item name="colorAccent">@color/colorPrimary</item>
+    </style>
+
+    <!-- Application theme -->
     <style name="AppTheme" parent="Base.AppTheme">
         <!-- Toolbar + Overflow menu text color -->
         <item name="android:textColorPrimary">@color/peek_orange</item>
@@ -10,32 +18,31 @@
         <item name="android:textViewStyle">@style/RobotoTextViewStyle</item>
         <item name="android:windowActionBarOverlay">true</item>
         <item name="android:windowBackground">@drawable/bg_window</item>
+        <item name="android:windowDisablePreview">true</item>
         <item name="android:alertDialogTheme">@style/PeekAlertDialog</item>
         <item name="android:windowContentTransitions">true</item>
-        <item name="android:windowSharedElementsUseOverlay">false</item>
-        <item name="android:windowDisablePreview">true</item>
-        <item name="fontPath">fonts/Nunito-Regular.ttf</item>
+        <item name="android:windowAllowEnterTransitionOverlap">true</item>
+        <item name="android:windowActivityTransitions">true</item>
+        <item name="fontPath">fonts/Yantramanav-Regular.ttf</item>
     </style>
 
-
-    <style name="RobotoTextViewStyle" parent="android:Widget.TextView">
-        <item name="android:fontFamily">sans-serif-light</item>
+    <!-- Alternative app themes
+        Mostly for activity-specific changes eg status bar color -->
+    <style name="AppTheme.StatusBarLight" parent="AppTheme">
+        <item name="colorPrimaryDark">@color/peek_light_grey</item>
     </style>
-    
-    <style name="Base.AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <!-- Used for Toolbar background color -->
+
+    <style name="AppTheme.StatusBarTranslucent" parent="AppTheme">
         <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="android:windowBackground">@drawable/bg_window</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorPrimary</item>
         <item name="android:windowTranslucentNavigation">false</item>
         <item name="android:windowTranslucentStatus">true</item>
     </style>
 
-    <style name="AppTheme.NoTranslucent" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="android:windowBackground">@drawable/bg_window</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorPrimary</item>
+    <style name="RobotoTextViewStyle" parent="android:Widget.TextView">
+        <item name="android:fontFamily">sans-serif-light</item>
     </style>
 
     <style name="DropDownListViewStyle" parent="@style/Widget.AppCompat.ListView.DropDown">
@@ -60,35 +67,79 @@
         <item name="android:background">@color/peek_dark_trans</item>
     </style>
 
-
-
     <style name="AppTheme.Splash" parent="AppTheme">
         <item name="android:windowBackground">@drawable/splash</item>
     </style>
 
+    <!-- Global text styles
+        Default: Regular style, regular size (18sp) -->
+    <style name="TextAppearance.Default" parent="android:TextAppearance">
+        <item name="fontPath">fonts/Nunito-Regular.ttf</item>
+        <item name="android:textSize">@dimen/textSizeRegular</item>
+        <item name="android:textColor">@color/peek_dark_grey</item>
+    </style>
+
+    <style name="TextAppearance.Small" parent="TextAppearance.Default">
+        <item name="android:textSize">@dimen/textSizeSmall</item>
+    </style>
+
+    <style name="TextAppearance.SmallBold" parent="TextAppearance.Small">
+        <item name="fontPath">fonts/Nunito-Bold.ttf</item>
+    </style>
+
+    <style name="TextAppearance.RegularBold" parent="TextAppearance.Default">
+        <item name="fontPath">fonts/Nunito-Bold.ttf</item>
+    </style>
+
+    <style name="TextAppearance.Large" parent="TextAppearance.Default">
+        <item name="android:textSize">@dimen/textSizeLarge</item>
+    </style>
+
+    <style name="TextAppearance.LargeBold" parent="TextAppearance.Large">
+        <item name="fontPath">fonts/Nunito-Bold.ttf</item>
+    </style>
+
+    <style name="TextAppearance.Max" parent="TextAppearance.Default">
+        <item name="android:textSize">@dimen/textSizeMax</item>
+    </style>
+
+    <style name="TextAppearance.MaxBold" parent="TextAppearance.Max">
+        <item name="fontPath">fonts/Nunito-Bold.ttf</item>
+    </style>
+
+
     <!-- Welcome activity -->
-    <style name="WelcomeText">
-        <item name="android:textSize">22sp</item>
-        <item name="android:textColor">@color/peek_dark</item>
-        <item name="android:fontFamily">sans-serif-light</item>
+    <style name="WelcomeText" parent="TextAppearance.LargeBold">
+        <item name="android:textColor">@color/peek_white</item>
         <item name="android:padding">16dp</item>
         <item name="android:gravity">center</item>
     </style>
 
     <!-- Tutorial activity -->
-    <style name="TutorialInfoText">
-        <item name="android:textSize">22sp</item>
+    <style name="TutorialInfoText" parent="TextAppearance.Large">
         <item name="android:textColor">@color/peek_dark</item>
-        <item name="android:fontFamily">sans-serif-light</item>
         <item name="android:padding">16dp</item>
         <item name="android:gravity">center</item>
     </style>
-    <style name="TutorialDoneText">
-        <item name="android:textSize">22sp</item>
+
+    <style name="TutorialDoneText" parent="TextAppearance.LargeBold">
+        <item name="android:textSize">@dimen/textSizeLarge</item>
         <item name="android:textColor">@color/peek_orange</item>
         <item name="android:textAllCaps">true</item>
         <item name="android:padding">22dp</item>
-        <item name="fontPath">fonts/Nunito-Bold.ttf</item>
+    </style>
+
+    <style name="LoginText" parent="TutorialDoneText"/>
+
+    <!-- Login activity -->
+    <style name="LoginGuestText" parent="TextAppearance.LargeBold">
+        <item name="android:textColor">@color/peek_dark_grey</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <!-- Select university activity -->
+    <style name="UniSelectText" parent="TextAppearance.LargeBold">
+        <item name="android:textColor">@color/peek_dark_grey</item>
     </style>
 
     <!-- Location info status bar -->

@@ -7,6 +7,8 @@
 
 package com.peekapps.peek.data.entity;
 
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -92,6 +94,10 @@ public class UniEntity {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public boolean isWithinBounds(LatLngBounds bounds) {
+        return bounds.contains(new LatLng(latitude, longitude));
     }
 }
 

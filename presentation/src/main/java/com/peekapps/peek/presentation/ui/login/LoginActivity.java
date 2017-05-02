@@ -7,6 +7,7 @@
 
 package com.peekapps.peek.presentation.ui.login;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -15,6 +16,7 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.peekapps.peek.presentation.R;
@@ -23,6 +25,7 @@ import com.peekapps.peek.presentation.common.di.components.DaggerActivityCompone
 import com.peekapps.peek.presentation.common.di.modules.ActivityModule;
 import com.peekapps.peek.presentation.ui.BaseActivity;
 import com.peekapps.peek.presentation.ui.main.MainActivity;
+import com.peekapps.peek.presentation.ui.onboarding.UniSelectActivity;
 import com.squareup.picasso.Picasso;
 
 import javax.inject.Inject;
@@ -30,6 +33,7 @@ import javax.inject.Inject;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import cn.trinea.android.view.autoscrollviewpager.AutoScrollViewPager;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class LoginActivity extends BaseActivity {
 
@@ -38,12 +42,10 @@ public class LoginActivity extends BaseActivity {
 
 //    private CallbackManager callbackManager;
 
-    @Bind(R.id.fb_login_button) FloatingActionButton fbButton;
-    @Bind(R.id.loginLogo)       ImageView loginLogo;
-    @Bind(R.id.loginTextLogo)   ImageView loginTextLogo;
-    @Bind(R.id.loginPhoto)      ImageView loginPhoto;
-    @Bind(R.id.loginSlogan)     TextView loginSlogan;
-    @Bind(R.id.loginInfoPager)  AutoScrollViewPager scrollInfoPager;
+    @Bind(R.id.loginLogo)               ImageView loginLogo;
+    @Bind(R.id.loginTextLogo)           ImageView loginTextLogo;
+
+    @Bind(R.id.loginFacebookButton)     RelativeLayout fbButton;
 
     @Inject
     InfoImageAdapter loginInfoImageAdapter;
@@ -126,29 +128,17 @@ public class LoginActivity extends BaseActivity {
         fadeIn.setDuration(2000);
         fadeIn.setStartOffset(500);
 
-        Picasso.with(this).load(R.drawable.login_chicago)
-                .centerCrop()
-                .fit()
-                .into(loginPhoto);
         fbButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getNavigator().navigateToMain(LoginActivity.this);
+                getNavigator().navigateToUniSelection(LoginActivity.this);
             }
         });
 
         loginLogo.setVisibility(View.VISIBLE);
         loginTextLogo.setVisibility(View.VISIBLE);
-        loginSlogan.setVisibility(View.VISIBLE);
         loginLogo.startAnimation(fadeIn);
         loginTextLogo.startAnimation(fadeIn);
-        loginSlogan.startAnimation(fadeIn);
-
-        scrollInfoPager.setAdapter(loginInfoImageAdapter);
-        scrollInfoPager.setInterval(4000);
-        scrollInfoPager.setScrollDurationFactor(3);
-        scrollInfoPager.startAutoScroll();
-        scrollInfoPager.setOffscreenPageLimit(5);
 
     }
 
@@ -171,6 +161,13 @@ public class LoginActivity extends BaseActivity {
         Intent loginIntent = new Intent(LoginActivity.this, LoginActivity.class).setFlags(
                 Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(loginIntent);
+        finish();
+    }
+
+    public void goToUniSelection() {
+        Intent uniSelectionIntent = new Intent(LoginActivity.this, UniSelectActivity.class).setFlags(
+                Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(uniSelectionIntent);
         finish();
     }
 

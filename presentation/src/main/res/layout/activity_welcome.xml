@@ -11,23 +11,27 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.peekapps.peek.presentation.ui.login.LoginActivity"
-    android:background="@color/peek_white">
+    android:background="@android:color/transparent">
 
-
-    <pl.droidsonroids.gif.GifImageView
+    <View
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/loginPhoto"
-        android:alpha="0.8"
-        android:src="@drawable/welcome_caps_gif"
-        android:scaleType="centerCrop"/>
+        android:id="@+id/welcomeFrame"
+        android:background="@color/peek_orange_logo"/>
+    <!--<pl.droidsonroids.gif.GifImageView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:id="@+id/loginPhoto"-->
+        <!--android:alpha="0.8"-->
+        <!--android:src="@drawable/welcome_caps_gif"-->
+        <!--android:scaleType="centerCrop"/>-->
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:alpha="0.5"
-        android:scaleType="centerCrop"
-        android:src="@drawable/welcome_bg_vignette"/>
+    <!--<ImageView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:alpha="0.5"-->
+        <!--android:scaleType="centerCrop"-->
+        <!--android:src="@drawable/welcome_bg_vignette"/>-->
 
 
     <LinearLayout
@@ -51,7 +55,7 @@
                             android:layout_width="70dp"
                             android:layout_height="150dp"
                             android:id="@+id/welcomeLogo"
-                            android:src="@drawable/peek_logo_tall_256"
+                            android:src="@drawable/welcome_logo_white_tall"
                             android:transitionName="@string/tutorial_logo_transition"
                             android:layout_gravity="center_vertical"
                             android:cropToPadding="false"
@@ -78,17 +82,21 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/welcome"
-                style="@style/WelcomeText"
+                android:textColor="@color/peek_white"
+                android:gravity="center"
+                android:padding="16dp"
+                style="@style/TextAppearance.LargeBold"
                 />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/welcome_info"
-                android:textColor="@color/peek_grey"
                 android:layout_marginBottom="30dp"
-                android:textSize="20sp"
-                style="@style/WelcomeText"
+                android:textColor="@color/peek_white"
+                android:gravity="center"
+                android:padding="16dp"
+                style="@style/TextAppearance.Default"
                 />
 
             <View
@@ -103,7 +111,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/welcomeStartButton"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="50dp"
                 android:layout_gravity="center_horizontal"
                 android:background="@drawable/welcome_bg_start_button_ripple"
                 android:clickable="true">
@@ -114,9 +122,8 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:text="@string/welcome_start_prompt"
-                    android:textColor="@color/peek_white"
+                    android:textColor="@color/peek_orange"
                     android:textSize="18sp"
-                    fontPath="fonts/Nunito-Bold.ttf"
                     style="@style/WelcomeText"
                     />
             </FrameLayout>

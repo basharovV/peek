@@ -18,9 +18,12 @@ package com.peekapps.peek.data.net;
 
 import android.location.Location;
 
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.peekapps.peek.data.entity.LocationEntity;
 import com.peekapps.peek.data.entity.UniEntity;
 import com.peekapps.peek.data.entity.UserEntity;
+import com.peekapps.peek.domain.UserLocation;
 
 import java.util.List;
 
@@ -52,4 +55,6 @@ public interface RestApi {
   Observable<UserEntity> userEntityById(final int userId);
 
   Observable<List<UniEntity>> uniEntityList();
+
+  Observable<UniEntity> suggestedUniEntityList(UserLocation userLocation);
 }

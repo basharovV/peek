@@ -78,19 +78,33 @@
             <activity
                 android:name="com.peekapps.peek.presentation.ui.onboarding.TutorialActivity"
                 android:screenOrientation="portrait"
-                android:launchMode="singleTop">
+                android:launchMode="singleTop"
+                android:theme="@style/AppTheme.StatusBarLight">
             </activity>
             <activity
                 android:name="com.peekapps.peek.presentation.ui.login.LoginActivity"
                 android:windowSoftInputMode="adjustResize|stateHidden"
                 android:screenOrientation="portrait"
-                android:launchMode="singleTop">
+                android:launchMode="singleTop"
+                android:theme="@style/AppTheme.StatusBarLight">
             </activity>
-
+            <activity
+                android:name="com.peekapps.peek.presentation.ui.onboarding.UniSelectActivity"
+                android:screenOrientation="portrait"
+                android:launchMode="singleTop"
+                android:theme="@style/AppTheme.StatusBarLight">
+            </activity>
+            <activity
+                android:name="com.peekapps.peek.presentation.ui.uniprofile.UniProfileActivity"
+                android:screenOrientation="portrait"
+                android:launchMode="singleTop"
+                android:theme="@style/AppTheme.StatusBarTranslucent">
+            </activity>
             <activity android:name="com.peekapps.peek.presentation.ui.main.MainActivity"
                 android:windowSoftInputMode="adjustPan"
                 android:screenOrientation="portrait"
-                android:launchMode="singleTask"/>
+                android:launchMode="singleTask"
+                android:theme="@style/AppTheme.StatusBarLight"/>
 
             <!--<activity android:name="com.peekapps.peek.presentation.ui.SettingsActivity" />-->
             <!--<activity-->

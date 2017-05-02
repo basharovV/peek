@@ -19,6 +19,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.places.PlaceLikelihood;
 import com.google.android.gms.location.places.PlaceLikelihoodBuffer;
 import com.peekapps.peek.data.entity.mapper.UserLocationMapper;
+import com.peekapps.peek.data.location.observables.LastKnownLocationObservable;
 import com.peekapps.peek.data.location.observables.LocationUpdatesObservable;
 import com.peekapps.peek.domain.UserLocation;
 import com.peekapps.peek.domain.services.LocationProvider;
@@ -59,12 +60,13 @@ public class LocationProviderImpl implements LocationProvider {
 
     @Override
     public Observable<UserLocation> getLastLocation() {
-            return Observable.create(new Observable.OnSubscribe<UserLocation>() {
-                @Override
-                public void call(Subscriber<? super UserLocation> subscriber) {
-
-                }
-            });
+            return LastKnownLocationObservable.createObservable(context)
+                    .map(new Func1<Location, UserLocation>() {
+                        @Override
+                        public UserLocation call(Location location) {
+                            return userLocationMapper.transform(location);
+                        }
+                    });
     }
 
     @Override

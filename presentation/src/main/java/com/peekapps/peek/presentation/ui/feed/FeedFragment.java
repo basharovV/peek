@@ -44,6 +44,7 @@ import com.peekapps.peek.presentation.R;
 import com.peekapps.peek.presentation.common.di.components.DaggerFragmentComponent;
 import com.peekapps.peek.presentation.common.di.components.FragmentComponent;
 import com.peekapps.peek.presentation.common.di.modules.FragmentModule;
+import com.peekapps.peek.presentation.common.navigation.Navigator;
 import com.peekapps.peek.presentation.ui.BaseFragment;
 
 import java.util.List;
@@ -52,13 +53,14 @@ import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class FeedFragment extends BaseFragment implements FeedView{
 
     //------ Views
-    @Bind(R.id.feedOptionsBarHolder)    LinearLayout optionsBarHolder;
-    @Bind(R.id.feedSortSpinner)         AppCompatSpinner sortSpinner;
-    @Bind(R.id.feedSearchButton)        ImageView searchButton;
+//    @Bind(R.id.feedOptionsBarHolder)    LinearLayout optionsBarHolder;
+//    @Bind(R.id.feedSortSpinner)         AppCompatSpinner sortSpinner;
+//    @Bind(R.id.feedSearchButton)        ImageView searchButton;
 
     // Header
     @Bind(R.id.feedLocationSelectorLayout) LinearLayout locationSelectorLayout;
@@ -90,6 +92,9 @@ public class FeedFragment extends BaseFragment implements FeedView{
 
     @Inject
     FeedPresenter feedPresenter;
+
+    @Inject
+    Navigator navigator;
 
     FragmentComponent fragmentComponent;
 
@@ -143,9 +148,9 @@ public class FeedFragment extends BaseFragment implements FeedView{
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         // Setup spinner
-        sortSpinner.setAdapter(adapter);
-        sortTypeSelectedListener = new OnSortTypeSelectedListener();
-        sortSpinner.setOnItemSelectedListener(sortTypeSelectedListener);
+//        sortSpinner.setAdapter(adapter);
+//        sortTypeSelectedListener = new OnSortTypeSelectedListener();
+//        sortSpinner.setOnItemSelectedListener(sortTypeSelectedListener);
 
         // Setup footer icons
         favouritesButton.setColorFilter(getResources().getColor(R.color.peek_grey));
@@ -171,24 +176,28 @@ public class FeedFragment extends BaseFragment implements FeedView{
         @Override
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
             super.onScrolled(recyclerView, dx, dy);
-            Log.d("FeedFragment", "Options height: " + optionsBarHolder.getMeasuredHeight());
-            int verticalOffset = recyclerView.computeVerticalScrollOffset();
-
-            Log.d("FeedFragment", "dy: " + verticalOffset + "| Options Y: " + optionsBarHolder.getTranslationY());
-            if (verticalOffset < optionsBarHolder.getMeasuredHeight()
-                    || verticalOffset < optionsBarHolder.getHeight()) {
-                optionsBarHolder.setTranslationY(-verticalOffset);
+//            Log.d("FeedFragment", "Options height: " + optionsBarHolder.getMeasuredHeight());
+//            int verticalOffset = recyclerView.computeVerticalScrollOffset();
+//
+//            Log.d("FeedFragment", "dy: " + verticalOffset + "| Options Y: " + optionsBarHolder.getTranslationY());
+//            if (verticalOffset < optionsBarHolder.getMeasuredHeight()
+//                    || verticalOffset < optionsBarHolder.getHeight()) {
+//                optionsBarHolder.setTranslationY(-verticalOffset);
             }
         }
-    }
+
     private class RefreshListener implements SwipeRefreshLayout.OnRefreshListener {
             @Override
             public void onRefresh() {
                 feedPresenter.updateFeed();
             }
-
     }
 
+
+    @OnClick(R.id.feedMyUniButton)
+    public void goToUniProfile() {
+        navigator.navigateToUniProfile(getContext(), 0);
+    }
     // --------------- Data related stuff --------------------
 
 

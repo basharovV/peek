@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2016.  Peek Apps, Inc - All Rights Reserved
+  ~  * Unauthorized copying of this file, via any medium is strictly prohibited
+  ~  * Proprietary and confidential
+  ~  * Written by Vyacheslav Basharov <basharov@peekapp.com>, February 2016
+  -->
+
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/uniProfileAppBar"
+        android:background="@color/peek_green"
+        android:fitsSystemWindows="true">
+
+        <android.support.design.widget.CollapsingToolbarLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:expandedTitleMarginEnd="64dp"
+            app:expandedTitleMarginStart="48dp"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:contentScrim="@color/peek_white">
+
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@color/peek_green"
+                app:layout_collapseMode="parallax"
+                android:minHeight="220dp"
+                android:scaleType="centerCrop"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed"/>
+
+
+            <android.support.v7.widget.Toolbar
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:id="@+id/uniProfileToolbar"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed"
+                app:layout_collapseMode="pin"
+                app:contentScrim="@android:color/white"
+                app:contentInsetStart="0dp">
+
+                <ImageButton
+                    android:layout_width="48dp"
+                    android:layout_height="?attr/actionBarSize"
+                    android:id="@+id/uniProfileBackButton"
+                    android:src="@drawable/ic_arrow_back"
+
+                    android:background="@android:color/transparent"/>
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:id="@+id/uniProfileToolbarTitle"
+                    android:text="@string/uni_profile_name"
+                    android:gravity="center_vertical"
+                    style="@style/TextAppearance.Default"/>
+            </android.support.v7.widget.Toolbar>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:id="@+id/uniProfileHeaderInfo"
+                android:orientation="vertical"
+                android:layout_gravity="bottom|center_horizontal">
+
+
+
+
+                <!--<TextView-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:gravity="center"-->
+                    <!--android:text="@string/uni_profile_location"-->
+                    <!--android:textColor="@color/peek_white"-->
+                    <!--style="@style/TextAppearance.Small"-->
+                    <!--/>-->
+
+            </LinearLayout>
+
+            <FrameLayout
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:layout_gravity="center"
+                android:fitsSystemWindows="true"
+                android:padding="15dp"
+                app:layout_behavior="com.peekapps.peek.presentation.ui.uniprofile.CollapsingImageBehavior"
+                app:finalHeight="48dp"
+                android:background="@drawable/uni_select_bg_pager_fragment">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/sulogo"
+                    android:background="@android:color/transparent"
+                    android:layout_gravity="center"
+                    android:scaleType="centerInside"/>
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="36dp"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed"
+                app:layout_collapseMode="pin"
+                android:layout_gravity="bottom"
+                android:orientation="horizontal"
+                android:weightSum="3"
+                android:background="@color/peek_dark_photo_filter">
+
+                <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_weight="1">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_horizontal"
+                        >
+                    <net.steamcrafted.materialiconlib.MaterialIconView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        app:materialIcon="clock"
+                        app:materialIconColor="@color/peek_white"
+                        app:materialIconSize="18dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="5dp"
+                        android:textColor="@color/peek_white"
+                        style="@style/TextAppearance.Small"
+                        android:gravity="center"
+                        android:text="5 min"/>
+                    </LinearLayout>
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_horizontal"
+                        >
+                        <net.steamcrafted.materialiconlib.MaterialIconView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            app:materialIcon="camera"
+                            app:materialIconColor="@color/peek_white"
+                            app:materialIconSize="18dp"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="5dp"
+                            android:textColor="@color/peek_white"
+                            style="@style/TextAppearance.Small"
+                            android:gravity="center"
+                            android:text="19"/>
+                    </LinearLayout>
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_horizontal"
+                        >
+                        <net.steamcrafted.materialiconlib.MaterialIconView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            app:materialIcon="map_marker"
+                            app:materialIconColor="@color/peek_white"
+                            app:materialIconSize="18dp"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="5dp"
+                            android:textColor="@color/peek_white"
+                            style="@style/TextAppearance.Small"
+                            android:gravity="center"
+                            android:text="Stirling"/>
+                    </LinearLayout>
+                </FrameLayout>
+
+            </LinearLayout>
+        </android.support.design.widget.CollapsingToolbarLayout>
+
+    </android.support.design.widget.AppBarLayout>
+
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/uniProfileRecyclerView"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        >
+
+
+    </android.support.v7.widget.RecyclerView>
+
+    <android.support.v7.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:layout_anchor="@+id/uniProfileHeaderInfo"
+        app:layout_scrollFlags="scroll|exitUntilCollapsed"
+        app:contentScrim="@android:color/white"
+        app:contentInsetStart="0dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/uni_profile_name"
+            android:textColor="@color/peek_white"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            style="@style/TextAppearance.LargeBold"
+            />
+        <!--<ImageButton-->
+            <!--android:layout_width="48dp"-->
+            <!--android:layout_height="?attr/actionBarSize"-->
+            <!--android:src="@drawable/ic_arrow_back"-->
+
+            <!--android:background="@android:color/transparent"/>-->
+    </android.support.v7.widget.Toolbar>
+
+
+
+</android.support.design.widget.CoordinatorLayout>
